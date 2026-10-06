@@ -41,8 +41,10 @@ docker compose exec web composer check        # cs + phpstan + phpunit (unit + i
 docker compose exec web php app/bin/nova migrate               # apply migrations (a non-empty DB needs a backup; dev-only: --no-backup)
 docker compose exec web php app/bin/nova dev:sample-catalogue  # load the labelled Phase 2 SAMPLE fixtures (development only)
 docker compose exec web php app/bin/nova assets:build          # content-hashed CSS/JS/fonts into public_html/assets/
-docker compose exec web php app/bin/nova dev:preview           # render the site (SAMPLE data) → http://fa.nova.localhost:8080 · http://en.nova.localhost:8080
-docker compose exec web php app/bin/nova dev:e2e               # dev DB = SAMPLE + SYNTHETIC QZ fixtures, then assets + preview (run before npm run test:e2e)
+docker compose exec web php app/bin/nova publish               # validate → build → verify → switch → record → prune (dev: SAMPLE data, noindex)
+docker compose exec web php app/bin/nova publish:rollback      # instant switch back; publish:recover / publish:status
+                                                               # live release: http://fa.nova.localhost:8080 · http://en.nova.localhost:8080
+docker compose exec web php app/bin/nova dev:e2e               # dev DB = SAMPLE + SYNTHETIC QZ fixtures, then assets + publish (run before npm run test:e2e)
 npm ci && npm run test:js                      # JS copy of the designation matcher vs the shared corpus
 npm run test:e2e                               # Playwright on the installed Chrome
 docker compose down                             # add -v to wipe the dev database

@@ -42,7 +42,10 @@ final class Application
                 'dev:sample-catalogue' => $this->sampleCatalogue(),
                 'dev:reset' => $this->devReset(),
                 'assets:build' => $this->assetsBuild(),
-                'dev:preview' => $this->devPreview(),
+                'publish' => $this->publish(),
+                'publish:rollback' => $this->publishRollback(),
+                'publish:recover' => $this->publishRecover(),
+                'publish:status' => $this->publishStatus(),
                 'dev:e2e' => $this->devE2e(),
                 default => $this->help(),
             };
@@ -132,25 +135,56 @@ final class Application
         return 0;
     }
 
-    /** DEVELOPMENT ONLY: renders the current catalogue (with the SAMPLE fixtures) into public_html/_site/preview. */
-    private function devPreview(): int
+    /** Publish from the command line (the Admin's Publish button runs the same engine). */
+    private function publish(): int
     {
-        if ($this->config->environment !== Environment::Development) {
-            $this->output->error('dev:preview is available only in development.');
+        $result = \Nova\Publish\PublishFactory::engine($this->config, $this->paths, $this->pdo())->publish(null);
+        foreach ($result->warnings as $w) {
+            $this->output->line("warning: {$w}");
+        }
+        if ($result->status === 'waiting') {
+            $this->output->error("The inactive slot can be reused in {$result->waitSeconds} s; publish again then.");
+
+            return 3;
+        }
+        if ($result->status === 'failed') {
+            foreach ($result->blockers as $b) {
+                $this->output->error("blocker: {$b}");
+            }
 
             return 2;
         }
-        $out = $this->paths->root . '/public_html/_site/preview';
-        \Nova\Core\Files::removeTree($out);
-        $data = \Nova\Publish\SiteData::load($this->pdo(), true, $this->paths->root . '/app/i18n/contact.php');
-        $builder = new \Nova\Publish\SiteBuilder($this->paths->root . '/app', $this->paths->root . '/public_html/assets', \Nova\Publish\BuildConfig::development());
-        $files = $builder->build($data, $out);
-        $this->output->line('Rendered ' . \count($files) . ' files: http://fa.nova.localhost:8080/ · http://en.nova.localhost:8080/');
+        $this->output->line("Published {$result->release}.");
 
         return 0;
     }
 
-    /** DEVELOPMENT ONLY: the browser-test site: dev:reset + synthetic QZ fixtures + assets + preview. */
+    private function publishRollback(): int
+    {
+        $release = \Nova\Publish\PublishFactory::engine($this->config, $this->paths, $this->pdo())->rollback(null);
+        $this->output->line("Rolled back: {$release} is live.");
+
+        return 0;
+    }
+
+    private function publishRecover(): int
+    {
+        $message = \Nova\Publish\PublishFactory::engine($this->config, $this->paths, $this->pdo())->recover();
+        $this->output->line($message ?? 'No interrupted publish.');
+
+        return 0;
+    }
+
+    private function publishStatus(): int
+    {
+        foreach (\Nova\Core\Sql::rows($this->pdo(), 'SELECT release_id, status, strategy, went_live_at FROM publish_record ORDER BY id DESC LIMIT 10') as $row) {
+            $this->output->line(\sprintf('%s  %-11s %-7s %s', (string) $row['release_id'], (string) $row['status'], (string) $row['strategy'], (string) ($row['went_live_at'] ?? '')));
+        }
+
+        return 0;
+    }
+
+    /** DEVELOPMENT ONLY: the browser-test site: dev:reset + synthetic QZ fixtures + assets + publish. */
     private function devE2e(): int
     {
         $code = $this->devReset();
@@ -161,7 +195,7 @@ final class Application
         $this->output->line('Added the SYNTHETIC browser-test designations (QZ…).');
         $this->assetsBuild();
 
-        return $this->devPreview();
+        return $this->publish();
     }
 
     /** The real pre-migration backup arrives with step 12; until then a non-empty database is refused. */
@@ -191,7 +225,10 @@ final class Application
         $this->output->line('  dev:sample-catalogue    load the Phase 2 SAMPLE fixtures (development only)');
         $this->output->line('  dev:reset               rebuild the local development database with the SAMPLE fixtures (development only)');
         $this->output->line('  assets:build            build content-hashed assets into public_html/assets/');
-        $this->output->line('  dev:preview             render the site with SAMPLE data into public_html/_site/preview (development only)');
+        $this->output->line('  publish                 validate, build and switch a new release (rollback: publish:rollback)');
+        $this->output->line('  publish:recover         finish or roll back an interrupted publish');
+        $this->output->line('  publish:status          the last releases and their state');
+        $this->output->line('  dev:e2e                 dev DB = SAMPLE + SYNTHETIC fixtures, then assets + publish (development only)');
 
         return 0;
     }

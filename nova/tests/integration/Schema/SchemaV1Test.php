@@ -75,7 +75,9 @@ final class SchemaV1Test extends TestCase
     public function testEveryTableIsInnoDbWithTheProjectCollation(): void
     {
         $rows = Sql::rows($this->pdo, 'SELECT TABLE_NAME, ENGINE, TABLE_COLLATION FROM information_schema.TABLES WHERE TABLE_SCHEMA = DATABASE()');
-        self::assertCount(16, $rows);
+        $tables = array_map(static fn(array $r): string => (string) $r['TABLE_NAME'], $rows);
+        sort($tables);
+        self::assertSame(['app_user', 'audit_event', 'brand', 'designation_key', 'document', 'document_link', 'family', 'product', 'product_variant', 'publish_record', 'redirect', 'schema_migrations', 'setting', 'source', 'spec_key', 'spec_value', 'spelling'], $tables);
         foreach ($rows as $row) {
             self::assertSame('InnoDB', $row['ENGINE'], (string) $row['TABLE_NAME']);
             self::assertSame('utf8mb4_unicode_520_ci', $row['TABLE_COLLATION'], (string) $row['TABLE_NAME']);
@@ -104,12 +106,14 @@ final class SchemaV1Test extends TestCase
     public static function foreignKeys(): iterable
     {
         $cascade = ['product_variant.product_id', 'spelling.product_id', 'spelling.variant_id', 'designation_key.product_id', 'designation_key.variant_id', 'designation_key.spelling_id', 'spec_value.product_id', 'spec_value.variant_id', 'document_link.product_id', 'document_link.variant_id'];
-        $restrict = ['product_variant.relationship_source_id', 'product_variant.relationship_confirmed_by', 'spelling.confirmed_by', 'redirect.created_by', 'product.family_id', 'product.verified_by', 'product_variant.verified_by', 'spec_key.family_id', 'spec_value.spec_key_id', 'spec_value.source_id', 'spec_value.updated_by', 'spelling.source_id', 'source.document_id', 'document_link.document_id', 'audit_event.user_id', 'setting.updated_by'];
+        $restrict = ['product_variant.relationship_source_id', 'product_variant.relationship_confirmed_by', 'spelling.confirmed_by', 'redirect.created_by', 'publish_record.published_by', 'product.family_id', 'product.verified_by', 'product_variant.verified_by', 'spec_key.family_id', 'spec_value.spec_key_id', 'spec_value.source_id', 'spec_value.updated_by', 'spelling.source_id', 'source.document_id', 'document_link.document_id', 'audit_event.user_id', 'setting.updated_by'];
         foreach ($cascade as $c) {
-            yield $c => [...explode('.', $c), 'CASCADE'];
+            [$table, $column] = explode('.', $c, 2) + ['', ''];
+            yield $c => [$table, $column, 'CASCADE'];
         }
         foreach ($restrict as $c) {
-            yield $c => [...explode('.', $c), 'RESTRICT'];
+            [$table, $column] = explode('.', $c, 2) + ['', ''];
+            yield $c => [$table, $column, 'RESTRICT'];
         }
     }
 
