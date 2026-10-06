@@ -14,7 +14,11 @@ This file is a map, not a source of truth. It points to the authoritative docume
   - The local baseline (step 2) is recorded in `nova/docs/local-baseline.md`.
   - The host probe is deferred.
 - **Not yet built:** schema, Admin, Publish Engine, public-site port, import.
-- **Next:** step 3, after the owner's go-ahead (see §12).
+- **Step 1 is committed** as `5c7e33e`.
+- **Step 3 is approved and committed** (owner review 2026-10-06; fullwidth-digit refinement; frozen choices recorded in `00`).
+  - Spec: `nova/docs/designation-matching.md`.
+  - Executable spec: `nova/tests/fixtures/designation/corpus.json`.
+- **Next:** step 4 (migrations runner, schema v1, fixtures), only on the owner's go-ahead.
 
 ## 2. Authoritative documents and precedence (D18)
 
@@ -183,7 +187,7 @@ Rules:
 
 **Step 1 was completed on 2026-10-06.** The text below is kept as the record of what it covered; the commands are in `AGENTS.md`.
 
-**Next: step 3** (`05` §24, §10, §25), when the owner says to continue:
+**Step 3** (`05` §24, §10, §25) was approved and committed on 2026-10-06. Its scope was:
 1. Build the designation test corpus as shared PHP/JS vectors:
    - the Phase 2 cases, including T-1 and the 6305/22220 pairs;
    - Persian/Arabic digits and letters;
@@ -192,7 +196,7 @@ Rules:
 2. Build the normaliser and the seven-category matcher in PHP and JS from one spec.
 3. Mark unverified suffix/slash semantics (V-1–V-5) as explicitly "unresolved". Never infer them.
 
-After that comes step 4 (migrations runner, schema v1, fixtures).
+Next, after the owner's go-ahead: step 4 (migrations runner, schema v1, fixtures).
 
 **Step 1 (completed):**
 

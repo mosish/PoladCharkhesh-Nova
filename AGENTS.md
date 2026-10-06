@@ -38,12 +38,14 @@ node tools/dev-init.mjs          # once: writes .env with random local passwords
 docker compose up -d --build     # web http://localhost:8080 · mail UI http://localhost:8025
 docker compose exec web composer install
 docker compose exec web composer check        # cs + phpstan + phpunit (unit + integration)
-npm ci && npm run test:e2e                     # Playwright on the installed Chrome
+npm ci && npm run test:js                      # JS copy of the designation matcher vs the shared corpus
+npm run test:e2e                               # Playwright on the installed Chrome
 docker compose down                             # add -v to wipe the dev database
 ```
 
 - `/_dev/` is a development-only diagnostics page from `nova/docker/dev-www/`. It is not in the docroot and never deployed.
 - Integration tests use the `nova_test` database, never `nova`.
+- Designation matching: the spec is `nova/docs/designation-matching.md`, and the executable spec is `nova/tests/fixtures/designation/corpus.json`. Change PHP (`app/src/Designation/`) and JS (`assets-src/js/designation.js`) together, and add the vectors first.
 
 ## 4. Conventions
 

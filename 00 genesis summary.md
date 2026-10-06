@@ -1,6 +1,6 @@
 # PoladCharkhesh-Nova — Stage 0 Genesis (Gate 1 and Gate 2 APPROVED)
 
-Created 2026-10-04; revised same day for confirmed hosting. Gate 1 approved 2026-10-04 with clarifications C1–C4 (incorporated below and in the full doc). Phase 2 delivered in three rounds: V1 (claude/01-phase2-design-system.md), V2 visual refinement + admin wireframes (claude/02-phase2-v2-visual-refinement.md), and the V2 targeted correction round, items 1–12 (claude/03-phase2-v2-corrections.md). **Gate 2 was APPROVED by the owner on 2026-10-06. Phase 2 is complete and frozen as the production baseline (see "Gate 2 approval and frozen production baseline"). Phase 3 implementation is IN PROGRESS, local-first (D25): E-1 was approved and local implementation authorized on 2026-10-06. Step 1 is complete and verified: the git repository, AGENTS.md/CLAUDE.md, the Docker dev stack and the toolchain; the local baseline is recorded in `nova/docs/local-baseline.md`. Next is step 3 (designation corpus, normaliser, matcher), which waits for the owner's go-ahead. The host probe is deferred until hosting is purchased (D26). A fresh session starts from `06 phase3 handoff checkpoint.md`.**
+Created 2026-10-04; revised same day for confirmed hosting. Gate 1 approved 2026-10-04 with clarifications C1–C4 (incorporated below and in the full doc). Phase 2 delivered in three rounds: V1 (claude/01-phase2-design-system.md), V2 visual refinement + admin wireframes (claude/02-phase2-v2-visual-refinement.md), and the V2 targeted correction round, items 1–12 (claude/03-phase2-v2-corrections.md). **Gate 2 was APPROVED by the owner on 2026-10-06. Phase 2 is complete and frozen as the production baseline (see "Gate 2 approval and frozen production baseline"). Phase 3 implementation is IN PROGRESS, local-first (D25): E-1 was approved and local implementation authorized on 2026-10-06. Step 1 is complete and verified: the git repository, AGENTS.md/CLAUDE.md, the Docker dev stack and the toolchain; the local baseline is recorded in `nova/docs/local-baseline.md`. Step 1 was committed as the baseline (`5c7e33e`). Step 3 (designation corpus, normaliser, matcher) was approved by the owner with one refinement (fullwidth digits) and committed. Step 4 (migrations runner, schema v1, fixtures) waits for the owner's go-ahead. The host probe is deferred until hosting is purchased (D26). A fresh session starts from `06 phase3 handoff checkpoint.md`.**
 
 Takeover and Gate 2 closure, 2026-10-04: Claude Code took over from the Cowork session and audited the workspace (see `04 takeover audit and performance policy.md`).
 - Owner decisions D14–D18 were recorded the same day.
@@ -81,6 +81,10 @@ Hosted copies are historical snapshots (D18); the local files are authoritative:
   - The probe runs near Production Candidate, after hosting is purchased and before production deployment, regenerated with a new key.
   - Its results freeze the production PHP/MariaDB minimums and the release-switch mechanism.
   - The tooling is kept in `tools/host-probe/`. No probe report is needed to start or continue local work.
+- Step 3 owner review (2026-10-06): designation normalisation and matching approved, with fullwidth digits ０–９ folded to ASCII like Persian/Arabic digits (character folding only, no inference).
+  - Frozen: the 64-code-point requested-designation limit; English-only case folding; no folding of look-alike slashes into "/"; invisible characters kept in the stored verbatim requested designation and removed only from the matching key.
+  - V-1–V-5 stay unresolved as documented.
+  - Spec: `nova/docs/designation-matching.md`; executable spec: `nova/tests/fixtures/designation/corpus.json`.
 - D14/D17 reconfirmed again (owner, 2026-10-06): no byte, file or request budgets; no numeric CWV/performance gates; measurements are for diagnosis and regression only; no time on arbitrary micro-optimisation.
 
 ## Gate 1 clarifications
@@ -130,7 +134,7 @@ Product + ProductVariant (option B), with Spelling as a separate table. The requ
 Release history → daily PHP-written MariaDB dump + media manifest (also before migrations/restores) → weekly off-site download by owner → provider snapshots (disaster only).
 
 ## Roadmap
-1 Discovery/architecture → Gate 1 ✔ → 2 Design system & key screens (V1 + V2 + correction round delivered) → Gate 2 ✔ (approved 2026-10-06) → 3 Foundation (in progress, local-first in Docker: step 1 done 2026-10-06; host probe deferred to pre-deployment) → 4a Public + 4b Admin (parallel) → 5 Engineering tools → Gate 3 → 6 QA → Gate 4 → 7 Deploy & handover.
+1 Discovery/architecture → Gate 1 ✔ → 2 Design system & key screens (V1 + V2 + correction round delivered) → Gate 2 ✔ (approved 2026-10-06) → 3 Foundation (in progress, local-first in Docker: steps 1 and 3 done and committed 2026-10-06; step 4 next; host probe deferred to pre-deployment) → 4a Public + 4b Admin (parallel) → 5 Engineering tools → Gate 3 → 6 QA → Gate 4 → 7 Deploy & handover.
 
 ## Open inputs needed from Mosi
 Exact domain names; host probe results, deferred to after hosting is purchased (D26) and not needed for local Phase 3 (PHP/MariaDB versions, extensions, symlink, AutoSSL for 4 hostnames, SMTP, cron, quotas); provider backup retention; old catalogue export / repo access; logo SVG; verified brands/sources; optional contact channels, Thu/Fri hours (and confirm Sat–Wed for 08:00–16:00), map coordinates; inquiry notification email address.

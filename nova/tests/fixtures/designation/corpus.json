@@ -1,0 +1,2645 @@
+{
+  "spec": "Nova designation normalisation and matching v1 (nova/docs/designation-matching.md; 05 \u00a710, D20, E-2, E-19, T-1)",
+  "notice": "TEST FIXTURES ONLY. Nothing here is production catalogue data or a verified technical fact. Relationships exist only where a fixture records them; see each catalogue's note.",
+  "requested_max_length": 64,
+  "normalise": [
+    {
+      "input": "6205-2RS",
+      "key": "62052rs",
+      "note": "hyphen removed, ASCII lower case"
+    },
+    {
+      "input": "6205 2rs",
+      "key": "62052rs",
+      "note": "space removed"
+    },
+    {
+      "input": "6205_2RS",
+      "key": "62052rs",
+      "note": "underscore removed"
+    },
+    {
+      "input": "6205.2RS",
+      "key": "62052rs",
+      "note": "full stop removed"
+    },
+    {
+      "input": "6205\t2RS\n",
+      "key": "62052rs",
+      "note": "tab and line feed removed"
+    },
+    {
+      "input": "6205\u00a02RS",
+      "key": "62052rs",
+      "note": "no-break space removed"
+    },
+    {
+      "input": "6205\u30002RS",
+      "key": "62052rs",
+      "note": "ideographic space removed"
+    },
+    {
+      "input": "6205 \u2013 2RS",
+      "key": "62052rs",
+      "note": "en dash removed"
+    },
+    {
+      "input": "6205\u20112RS",
+      "key": "62052rs",
+      "note": "non-breaking hyphen removed"
+    },
+    {
+      "input": "6205\u22122RS",
+      "key": "62052rs",
+      "note": "minus sign removed"
+    },
+    {
+      "input": "\u06f6\u06f2\u06f0\u06f5",
+      "key": "6205",
+      "note": "Persian digits"
+    },
+    {
+      "input": "\u0666\u0662\u0660\u0665",
+      "key": "6205",
+      "note": "Arabic-Indic digits"
+    },
+    {
+      "input": "\u06f6\u0662\u06f05",
+      "key": "6205",
+      "note": "mixed digit scripts"
+    },
+    {
+      "input": "\u200f6205\u200e-2RS\u2069",
+      "key": "62052rs",
+      "note": "bidi marks and isolate removed"
+    },
+    {
+      "input": "\u20666205-2RS\u2069",
+      "key": "62052rs",
+      "note": "LRI ... PDI isolation removed"
+    },
+    {
+      "input": "62\u200b05",
+      "key": "6205",
+      "note": "zero-width space removed"
+    },
+    {
+      "input": "62\u200c05",
+      "key": "6205",
+      "note": "ZWNJ removed"
+    },
+    {
+      "input": "\ufeff6205",
+      "key": "6205",
+      "note": "BOM removed"
+    },
+    {
+      "input": "6\u00ad205",
+      "key": "6205",
+      "note": "soft hyphen removed"
+    },
+    {
+      "input": "\u202e6205\u202c",
+      "key": "6205",
+      "note": "bidi override removed"
+    },
+    {
+      "input": "TC 25\u00d742\u00d77",
+      "key": "tc25x42x7",
+      "note": "multiplication sign becomes x"
+    },
+    {
+      "input": "TC 25X42X7",
+      "key": "tc25x42x7",
+      "note": "capital X lower-cased"
+    },
+    {
+      "input": "63/22",
+      "key": "63/22",
+      "note": "slash kept (E-19)"
+    },
+    {
+      "input": "63 / 22",
+      "key": "63/22",
+      "note": "spaces around the slash removed, slash kept"
+    },
+    {
+      "input": "6322",
+      "key": "6322",
+      "note": "different key from 63/22"
+    },
+    {
+      "input": "6205/C3",
+      "key": "6205/c3",
+      "note": "slash kept inside a suffix"
+    },
+    {
+      "input": "6205\u2044C3",
+      "key": "6205\u2044c3",
+      "note": "fraction slash NOT folded into / (unverified)"
+    },
+    {
+      "input": "6205*2RS",
+      "key": "6205*2rs",
+      "note": "other punctuation kept"
+    },
+    {
+      "input": "\uff10",
+      "key": "0",
+      "note": "fullwidth digit 0 (U+FF10)"
+    },
+    {
+      "input": "\uff11",
+      "key": "1",
+      "note": "fullwidth digit 1 (U+FF11)"
+    },
+    {
+      "input": "\uff12",
+      "key": "2",
+      "note": "fullwidth digit 2 (U+FF12)"
+    },
+    {
+      "input": "\uff13",
+      "key": "3",
+      "note": "fullwidth digit 3 (U+FF13)"
+    },
+    {
+      "input": "\uff14",
+      "key": "4",
+      "note": "fullwidth digit 4 (U+FF14)"
+    },
+    {
+      "input": "\uff15",
+      "key": "5",
+      "note": "fullwidth digit 5 (U+FF15)"
+    },
+    {
+      "input": "\uff16",
+      "key": "6",
+      "note": "fullwidth digit 6 (U+FF16)"
+    },
+    {
+      "input": "\uff17",
+      "key": "7",
+      "note": "fullwidth digit 7 (U+FF17)"
+    },
+    {
+      "input": "\uff18",
+      "key": "8",
+      "note": "fullwidth digit 8 (U+FF18)"
+    },
+    {
+      "input": "\uff19",
+      "key": "9",
+      "note": "fullwidth digit 9 (U+FF19)"
+    },
+    {
+      "input": "\uff16\uff12\uff10\uff15",
+      "key": "6205",
+      "note": "fullwidth designation"
+    },
+    {
+      "input": "\uff16\uff12\uff10\uff15-2RS",
+      "key": "62052rs",
+      "note": "fullwidth digits with an ASCII suffix"
+    },
+    {
+      "input": "\uff16\u06f2\u06605",
+      "key": "6205",
+      "note": "fullwidth, Persian, Arabic-Indic and ASCII digits mixed"
+    },
+    {
+      "input": "TC \uff12\uff15\u00d7\uff14\uff12\u00d7\uff17",
+      "key": "tc25x42x7",
+      "note": "fullwidth digits with the multiplication sign"
+    },
+    {
+      "input": "\uff16\uff13/\uff12\uff12",
+      "key": "63/22",
+      "note": "fullwidth digits around the significant slash"
+    },
+    {
+      "input": "\uff16\uff13\uff0f\uff12\uff12",
+      "key": "63\uff0f22",
+      "note": "fullwidth solidus NOT folded into / (look-alike slash)"
+    },
+    {
+      "input": "\uff31\uff3a \uff11\uff10\uff10",
+      "key": "\uff31\uff3a100",
+      "note": "fullwidth LETTERS not folded; only digits are"
+    },
+    {
+      "input": "\u064a\u0643",
+      "key": "\u06cc\u06a9",
+      "note": "Arabic yeh/kaf become Persian forms"
+    },
+    {
+      "input": "\u064a \u0643",
+      "key": "\u06cc\u06a9",
+      "note": "Arabic forms, space removed"
+    },
+    {
+      "input": "\u00c4B",
+      "key": "\u00c4b",
+      "note": "lower case is ASCII-only"
+    },
+    {
+      "input": "",
+      "key": "",
+      "note": "empty"
+    },
+    {
+      "input": "  -_. ",
+      "key": "",
+      "note": "separators only"
+    }
+  ],
+  "requested": [
+    {
+      "input": "6205-2RS",
+      "requested": "6205-2RS",
+      "too_long": false,
+      "note": "unchanged"
+    },
+    {
+      "input": "  6205-2RS  ",
+      "requested": "6205-2RS",
+      "too_long": false,
+      "note": "trimmed"
+    },
+    {
+      "input": "\u00a06205\u3000",
+      "requested": "6205",
+      "too_long": false,
+      "note": "Unicode whitespace trimmed"
+    },
+    {
+      "input": "6205   2rs",
+      "requested": "6205   2rs",
+      "too_long": false,
+      "note": "inner spacing and case kept"
+    },
+    {
+      "input": "\u06f6\u06f2\u06f0\u06f5",
+      "requested": "\u06f6\u06f2\u06f0\u06f5",
+      "too_long": false,
+      "note": "Persian digits kept"
+    },
+    {
+      "input": "\uff16\uff12\uff10\uff15-2RS",
+      "requested": "\uff16\uff12\uff10\uff15-2RS",
+      "too_long": false,
+      "note": "fullwidth digits kept verbatim"
+    },
+    {
+      "input": "\u200f6205\u200f",
+      "requested": "\u200f6205\u200f",
+      "too_long": false,
+      "note": "invisible marks are not whitespace; kept"
+    },
+    {
+      "input": "\ufeff6205",
+      "requested": "\ufeff6205",
+      "too_long": false,
+      "note": "BOM is not trimmed"
+    },
+    {
+      "input": "\u0628\u0644\u0628\u0631\u06cc\u0646\u06af 6205",
+      "requested": "\u0628\u0644\u0628\u0631\u06cc\u0646\u06af 6205",
+      "too_long": false,
+      "note": "Persian text kept"
+    },
+    {
+      "input": "QZ 100----------------------------------------------------------",
+      "requested": "QZ 100----------------------------------------------------------",
+      "too_long": false,
+      "note": "exactly 64 code points"
+    },
+    {
+      "input": "QZ 100-----------------------------------------------------------",
+      "requested": "QZ 100----------------------------------------------------------",
+      "too_long": true,
+      "note": "65 code points cut to 64"
+    },
+    {
+      "input": "\u06f6\u06f6\u06f6\u06f6\u06f6\u06f6\u06f6\u06f6\u06f6\u06f6\u06f6\u06f6\u06f6\u06f6\u06f6\u06f6\u06f6\u06f6\u06f6\u06f6\u06f6\u06f6\u06f6\u06f6\u06f6\u06f6\u06f6\u06f6\u06f6\u06f6\u06f6\u06f6\u06f6\u06f6\u06f6\u06f6\u06f6\u06f6\u06f6\u06f6\u06f6\u06f6\u06f6\u06f6\u06f6\u06f6\u06f6\u06f6\u06f6\u06f6\u06f6\u06f6\u06f6\u06f6\u06f6\u06f6\u06f6\u06f6\u06f6\u06f6\u06f6\u06f6\u06f6\u06f6\u06f6",
+      "requested": "\u06f6\u06f6\u06f6\u06f6\u06f6\u06f6\u06f6\u06f6\u06f6\u06f6\u06f6\u06f6\u06f6\u06f6\u06f6\u06f6\u06f6\u06f6\u06f6\u06f6\u06f6\u06f6\u06f6\u06f6\u06f6\u06f6\u06f6\u06f6\u06f6\u06f6\u06f6\u06f6\u06f6\u06f6\u06f6\u06f6\u06f6\u06f6\u06f6\u06f6\u06f6\u06f6\u06f6\u06f6\u06f6\u06f6\u06f6\u06f6\u06f6\u06f6\u06f6\u06f6\u06f6\u06f6\u06f6\u06f6\u06f6\u06f6\u06f6\u06f6\u06f6\u06f6\u06f6\u06f6",
+      "too_long": true,
+      "note": "limit counts code points, not bytes"
+    },
+    {
+      "input": "   ",
+      "requested": "",
+      "too_long": false,
+      "note": "whitespace only"
+    }
+  ],
+  "catalogues": {
+    "sample-as-recorded": {
+      "note": "TEST FIXTURE derived from the Phase 2 prototype sample (design/phase2-v2-corrections/src/catalogue.json), with relationships exactly as that sample recorded them: 6200-6207 carry 2RS/ZZ variants; 6305-2RS and 22220 E were standalone rows, so they are standalone Products here (05 \u00a79: unresolved relationship, no inferred claim). The sample's spellings (22220E, NU205, HK2520, UCP208) are omitted: each normalises to its own designation's key and would be a redundant duplicate key. No suffix rules are approved (V-1). NOT production catalogue data.",
+      "index": {
+        "products": [
+          {
+            "id": "p-6200",
+            "designation": "6200",
+            "family": "ball",
+            "base_listed": true,
+            "variants": [
+              {
+                "id": "v-6200-2rs",
+                "designation": "6200-2RS",
+                "listed": true
+              },
+              {
+                "id": "v-6200-zz",
+                "designation": "6200-ZZ",
+                "listed": true
+              }
+            ]
+          },
+          {
+            "id": "p-6201",
+            "designation": "6201",
+            "family": "ball",
+            "base_listed": true,
+            "variants": [
+              {
+                "id": "v-6201-2rs",
+                "designation": "6201-2RS",
+                "listed": true
+              },
+              {
+                "id": "v-6201-zz",
+                "designation": "6201-ZZ",
+                "listed": true
+              }
+            ]
+          },
+          {
+            "id": "p-6205",
+            "designation": "6205",
+            "family": "ball",
+            "base_listed": true,
+            "variants": [
+              {
+                "id": "v-6205-2rs",
+                "designation": "6205-2RS",
+                "listed": true
+              },
+              {
+                "id": "v-6205-zz",
+                "designation": "6205-ZZ",
+                "listed": true
+              }
+            ]
+          },
+          {
+            "id": "p-6206",
+            "designation": "6206",
+            "family": "ball",
+            "base_listed": true,
+            "variants": [
+              {
+                "id": "v-6206-2rs",
+                "designation": "6206-2RS",
+                "listed": true
+              },
+              {
+                "id": "v-6206-zz",
+                "designation": "6206-ZZ",
+                "listed": true
+              }
+            ]
+          },
+          {
+            "id": "p-6207",
+            "designation": "6207",
+            "family": "ball",
+            "base_listed": true,
+            "variants": [
+              {
+                "id": "v-6207-2rs",
+                "designation": "6207-2RS",
+                "listed": true
+              },
+              {
+                "id": "v-6207-zz",
+                "designation": "6207-ZZ",
+                "listed": true
+              }
+            ]
+          },
+          {
+            "id": "p-6305-2rs",
+            "designation": "6305-2RS",
+            "family": "ball",
+            "base_listed": true,
+            "variants": []
+          },
+          {
+            "id": "p-30208",
+            "designation": "30208",
+            "family": "tapered",
+            "base_listed": true,
+            "variants": []
+          },
+          {
+            "id": "p-22220-e",
+            "designation": "22220 E",
+            "family": "spherical",
+            "base_listed": true,
+            "variants": []
+          },
+          {
+            "id": "p-nu-205",
+            "designation": "NU 205",
+            "family": "cylindrical",
+            "base_listed": true,
+            "variants": []
+          },
+          {
+            "id": "p-hk-2520",
+            "designation": "HK 2520",
+            "family": "needle",
+            "base_listed": true,
+            "variants": []
+          },
+          {
+            "id": "p-51105",
+            "designation": "51105",
+            "family": "thrust",
+            "base_listed": true,
+            "variants": []
+          },
+          {
+            "id": "p-ucp-208",
+            "designation": "UCP 208",
+            "family": "unit",
+            "base_listed": true,
+            "variants": []
+          },
+          {
+            "id": "p-tc-25x42x7",
+            "designation": "TC 25\u00d742\u00d77",
+            "family": "seal",
+            "base_listed": true,
+            "variants": []
+          }
+        ],
+        "spellings": [],
+        "suffix_rules": {}
+      }
+    },
+    "t1-recorded-relationship": {
+      "note": "HYPOTHETICAL TEST FIXTURE for the T-1 regression: models 6305-2RS and 22220 E as recorded variants of Products 6305 and 22220 with base_listed off, AS IF the Owner had verified those relationships (the 05 \u00a725 example). It asserts no verified fact about these designations. NOT production catalogue data.",
+      "index": {
+        "products": [
+          {
+            "id": "p-6305",
+            "designation": "6305",
+            "family": "ball",
+            "base_listed": false,
+            "variants": [
+              {
+                "id": "v-6305-2rs",
+                "designation": "6305-2RS",
+                "listed": true
+              }
+            ]
+          },
+          {
+            "id": "p-22220",
+            "designation": "22220",
+            "family": "spherical",
+            "base_listed": false,
+            "variants": [
+              {
+                "id": "v-22220-e",
+                "designation": "22220 E",
+                "listed": true
+              }
+            ]
+          }
+        ],
+        "spellings": [],
+        "suffix_rules": {}
+      }
+    },
+    "synthetic": {
+      "note": "SYNTHETIC TEST FIXTURE. The QZ designations, families and suffix tokens are invented to exercise the matching mechanism (spellings, unlisted variants, approved-token base series, ambiguity, precedence). They are not bearing designations and the tokens are not real suffix rules. NOT production catalogue data.",
+      "index": {
+        "products": [
+          {
+            "id": "p-qz100",
+            "designation": "QZ 100",
+            "family": "syn-a",
+            "base_listed": true,
+            "variants": [
+              {
+                "id": "v-qz100-k1",
+                "designation": "QZ 100-K1",
+                "listed": true
+              },
+              {
+                "id": "v-qz100-k2",
+                "designation": "QZ 100-K2",
+                "listed": false
+              }
+            ]
+          },
+          {
+            "id": "p-qz200",
+            "designation": "QZ 200",
+            "family": "syn-a",
+            "base_listed": false,
+            "variants": [
+              {
+                "id": "v-qz200-k1",
+                "designation": "QZ 200-K1",
+                "listed": true
+              },
+              {
+                "id": "v-qz200-kk",
+                "designation": "QZ 200-KK",
+                "listed": true
+              }
+            ]
+          },
+          {
+            "id": "p-qz300",
+            "designation": "QZ 300",
+            "family": "syn-a",
+            "base_listed": false,
+            "variants": []
+          },
+          {
+            "id": "p-qz400",
+            "designation": "QZ 400",
+            "family": "syn-b",
+            "base_listed": true,
+            "variants": []
+          },
+          {
+            "id": "p-qz5",
+            "designation": "QZ 5",
+            "family": "syn-c",
+            "base_listed": true,
+            "variants": []
+          },
+          {
+            "id": "p-qz50",
+            "designation": "QZ 50",
+            "family": "syn-c",
+            "base_listed": false,
+            "variants": [
+              {
+                "id": "v-qz50-x",
+                "designation": "QZ 50 X",
+                "listed": true
+              }
+            ]
+          },
+          {
+            "id": "p-qz51",
+            "designation": "QZ 51",
+            "family": "syn-c",
+            "base_listed": true,
+            "variants": []
+          },
+          {
+            "id": "p-qz6-22",
+            "designation": "QZ 6/22",
+            "family": "syn-b",
+            "base_listed": true,
+            "variants": []
+          },
+          {
+            "id": "p-qz622",
+            "designation": "QZ 622",
+            "family": "syn-b",
+            "base_listed": true,
+            "variants": []
+          },
+          {
+            "id": "p-qz8",
+            "designation": "QZ 8",
+            "family": "syn-d",
+            "base_listed": true,
+            "variants": []
+          },
+          {
+            "id": "p-qz8a",
+            "designation": "QZ 8A",
+            "family": "syn-d",
+            "base_listed": true,
+            "variants": []
+          },
+          {
+            "id": "p-qz9",
+            "designation": "QZ 9",
+            "family": "syn-d",
+            "base_listed": true,
+            "variants": []
+          }
+        ],
+        "spellings": [
+          {
+            "spelling": "QZ-ONE-HUNDRED",
+            "target": "p-qz100"
+          },
+          {
+            "spelling": "QZ 200 KAY KAY",
+            "target": "v-qz200-kk"
+          },
+          {
+            "spelling": "QZ100K2 OLD",
+            "target": "v-qz100-k2"
+          },
+          {
+            "spelling": "QZ THREE HUNDRED",
+            "target": "p-qz300"
+          },
+          {
+            "spelling": "QZ 100 K1K1",
+            "target": "v-qz100-k1"
+          }
+        ],
+        "suffix_rules": {
+          "syn-a": [
+            "K1",
+            "K2",
+            "KK",
+            "/P9"
+          ],
+          "syn-b": [],
+          "syn-c": [
+            "0"
+          ],
+          "syn-d": [
+            "A",
+            "B",
+            "AB"
+          ]
+        }
+      }
+    }
+  },
+  "match": [
+    {
+      "catalogue": "sample-as-recorded",
+      "input": "6205",
+      "note": "exact listed Product",
+      "expect": {
+        "requested": "6205",
+        "key": "6205",
+        "type": "exact_product",
+        "via": null,
+        "spelling": null,
+        "product": "p-6205",
+        "variant": null,
+        "designation": "6205",
+        "listed": [],
+        "suffix": [],
+        "reason": null
+      }
+    },
+    {
+      "catalogue": "sample-as-recorded",
+      "input": "\u06f6\u06f2\u06f0\u06f5",
+      "note": "Persian digits; requested kept verbatim",
+      "expect": {
+        "requested": "\u06f6\u06f2\u06f0\u06f5",
+        "key": "6205",
+        "type": "exact_product",
+        "via": null,
+        "spelling": null,
+        "product": "p-6205",
+        "variant": null,
+        "designation": "6205",
+        "listed": [],
+        "suffix": [],
+        "reason": null
+      }
+    },
+    {
+      "catalogue": "sample-as-recorded",
+      "input": "6205-2RS",
+      "note": "listed variant is exact (D20), not 'requires confirmation'",
+      "expect": {
+        "requested": "6205-2RS",
+        "key": "62052rs",
+        "type": "exact_variant",
+        "via": null,
+        "spelling": null,
+        "product": "p-6205",
+        "variant": "v-6205-2rs",
+        "designation": "6205-2RS",
+        "listed": [],
+        "suffix": [],
+        "reason": null
+      }
+    },
+    {
+      "catalogue": "sample-as-recorded",
+      "input": "6205 2rs",
+      "note": "requested kept as typed; catalogue writing in designation",
+      "expect": {
+        "requested": "6205 2rs",
+        "key": "62052rs",
+        "type": "exact_variant",
+        "via": null,
+        "spelling": null,
+        "product": "p-6205",
+        "variant": "v-6205-2rs",
+        "designation": "6205-2RS",
+        "listed": [],
+        "suffix": [],
+        "reason": null
+      }
+    },
+    {
+      "catalogue": "sample-as-recorded",
+      "input": "  6205-ZZ ",
+      "note": "trimmed",
+      "expect": {
+        "requested": "6205-ZZ",
+        "key": "6205zz",
+        "type": "exact_variant",
+        "via": null,
+        "spelling": null,
+        "product": "p-6205",
+        "variant": "v-6205-zz",
+        "designation": "6205-ZZ",
+        "listed": [],
+        "suffix": [],
+        "reason": null
+      }
+    },
+    {
+      "catalogue": "sample-as-recorded",
+      "input": "6206-ZZ",
+      "note": "",
+      "expect": {
+        "requested": "6206-ZZ",
+        "key": "6206zz",
+        "type": "exact_variant",
+        "via": null,
+        "spelling": null,
+        "product": "p-6206",
+        "variant": "v-6206-zz",
+        "designation": "6206-ZZ",
+        "listed": [],
+        "suffix": [],
+        "reason": null
+      }
+    },
+    {
+      "catalogue": "sample-as-recorded",
+      "input": "\uff16\uff12\uff10\uff15",
+      "note": "fullwidth digits; requested kept verbatim",
+      "expect": {
+        "requested": "\uff16\uff12\uff10\uff15",
+        "key": "6205",
+        "type": "exact_product",
+        "via": null,
+        "spelling": null,
+        "product": "p-6205",
+        "variant": null,
+        "designation": "6205",
+        "listed": [],
+        "suffix": [],
+        "reason": null
+      }
+    },
+    {
+      "catalogue": "sample-as-recorded",
+      "input": "\uff16\uff12\uff10\uff15-2RS",
+      "note": "fullwidth digits, ASCII suffix",
+      "expect": {
+        "requested": "\uff16\uff12\uff10\uff15-2RS",
+        "key": "62052rs",
+        "type": "exact_variant",
+        "via": null,
+        "spelling": null,
+        "product": "p-6205",
+        "variant": "v-6205-2rs",
+        "designation": "6205-2RS",
+        "listed": [],
+        "suffix": [],
+        "reason": null
+      }
+    },
+    {
+      "catalogue": "sample-as-recorded",
+      "input": "\uff12\uff12\uff12\uff12\uff10 E",
+      "note": "",
+      "expect": {
+        "requested": "\uff12\uff12\uff12\uff12\uff10 E",
+        "key": "22220e",
+        "type": "exact_product",
+        "via": null,
+        "spelling": null,
+        "product": "p-22220-e",
+        "variant": null,
+        "designation": "22220 E",
+        "listed": [],
+        "suffix": [],
+        "reason": null
+      }
+    },
+    {
+      "catalogue": "sample-as-recorded",
+      "input": "\uff16\uff13\uff10\uff15",
+      "note": "digit folding infers no relationship",
+      "expect": {
+        "requested": "\uff16\uff13\uff10\uff15",
+        "key": "6305",
+        "type": "none",
+        "via": null,
+        "spelling": null,
+        "product": null,
+        "variant": null,
+        "designation": null,
+        "listed": [],
+        "suffix": [],
+        "reason": "unknown"
+      }
+    },
+    {
+      "catalogue": "sample-as-recorded",
+      "input": "\uff16\uff12/\uff10\uff15",
+      "note": "slash still significant after digit folding",
+      "expect": {
+        "requested": "\uff16\uff12/\uff10\uff15",
+        "key": "62/05",
+        "type": "none",
+        "via": null,
+        "spelling": null,
+        "product": null,
+        "variant": null,
+        "designation": null,
+        "listed": [],
+        "suffix": [],
+        "reason": "unknown"
+      }
+    },
+    {
+      "catalogue": "sample-as-recorded",
+      "input": "6205-2RSH",
+      "note": "prototype said 'series'; no Owner-approved suffix rule exists (V-1)",
+      "expect": {
+        "requested": "6205-2RSH",
+        "key": "62052rsh",
+        "type": "none",
+        "via": null,
+        "spelling": null,
+        "product": null,
+        "variant": null,
+        "designation": null,
+        "listed": [],
+        "suffix": [],
+        "reason": "unknown"
+      }
+    },
+    {
+      "catalogue": "sample-as-recorded",
+      "input": "6205 C3",
+      "note": "no approved rule; clearance semantics unresolved (V-1)",
+      "expect": {
+        "requested": "6205 C3",
+        "key": "6205c3",
+        "type": "none",
+        "via": null,
+        "spelling": null,
+        "product": null,
+        "variant": null,
+        "designation": null,
+        "listed": [],
+        "suffix": [],
+        "reason": "unknown"
+      }
+    },
+    {
+      "catalogue": "sample-as-recorded",
+      "input": "30208 J2",
+      "note": "prototype said 'series'; unresolved (V-1)",
+      "expect": {
+        "requested": "30208 J2",
+        "key": "30208j2",
+        "type": "none",
+        "via": null,
+        "spelling": null,
+        "product": null,
+        "variant": null,
+        "designation": null,
+        "listed": [],
+        "suffix": [],
+        "reason": "unknown"
+      }
+    },
+    {
+      "catalogue": "sample-as-recorded",
+      "input": "6305",
+      "note": "6305-2RS is standalone in the sample: no relationship is inferred from its text",
+      "expect": {
+        "requested": "6305",
+        "key": "6305",
+        "type": "none",
+        "via": null,
+        "spelling": null,
+        "product": null,
+        "variant": null,
+        "designation": null,
+        "listed": [],
+        "suffix": [],
+        "reason": "unknown"
+      }
+    },
+    {
+      "catalogue": "sample-as-recorded",
+      "input": "6305-2RS",
+      "note": "standalone Product (relationship to be reviewed)",
+      "expect": {
+        "requested": "6305-2RS",
+        "key": "63052rs",
+        "type": "exact_product",
+        "via": null,
+        "spelling": null,
+        "product": "p-6305-2rs",
+        "variant": null,
+        "designation": "6305-2RS",
+        "listed": [],
+        "suffix": [],
+        "reason": null
+      }
+    },
+    {
+      "catalogue": "sample-as-recorded",
+      "input": "6305-2",
+      "note": "half-typed code: no claim (T-1 3e)",
+      "expect": {
+        "requested": "6305-2",
+        "key": "63052",
+        "type": "none",
+        "via": null,
+        "spelling": null,
+        "product": null,
+        "variant": null,
+        "designation": null,
+        "listed": [],
+        "suffix": [],
+        "reason": "unknown"
+      }
+    },
+    {
+      "catalogue": "sample-as-recorded",
+      "input": "22220",
+      "note": "22220 E is standalone: relationship unresolved, not inferred",
+      "expect": {
+        "requested": "22220",
+        "key": "22220",
+        "type": "none",
+        "via": null,
+        "spelling": null,
+        "product": null,
+        "variant": null,
+        "designation": null,
+        "listed": [],
+        "suffix": [],
+        "reason": "unknown"
+      }
+    },
+    {
+      "catalogue": "sample-as-recorded",
+      "input": "22220 E",
+      "note": "",
+      "expect": {
+        "requested": "22220 E",
+        "key": "22220e",
+        "type": "exact_product",
+        "via": null,
+        "spelling": null,
+        "product": "p-22220-e",
+        "variant": null,
+        "designation": "22220 E",
+        "listed": [],
+        "suffix": [],
+        "reason": null
+      }
+    },
+    {
+      "catalogue": "sample-as-recorded",
+      "input": "22220e",
+      "note": "separator-insensitive",
+      "expect": {
+        "requested": "22220e",
+        "key": "22220e",
+        "type": "exact_product",
+        "via": null,
+        "spelling": null,
+        "product": "p-22220-e",
+        "variant": null,
+        "designation": "22220 E",
+        "listed": [],
+        "suffix": [],
+        "reason": null
+      }
+    },
+    {
+      "catalogue": "sample-as-recorded",
+      "input": "22220E",
+      "note": "the sample's spelling is covered by normalisation",
+      "expect": {
+        "requested": "22220E",
+        "key": "22220e",
+        "type": "exact_product",
+        "via": null,
+        "spelling": null,
+        "product": "p-22220-e",
+        "variant": null,
+        "designation": "22220 E",
+        "listed": [],
+        "suffix": [],
+        "reason": null
+      }
+    },
+    {
+      "catalogue": "sample-as-recorded",
+      "input": "NU205",
+      "note": "",
+      "expect": {
+        "requested": "NU205",
+        "key": "nu205",
+        "type": "exact_product",
+        "via": null,
+        "spelling": null,
+        "product": "p-nu-205",
+        "variant": null,
+        "designation": "NU 205",
+        "listed": [],
+        "suffix": [],
+        "reason": null
+      }
+    },
+    {
+      "catalogue": "sample-as-recorded",
+      "input": "nu 205",
+      "note": "",
+      "expect": {
+        "requested": "nu 205",
+        "key": "nu205",
+        "type": "exact_product",
+        "via": null,
+        "spelling": null,
+        "product": "p-nu-205",
+        "variant": null,
+        "designation": "NU 205",
+        "listed": [],
+        "suffix": [],
+        "reason": null
+      }
+    },
+    {
+      "catalogue": "sample-as-recorded",
+      "input": "HK2520",
+      "note": "",
+      "expect": {
+        "requested": "HK2520",
+        "key": "hk2520",
+        "type": "exact_product",
+        "via": null,
+        "spelling": null,
+        "product": "p-hk-2520",
+        "variant": null,
+        "designation": "HK 2520",
+        "listed": [],
+        "suffix": [],
+        "reason": null
+      }
+    },
+    {
+      "catalogue": "sample-as-recorded",
+      "input": "UCP208",
+      "note": "pending status does not affect matching",
+      "expect": {
+        "requested": "UCP208",
+        "key": "ucp208",
+        "type": "exact_product",
+        "via": null,
+        "spelling": null,
+        "product": "p-ucp-208",
+        "variant": null,
+        "designation": "UCP 208",
+        "listed": [],
+        "suffix": [],
+        "reason": null
+      }
+    },
+    {
+      "catalogue": "sample-as-recorded",
+      "input": "TC 25x42x7",
+      "note": "",
+      "expect": {
+        "requested": "TC 25x42x7",
+        "key": "tc25x42x7",
+        "type": "exact_product",
+        "via": null,
+        "spelling": null,
+        "product": "p-tc-25x42x7",
+        "variant": null,
+        "designation": "TC 25\u00d742\u00d77",
+        "listed": [],
+        "suffix": [],
+        "reason": null
+      }
+    },
+    {
+      "catalogue": "sample-as-recorded",
+      "input": "tc25\u00d742\u00d77",
+      "note": "",
+      "expect": {
+        "requested": "tc25\u00d742\u00d77",
+        "key": "tc25x42x7",
+        "type": "exact_product",
+        "via": null,
+        "spelling": null,
+        "product": "p-tc-25x42x7",
+        "variant": null,
+        "designation": "TC 25\u00d742\u00d77",
+        "listed": [],
+        "suffix": [],
+        "reason": null
+      }
+    },
+    {
+      "catalogue": "sample-as-recorded",
+      "input": "tc 25*42*7",
+      "note": "* is not folded",
+      "expect": {
+        "requested": "tc 25*42*7",
+        "key": "tc25*42*7",
+        "type": "none",
+        "via": null,
+        "spelling": null,
+        "product": null,
+        "variant": null,
+        "designation": null,
+        "listed": [],
+        "suffix": [],
+        "reason": "unknown"
+      }
+    },
+    {
+      "catalogue": "sample-as-recorded",
+      "input": "62/05",
+      "note": "slash significant: not 6205",
+      "expect": {
+        "requested": "62/05",
+        "key": "62/05",
+        "type": "none",
+        "via": null,
+        "spelling": null,
+        "product": null,
+        "variant": null,
+        "designation": null,
+        "listed": [],
+        "suffix": [],
+        "reason": "unknown"
+      }
+    },
+    {
+      "catalogue": "sample-as-recorded",
+      "input": "\u0628\u0644\u0628\u0631\u06cc\u0646\u06af 6205",
+      "note": "no free-text extraction; partial search is a separate mode",
+      "expect": {
+        "requested": "\u0628\u0644\u0628\u0631\u06cc\u0646\u06af 6205",
+        "key": "\u0628\u0644\u0628\u0631\u06cc\u0646\u06af6205",
+        "type": "none",
+        "via": null,
+        "spelling": null,
+        "product": null,
+        "variant": null,
+        "designation": null,
+        "listed": [],
+        "suffix": [],
+        "reason": "unknown"
+      }
+    },
+    {
+      "catalogue": "sample-as-recorded",
+      "input": "",
+      "note": "",
+      "expect": {
+        "requested": "",
+        "key": "",
+        "type": "none",
+        "via": null,
+        "spelling": null,
+        "product": null,
+        "variant": null,
+        "designation": null,
+        "listed": [],
+        "suffix": [],
+        "reason": "empty"
+      }
+    },
+    {
+      "catalogue": "sample-as-recorded",
+      "input": "   ",
+      "note": "",
+      "expect": {
+        "requested": "",
+        "key": "",
+        "type": "none",
+        "via": null,
+        "spelling": null,
+        "product": null,
+        "variant": null,
+        "designation": null,
+        "listed": [],
+        "suffix": [],
+        "reason": "empty"
+      }
+    },
+    {
+      "catalogue": "sample-as-recorded",
+      "input": " - ",
+      "note": "separators only",
+      "expect": {
+        "requested": "-",
+        "key": "",
+        "type": "none",
+        "via": null,
+        "spelling": null,
+        "product": null,
+        "variant": null,
+        "designation": null,
+        "listed": [],
+        "suffix": [],
+        "reason": "empty"
+      }
+    },
+    {
+      "catalogue": "t1-recorded-relationship",
+      "input": "6305",
+      "note": "T-1: related, the listed item is a variant of the request, never its base",
+      "expect": {
+        "requested": "6305",
+        "key": "6305",
+        "type": "related",
+        "via": null,
+        "spelling": null,
+        "product": "p-6305",
+        "variant": null,
+        "designation": "6305",
+        "listed": [
+          "6305-2RS"
+        ],
+        "suffix": [],
+        "reason": null
+      }
+    },
+    {
+      "catalogue": "t1-recorded-relationship",
+      "input": "\u06f6\u06f3\u06f0\u06f5",
+      "note": "",
+      "expect": {
+        "requested": "\u06f6\u06f3\u06f0\u06f5",
+        "key": "6305",
+        "type": "related",
+        "via": null,
+        "spelling": null,
+        "product": "p-6305",
+        "variant": null,
+        "designation": "6305",
+        "listed": [
+          "6305-2RS"
+        ],
+        "suffix": [],
+        "reason": null
+      }
+    },
+    {
+      "catalogue": "t1-recorded-relationship",
+      "input": "\uff16\uff13\uff10\uff15",
+      "note": "T-1 related, fullwidth digits",
+      "expect": {
+        "requested": "\uff16\uff13\uff10\uff15",
+        "key": "6305",
+        "type": "related",
+        "via": null,
+        "spelling": null,
+        "product": "p-6305",
+        "variant": null,
+        "designation": "6305",
+        "listed": [
+          "6305-2RS"
+        ],
+        "suffix": [],
+        "reason": null
+      }
+    },
+    {
+      "catalogue": "t1-recorded-relationship",
+      "input": "6305-2RS",
+      "note": "the variant is exact; 6305 is not presented as listed",
+      "expect": {
+        "requested": "6305-2RS",
+        "key": "63052rs",
+        "type": "exact_variant",
+        "via": null,
+        "spelling": null,
+        "product": "p-6305",
+        "variant": "v-6305-2rs",
+        "designation": "6305-2RS",
+        "listed": [],
+        "suffix": [],
+        "reason": null
+      }
+    },
+    {
+      "catalogue": "t1-recorded-relationship",
+      "input": "6305 2rs",
+      "note": "",
+      "expect": {
+        "requested": "6305 2rs",
+        "key": "63052rs",
+        "type": "exact_variant",
+        "via": null,
+        "spelling": null,
+        "product": "p-6305",
+        "variant": "v-6305-2rs",
+        "designation": "6305-2RS",
+        "listed": [],
+        "suffix": [],
+        "reason": null
+      }
+    },
+    {
+      "catalogue": "t1-recorded-relationship",
+      "input": "6305-2",
+      "note": "half-typed: no related/series claim (T-1 3e)",
+      "expect": {
+        "requested": "6305-2",
+        "key": "63052",
+        "type": "none",
+        "via": null,
+        "spelling": null,
+        "product": null,
+        "variant": null,
+        "designation": null,
+        "listed": [],
+        "suffix": [],
+        "reason": "unknown"
+      }
+    },
+    {
+      "catalogue": "t1-recorded-relationship",
+      "input": "630",
+      "note": "a prefix of a Product key is not a match",
+      "expect": {
+        "requested": "630",
+        "key": "630",
+        "type": "none",
+        "via": null,
+        "spelling": null,
+        "product": null,
+        "variant": null,
+        "designation": null,
+        "listed": [],
+        "suffix": [],
+        "reason": "unknown"
+      }
+    },
+    {
+      "catalogue": "t1-recorded-relationship",
+      "input": "6305-2RSH",
+      "note": "no approved suffix rule (V-1)",
+      "expect": {
+        "requested": "6305-2RSH",
+        "key": "63052rsh",
+        "type": "none",
+        "via": null,
+        "spelling": null,
+        "product": null,
+        "variant": null,
+        "designation": null,
+        "listed": [],
+        "suffix": [],
+        "reason": "unknown"
+      }
+    },
+    {
+      "catalogue": "t1-recorded-relationship",
+      "input": "22220",
+      "note": "",
+      "expect": {
+        "requested": "22220",
+        "key": "22220",
+        "type": "related",
+        "via": null,
+        "spelling": null,
+        "product": "p-22220",
+        "variant": null,
+        "designation": "22220",
+        "listed": [
+          "22220 E"
+        ],
+        "suffix": [],
+        "reason": null
+      }
+    },
+    {
+      "catalogue": "t1-recorded-relationship",
+      "input": "22220 E",
+      "note": "",
+      "expect": {
+        "requested": "22220 E",
+        "key": "22220e",
+        "type": "exact_variant",
+        "via": null,
+        "spelling": null,
+        "product": "p-22220",
+        "variant": "v-22220-e",
+        "designation": "22220 E",
+        "listed": [],
+        "suffix": [],
+        "reason": null
+      }
+    },
+    {
+      "catalogue": "t1-recorded-relationship",
+      "input": "22220e",
+      "note": "",
+      "expect": {
+        "requested": "22220e",
+        "key": "22220e",
+        "type": "exact_variant",
+        "via": null,
+        "spelling": null,
+        "product": "p-22220",
+        "variant": "v-22220-e",
+        "designation": "22220 E",
+        "listed": [],
+        "suffix": [],
+        "reason": null
+      }
+    },
+    {
+      "catalogue": "t1-recorded-relationship",
+      "input": "2222",
+      "note": "half-typed",
+      "expect": {
+        "requested": "2222",
+        "key": "2222",
+        "type": "none",
+        "via": null,
+        "spelling": null,
+        "product": null,
+        "variant": null,
+        "designation": null,
+        "listed": [],
+        "suffix": [],
+        "reason": "unknown"
+      }
+    },
+    {
+      "catalogue": "t1-recorded-relationship",
+      "input": "22220 E1",
+      "note": "",
+      "expect": {
+        "requested": "22220 E1",
+        "key": "22220e1",
+        "type": "none",
+        "via": null,
+        "spelling": null,
+        "product": null,
+        "variant": null,
+        "designation": null,
+        "listed": [],
+        "suffix": [],
+        "reason": "unknown"
+      }
+    },
+    {
+      "catalogue": "synthetic",
+      "input": "QZ 100",
+      "note": "",
+      "expect": {
+        "requested": "QZ 100",
+        "key": "qz100",
+        "type": "exact_product",
+        "via": null,
+        "spelling": null,
+        "product": "p-qz100",
+        "variant": null,
+        "designation": "QZ 100",
+        "listed": [],
+        "suffix": [],
+        "reason": null
+      }
+    },
+    {
+      "catalogue": "synthetic",
+      "input": "qz100",
+      "note": "",
+      "expect": {
+        "requested": "qz100",
+        "key": "qz100",
+        "type": "exact_product",
+        "via": null,
+        "spelling": null,
+        "product": "p-qz100",
+        "variant": null,
+        "designation": "QZ 100",
+        "listed": [],
+        "suffix": [],
+        "reason": null
+      }
+    },
+    {
+      "catalogue": "synthetic",
+      "input": "QZ 100-K1",
+      "note": "exact variant beats base series QZ 100 + K1",
+      "expect": {
+        "requested": "QZ 100-K1",
+        "key": "qz100k1",
+        "type": "exact_variant",
+        "via": null,
+        "spelling": null,
+        "product": "p-qz100",
+        "variant": "v-qz100-k1",
+        "designation": "QZ 100-K1",
+        "listed": [],
+        "suffix": [],
+        "reason": null
+      }
+    },
+    {
+      "catalogue": "synthetic",
+      "input": "QZ 100 K2",
+      "note": "unlisted variant beats base series QZ 100 + K2",
+      "expect": {
+        "requested": "QZ 100 K2",
+        "key": "qz100k2",
+        "type": "unlisted_variant",
+        "via": null,
+        "spelling": null,
+        "product": "p-qz100",
+        "variant": "v-qz100-k2",
+        "designation": "QZ 100-K2",
+        "listed": [],
+        "suffix": [],
+        "reason": null
+      }
+    },
+    {
+      "catalogue": "synthetic",
+      "input": "QZ 200",
+      "note": "",
+      "expect": {
+        "requested": "QZ 200",
+        "key": "qz200",
+        "type": "related",
+        "via": null,
+        "spelling": null,
+        "product": "p-qz200",
+        "variant": null,
+        "designation": "QZ 200",
+        "listed": [
+          "QZ 200-K1",
+          "QZ 200-KK"
+        ],
+        "suffix": [],
+        "reason": null
+      }
+    },
+    {
+      "catalogue": "synthetic",
+      "input": "QZ 300",
+      "note": "zero listed items: related, names none",
+      "expect": {
+        "requested": "QZ 300",
+        "key": "qz300",
+        "type": "related",
+        "via": null,
+        "spelling": null,
+        "product": "p-qz300",
+        "variant": null,
+        "designation": "QZ 300",
+        "listed": [],
+        "suffix": [],
+        "reason": null
+      }
+    },
+    {
+      "catalogue": "synthetic",
+      "input": "QZ 200-KK",
+      "note": "",
+      "expect": {
+        "requested": "QZ 200-KK",
+        "key": "qz200kk",
+        "type": "exact_variant",
+        "via": null,
+        "spelling": null,
+        "product": "p-qz200",
+        "variant": "v-qz200-kk",
+        "designation": "QZ 200-KK",
+        "listed": [],
+        "suffix": [],
+        "reason": null
+      }
+    },
+    {
+      "catalogue": "synthetic",
+      "input": "QZ-ONE-HUNDRED",
+      "note": "",
+      "expect": {
+        "requested": "QZ-ONE-HUNDRED",
+        "key": "qzonehundred",
+        "type": "exact_product",
+        "via": "spelling",
+        "spelling": "QZ-ONE-HUNDRED",
+        "product": "p-qz100",
+        "variant": null,
+        "designation": "QZ 100",
+        "listed": [],
+        "suffix": [],
+        "reason": null
+      }
+    },
+    {
+      "catalogue": "synthetic",
+      "input": "qz one hundred",
+      "note": "",
+      "expect": {
+        "requested": "qz one hundred",
+        "key": "qzonehundred",
+        "type": "exact_product",
+        "via": "spelling",
+        "spelling": "QZ-ONE-HUNDRED",
+        "product": "p-qz100",
+        "variant": null,
+        "designation": "QZ 100",
+        "listed": [],
+        "suffix": [],
+        "reason": null
+      }
+    },
+    {
+      "catalogue": "synthetic",
+      "input": "QZ 200 KAY KAY",
+      "note": "",
+      "expect": {
+        "requested": "QZ 200 KAY KAY",
+        "key": "qz200kaykay",
+        "type": "exact_variant",
+        "via": "spelling",
+        "spelling": "QZ 200 KAY KAY",
+        "product": "p-qz200",
+        "variant": "v-qz200-kk",
+        "designation": "QZ 200-KK",
+        "listed": [],
+        "suffix": [],
+        "reason": null
+      }
+    },
+    {
+      "catalogue": "synthetic",
+      "input": "QZ100K2 OLD",
+      "note": "",
+      "expect": {
+        "requested": "QZ100K2 OLD",
+        "key": "qz100k2old",
+        "type": "unlisted_variant",
+        "via": "spelling",
+        "spelling": "QZ100K2 OLD",
+        "product": "p-qz100",
+        "variant": "v-qz100-k2",
+        "designation": "QZ 100-K2",
+        "listed": [],
+        "suffix": [],
+        "reason": null
+      }
+    },
+    {
+      "catalogue": "synthetic",
+      "input": "QZ THREE HUNDRED",
+      "note": "",
+      "expect": {
+        "requested": "QZ THREE HUNDRED",
+        "key": "qzthreehundred",
+        "type": "related",
+        "via": "spelling",
+        "spelling": "QZ THREE HUNDRED",
+        "product": "p-qz300",
+        "variant": null,
+        "designation": "QZ 300",
+        "listed": [],
+        "suffix": [],
+        "reason": null
+      }
+    },
+    {
+      "catalogue": "synthetic",
+      "input": "QZ 100 K1K1",
+      "note": "spelling beats base series QZ 100 + K1 K1",
+      "expect": {
+        "requested": "QZ 100 K1K1",
+        "key": "qz100k1k1",
+        "type": "exact_variant",
+        "via": "spelling",
+        "spelling": "QZ 100 K1K1",
+        "product": "p-qz100",
+        "variant": "v-qz100-k1",
+        "designation": "QZ 100-K1",
+        "listed": [],
+        "suffix": [],
+        "reason": null
+      }
+    },
+    {
+      "catalogue": "synthetic",
+      "input": "QZ 100 KK",
+      "note": "base listed first, then listed variants; unlisted K2 not shown",
+      "expect": {
+        "requested": "QZ 100 KK",
+        "key": "qz100kk",
+        "type": "base_series",
+        "via": null,
+        "spelling": null,
+        "product": "p-qz100",
+        "variant": null,
+        "designation": "QZ 100",
+        "listed": [
+          "QZ 100",
+          "QZ 100-K1"
+        ],
+        "suffix": [
+          "kk"
+        ],
+        "reason": null
+      }
+    },
+    {
+      "catalogue": "synthetic",
+      "input": "QZ 200-K2",
+      "note": "base not listed: only the listed variants",
+      "expect": {
+        "requested": "QZ 200-K2",
+        "key": "qz200k2",
+        "type": "base_series",
+        "via": null,
+        "spelling": null,
+        "product": "p-qz200",
+        "variant": null,
+        "designation": "QZ 200",
+        "listed": [
+          "QZ 200-K1",
+          "QZ 200-KK"
+        ],
+        "suffix": [
+          "k2"
+        ],
+        "reason": null
+      }
+    },
+    {
+      "catalogue": "synthetic",
+      "input": "QZ 300 K1",
+      "note": "",
+      "expect": {
+        "requested": "QZ 300 K1",
+        "key": "qz300k1",
+        "type": "base_series",
+        "via": null,
+        "spelling": null,
+        "product": "p-qz300",
+        "variant": null,
+        "designation": "QZ 300",
+        "listed": [],
+        "suffix": [
+          "k1"
+        ],
+        "reason": null
+      }
+    },
+    {
+      "catalogue": "synthetic",
+      "input": "QZ 100-K1-K2",
+      "note": "",
+      "expect": {
+        "requested": "QZ 100-K1-K2",
+        "key": "qz100k1k2",
+        "type": "base_series",
+        "via": null,
+        "spelling": null,
+        "product": "p-qz100",
+        "variant": null,
+        "designation": "QZ 100",
+        "listed": [
+          "QZ 100",
+          "QZ 100-K1"
+        ],
+        "suffix": [
+          "k1",
+          "k2"
+        ],
+        "reason": null
+      }
+    },
+    {
+      "catalogue": "synthetic",
+      "input": "QZ 100/P9",
+      "note": "a token may contain the significant slash",
+      "expect": {
+        "requested": "QZ 100/P9",
+        "key": "qz100/p9",
+        "type": "base_series",
+        "via": null,
+        "spelling": null,
+        "product": "p-qz100",
+        "variant": null,
+        "designation": "QZ 100",
+        "listed": [
+          "QZ 100",
+          "QZ 100-K1"
+        ],
+        "suffix": [
+          "/p9"
+        ],
+        "reason": null
+      }
+    },
+    {
+      "catalogue": "synthetic",
+      "input": "QZ 100 P9",
+      "note": "without the slash the token does not match",
+      "expect": {
+        "requested": "QZ 100 P9",
+        "key": "qz100p9",
+        "type": "none",
+        "via": null,
+        "spelling": null,
+        "product": null,
+        "variant": null,
+        "designation": null,
+        "listed": [],
+        "suffix": [],
+        "reason": "unknown"
+      }
+    },
+    {
+      "catalogue": "synthetic",
+      "input": "QZ 100-K3",
+      "note": "token not approved",
+      "expect": {
+        "requested": "QZ 100-K3",
+        "key": "qz100k3",
+        "type": "none",
+        "via": null,
+        "spelling": null,
+        "product": null,
+        "variant": null,
+        "designation": null,
+        "listed": [],
+        "suffix": [],
+        "reason": "unknown"
+      }
+    },
+    {
+      "catalogue": "synthetic",
+      "input": "QZ 100-K",
+      "note": "partial token",
+      "expect": {
+        "requested": "QZ 100-K",
+        "key": "qz100k",
+        "type": "none",
+        "via": null,
+        "spelling": null,
+        "product": null,
+        "variant": null,
+        "designation": null,
+        "listed": [],
+        "suffix": [],
+        "reason": "unknown"
+      }
+    },
+    {
+      "catalogue": "synthetic",
+      "input": "QZ 400-K1",
+      "note": "family has no approved tokens",
+      "expect": {
+        "requested": "QZ 400-K1",
+        "key": "qz400k1",
+        "type": "none",
+        "via": null,
+        "spelling": null,
+        "product": null,
+        "variant": null,
+        "designation": null,
+        "listed": [],
+        "suffix": [],
+        "reason": "unknown"
+      }
+    },
+    {
+      "catalogue": "synthetic",
+      "input": "QZ 1000",
+      "note": "0 is approved only for another family",
+      "expect": {
+        "requested": "QZ 1000",
+        "key": "qz1000",
+        "type": "none",
+        "via": null,
+        "spelling": null,
+        "product": null,
+        "variant": null,
+        "designation": null,
+        "listed": [],
+        "suffix": [],
+        "reason": "unknown"
+      }
+    },
+    {
+      "catalogue": "synthetic",
+      "input": "QZ 50",
+      "note": "related beats base series QZ 5 + 0",
+      "expect": {
+        "requested": "QZ 50",
+        "key": "qz50",
+        "type": "related",
+        "via": null,
+        "spelling": null,
+        "product": "p-qz50",
+        "variant": null,
+        "designation": "QZ 50",
+        "listed": [
+          "QZ 50 X"
+        ],
+        "suffix": [],
+        "reason": null
+      }
+    },
+    {
+      "catalogue": "synthetic",
+      "input": "QZ 5",
+      "note": "",
+      "expect": {
+        "requested": "QZ 5",
+        "key": "qz5",
+        "type": "exact_product",
+        "via": null,
+        "spelling": null,
+        "product": "p-qz5",
+        "variant": null,
+        "designation": "QZ 5",
+        "listed": [],
+        "suffix": [],
+        "reason": null
+      }
+    },
+    {
+      "catalogue": "synthetic",
+      "input": "QZ 510",
+      "note": "",
+      "expect": {
+        "requested": "QZ 510",
+        "key": "qz510",
+        "type": "base_series",
+        "via": null,
+        "spelling": null,
+        "product": "p-qz51",
+        "variant": null,
+        "designation": "QZ 51",
+        "listed": [
+          "QZ 51"
+        ],
+        "suffix": [
+          "0"
+        ],
+        "reason": null
+      }
+    },
+    {
+      "catalogue": "synthetic",
+      "input": "QZ 500",
+      "note": "QZ 5 + 0 0 and QZ 50 + 0: more than one candidate",
+      "expect": {
+        "requested": "QZ 500",
+        "key": "qz500",
+        "type": "none",
+        "via": null,
+        "spelling": null,
+        "product": null,
+        "variant": null,
+        "designation": null,
+        "listed": [],
+        "suffix": [],
+        "reason": "ambiguous"
+      }
+    },
+    {
+      "catalogue": "synthetic",
+      "input": "QZ 8A",
+      "note": "exact Product beats base series QZ 8 + A",
+      "expect": {
+        "requested": "QZ 8A",
+        "key": "qz8a",
+        "type": "exact_product",
+        "via": null,
+        "spelling": null,
+        "product": "p-qz8a",
+        "variant": null,
+        "designation": "QZ 8A",
+        "listed": [],
+        "suffix": [],
+        "reason": null
+      }
+    },
+    {
+      "catalogue": "synthetic",
+      "input": "QZ 8B",
+      "note": "",
+      "expect": {
+        "requested": "QZ 8B",
+        "key": "qz8b",
+        "type": "base_series",
+        "via": null,
+        "spelling": null,
+        "product": "p-qz8",
+        "variant": null,
+        "designation": "QZ 8",
+        "listed": [
+          "QZ 8"
+        ],
+        "suffix": [
+          "b"
+        ],
+        "reason": null
+      }
+    },
+    {
+      "catalogue": "synthetic",
+      "input": "QZ 8AB",
+      "note": "QZ 8 + AB / A B and QZ 8A + B",
+      "expect": {
+        "requested": "QZ 8AB",
+        "key": "qz8ab",
+        "type": "none",
+        "via": null,
+        "spelling": null,
+        "product": null,
+        "variant": null,
+        "designation": null,
+        "listed": [],
+        "suffix": [],
+        "reason": "ambiguous"
+      }
+    },
+    {
+      "catalogue": "synthetic",
+      "input": "QZ 9AB",
+      "note": "one Product, two token splits (AB or A B): not guessed",
+      "expect": {
+        "requested": "QZ 9AB",
+        "key": "qz9ab",
+        "type": "none",
+        "via": null,
+        "spelling": null,
+        "product": null,
+        "variant": null,
+        "designation": null,
+        "listed": [],
+        "suffix": [],
+        "reason": "ambiguous"
+      }
+    },
+    {
+      "catalogue": "synthetic",
+      "input": "QZ 9BA",
+      "note": "",
+      "expect": {
+        "requested": "QZ 9BA",
+        "key": "qz9ba",
+        "type": "base_series",
+        "via": null,
+        "spelling": null,
+        "product": "p-qz9",
+        "variant": null,
+        "designation": "QZ 9",
+        "listed": [
+          "QZ 9"
+        ],
+        "suffix": [
+          "b",
+          "a"
+        ],
+        "reason": null
+      }
+    },
+    {
+      "catalogue": "synthetic",
+      "input": "QZ 9A",
+      "note": "",
+      "expect": {
+        "requested": "QZ 9A",
+        "key": "qz9a",
+        "type": "base_series",
+        "via": null,
+        "spelling": null,
+        "product": "p-qz9",
+        "variant": null,
+        "designation": "QZ 9",
+        "listed": [
+          "QZ 9"
+        ],
+        "suffix": [
+          "a"
+        ],
+        "reason": null
+      }
+    },
+    {
+      "catalogue": "synthetic",
+      "input": "QZ \uff11\uff10\uff10-K1",
+      "note": "",
+      "expect": {
+        "requested": "QZ \uff11\uff10\uff10-K1",
+        "key": "qz100k1",
+        "type": "exact_variant",
+        "via": null,
+        "spelling": null,
+        "product": "p-qz100",
+        "variant": "v-qz100-k1",
+        "designation": "QZ 100-K1",
+        "listed": [],
+        "suffix": [],
+        "reason": null
+      }
+    },
+    {
+      "catalogue": "synthetic",
+      "input": "QZ \uff11\uff10\uff10 KK",
+      "note": "digit folding only; base series still needs approved tokens",
+      "expect": {
+        "requested": "QZ \uff11\uff10\uff10 KK",
+        "key": "qz100kk",
+        "type": "base_series",
+        "via": null,
+        "spelling": null,
+        "product": "p-qz100",
+        "variant": null,
+        "designation": "QZ 100",
+        "listed": [
+          "QZ 100",
+          "QZ 100-K1"
+        ],
+        "suffix": [
+          "kk"
+        ],
+        "reason": null
+      }
+    },
+    {
+      "catalogue": "synthetic",
+      "input": "QZ \uff15\uff10\uff10",
+      "note": "",
+      "expect": {
+        "requested": "QZ \uff15\uff10\uff10",
+        "key": "qz500",
+        "type": "none",
+        "via": null,
+        "spelling": null,
+        "product": null,
+        "variant": null,
+        "designation": null,
+        "listed": [],
+        "suffix": [],
+        "reason": "ambiguous"
+      }
+    },
+    {
+      "catalogue": "synthetic",
+      "input": "QZ 6/22",
+      "note": "",
+      "expect": {
+        "requested": "QZ 6/22",
+        "key": "qz6/22",
+        "type": "exact_product",
+        "via": null,
+        "spelling": null,
+        "product": "p-qz6-22",
+        "variant": null,
+        "designation": "QZ 6/22",
+        "listed": [],
+        "suffix": [],
+        "reason": null
+      }
+    },
+    {
+      "catalogue": "synthetic",
+      "input": "QZ 6 / 22",
+      "note": "",
+      "expect": {
+        "requested": "QZ 6 / 22",
+        "key": "qz6/22",
+        "type": "exact_product",
+        "via": null,
+        "spelling": null,
+        "product": "p-qz6-22",
+        "variant": null,
+        "designation": "QZ 6/22",
+        "listed": [],
+        "suffix": [],
+        "reason": null
+      }
+    },
+    {
+      "catalogue": "synthetic",
+      "input": "QZ 622",
+      "note": "distinct from QZ 6/22",
+      "expect": {
+        "requested": "QZ 622",
+        "key": "qz622",
+        "type": "exact_product",
+        "via": null,
+        "spelling": null,
+        "product": "p-qz622",
+        "variant": null,
+        "designation": "QZ 622",
+        "listed": [],
+        "suffix": [],
+        "reason": null
+      }
+    },
+    {
+      "catalogue": "synthetic",
+      "input": "QZ 62/2",
+      "note": "",
+      "expect": {
+        "requested": "QZ 62/2",
+        "key": "qz62/2",
+        "type": "none",
+        "via": null,
+        "spelling": null,
+        "product": null,
+        "variant": null,
+        "designation": null,
+        "listed": [],
+        "suffix": [],
+        "reason": "unknown"
+      }
+    },
+    {
+      "catalogue": "synthetic",
+      "input": "QZ",
+      "note": "",
+      "expect": {
+        "requested": "QZ",
+        "key": "qz",
+        "type": "none",
+        "via": null,
+        "spelling": null,
+        "product": null,
+        "variant": null,
+        "designation": null,
+        "listed": [],
+        "suffix": [],
+        "reason": "unknown"
+      }
+    },
+    {
+      "catalogue": "synthetic",
+      "input": "QZ 100----------------------------------------------------------",
+      "note": "64 code points: within the limit",
+      "expect": {
+        "requested": "QZ 100----------------------------------------------------------",
+        "key": "qz100",
+        "type": "exact_product",
+        "via": null,
+        "spelling": null,
+        "product": "p-qz100",
+        "variant": null,
+        "designation": "QZ 100",
+        "listed": [],
+        "suffix": [],
+        "reason": null
+      }
+    },
+    {
+      "catalogue": "synthetic",
+      "input": "QZ 100-----------------------------------------------------------",
+      "note": "over the limit: never matched, even though the cut text would be",
+      "expect": {
+        "requested": "QZ 100----------------------------------------------------------",
+        "key": "qz100",
+        "type": "none",
+        "via": null,
+        "spelling": null,
+        "product": null,
+        "variant": null,
+        "designation": null,
+        "listed": [],
+        "suffix": [],
+        "reason": "too_long"
+      }
+    }
+  ],
+  "invalid_index": [
+    {
+      "index": {
+        "products": [
+          {
+            "id": "p-1",
+            "designation": "QZ 1",
+            "family": "f",
+            "base_listed": true,
+            "variants": []
+          },
+          {
+            "id": "p-2",
+            "designation": "QZ-1",
+            "family": "f",
+            "base_listed": true,
+            "variants": []
+          }
+        ],
+        "spellings": [],
+        "suffix_rules": {}
+      },
+      "error": "duplicate_key",
+      "note": "two Products with one key"
+    },
+    {
+      "index": {
+        "products": [
+          {
+            "id": "p-1",
+            "designation": "QZ 1",
+            "family": "f",
+            "base_listed": true,
+            "variants": [
+              {
+                "id": "v-1",
+                "designation": "qz1",
+                "listed": true
+              }
+            ]
+          }
+        ],
+        "spellings": [],
+        "suffix_rules": {}
+      },
+      "error": "duplicate_key",
+      "note": "a variant with its Product's key"
+    },
+    {
+      "index": {
+        "products": [
+          {
+            "id": "p-1",
+            "designation": "22220 E",
+            "family": "f",
+            "base_listed": true,
+            "variants": []
+          }
+        ],
+        "spellings": [
+          {
+            "spelling": "22220E",
+            "target": "p-1"
+          }
+        ],
+        "suffix_rules": {}
+      },
+      "error": "duplicate_key",
+      "note": "redundant spelling: same key as its target"
+    },
+    {
+      "index": {
+        "products": [
+          {
+            "id": "p-1",
+            "designation": "QZ 1",
+            "family": "f",
+            "base_listed": true,
+            "variants": []
+          },
+          {
+            "id": "p-2",
+            "designation": "QZ 2",
+            "family": "f",
+            "base_listed": true,
+            "variants": []
+          }
+        ],
+        "spellings": [
+          {
+            "spelling": "QZ-2",
+            "target": "p-1"
+          }
+        ],
+        "suffix_rules": {}
+      },
+      "error": "duplicate_key",
+      "note": "spelling collides with another Product"
+    },
+    {
+      "index": {
+        "products": [
+          {
+            "id": "p-1",
+            "designation": "QZ 1",
+            "family": "f",
+            "base_listed": true,
+            "variants": []
+          }
+        ],
+        "spellings": [
+          {
+            "spelling": "QZ A",
+            "target": "p-1"
+          },
+          {
+            "spelling": "QZA",
+            "target": "p-1"
+          }
+        ],
+        "suffix_rules": {}
+      },
+      "error": "duplicate_key",
+      "note": "two spellings with one key"
+    },
+    {
+      "index": {
+        "products": [
+          {
+            "id": "p-1",
+            "designation": "QZ 1",
+            "family": "f",
+            "base_listed": true,
+            "variants": []
+          },
+          {
+            "id": "p-1",
+            "designation": "QZ 2",
+            "family": "f",
+            "base_listed": true,
+            "variants": []
+          }
+        ],
+        "spellings": [],
+        "suffix_rules": {}
+      },
+      "error": "duplicate_id",
+      "note": "two Products with one id"
+    },
+    {
+      "index": {
+        "products": [
+          {
+            "id": "p-1",
+            "designation": "QZ 1",
+            "family": "f",
+            "base_listed": true,
+            "variants": [
+              {
+                "id": "p-1",
+                "designation": "QZ 1-A",
+                "listed": true
+              }
+            ]
+          }
+        ],
+        "spellings": [],
+        "suffix_rules": {}
+      },
+      "error": "duplicate_id",
+      "note": "variant id equals a Product id"
+    },
+    {
+      "index": {
+        "products": [
+          {
+            "id": "p-1",
+            "designation": "QZ 1",
+            "family": "f",
+            "base_listed": true,
+            "variants": []
+          }
+        ],
+        "spellings": [
+          {
+            "spelling": "QZ ONE",
+            "target": "p-missing"
+          }
+        ],
+        "suffix_rules": {}
+      },
+      "error": "unknown_target",
+      "note": "spelling target does not exist"
+    },
+    {
+      "index": {
+        "products": [
+          {
+            "id": "p-1",
+            "designation": "--",
+            "family": "f",
+            "base_listed": true,
+            "variants": []
+          }
+        ],
+        "spellings": [],
+        "suffix_rules": {}
+      },
+      "error": "empty_key",
+      "note": "designation normalises to nothing"
+    },
+    {
+      "index": {
+        "products": [
+          {
+            "id": "p-1",
+            "designation": "QZ 1",
+            "family": "f",
+            "base_listed": true,
+            "variants": []
+          }
+        ],
+        "spellings": [
+          {
+            "spelling": " . ",
+            "target": "p-1"
+          }
+        ],
+        "suffix_rules": {}
+      },
+      "error": "empty_key",
+      "note": "spelling normalises to nothing"
+    },
+    {
+      "index": {
+        "products": [
+          {
+            "id": "p-1",
+            "designation": "QZ 1",
+            "family": "f",
+            "base_listed": true,
+            "variants": []
+          }
+        ],
+        "spellings": [],
+        "suffix_rules": {
+          "f": [
+            "-"
+          ]
+        }
+      },
+      "error": "empty_token",
+      "note": "suffix token normalises to nothing"
+    },
+    {
+      "index": {
+        "products": [
+          {
+            "id": "p-1",
+            "designation": "QZ 1",
+            "family": "f",
+            "variants": []
+          }
+        ],
+        "spellings": [],
+        "suffix_rules": {}
+      },
+      "error": "invalid_index",
+      "note": "base_listed missing"
+    },
+    {
+      "index": {
+        "products": [
+          {
+            "id": "p-1",
+            "designation": "QZ 1",
+            "family": "f",
+            "base_listed": "yes",
+            "variants": []
+          }
+        ],
+        "spellings": [],
+        "suffix_rules": {}
+      },
+      "error": "invalid_index",
+      "note": "base_listed not boolean"
+    },
+    {
+      "index": {
+        "products": [],
+        "suffix_rules": {}
+      },
+      "error": "invalid_index",
+      "note": "spellings missing"
+    }
+  ]
+}

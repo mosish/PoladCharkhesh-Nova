@@ -5,7 +5,9 @@ Date: 2026-10-06 (revision 3 of the same day).
 Status: **APPROVED (E-1, 2026-10-06); implementation in progress, local-first.**
 - E-1, E-2, E-7 and E-8 are approved. Development is local-first in Docker (D25), and the host probe is deferred until hosting is purchased (D26).
 - **Step 1: done and verified (2026-10-06).** Repository, AGENTS.md/CLAUDE.md, Docker dev stack and toolchain. The step 2 local baseline is recorded in `nova/docs/local-baseline.md`.
-- Not yet built: schema, Admin, Publish Engine, public-site port, catalogue import.
+- **Step 3: approved and committed (2026-10-06).** Designation corpus, normaliser and matcher in PHP and JS (`nova/docs/designation-matching.md`), with the owner's fullwidth-digit refinement and the choices frozen in `00`. V-1–V-5 remain unresolved; no suffix rules are approved.
+- **Next: step 4, awaiting the owner's go-ahead.**
+- Not yet built: schema (step 4), Admin, Publish Engine, public-site port, catalogue import.
 - Gate 2 is approved, closed and frozen (`00 genesis summary.md`).
 - A fresh session starts from `06 phase3 handoff checkpoint.md`.
 

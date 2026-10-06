@@ -8,6 +8,7 @@
   },
   "scripts": {
     "dev:init": "node tools/dev-init.mjs",
+    "test:js": "node --test \"tests/js/**/*.test.js\"",
     "test:e2e": "playwright test"
   },
   "devDependencies": {

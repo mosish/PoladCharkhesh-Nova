@@ -265,6 +265,26 @@ The owner runs the probe and sends its results, the domain names, and the catalo
 - Verified from a clean rebuild: CS clean, PHPStan max with no errors, PHPUnit 31/31, Playwright 4/4.
 - No schema, domain code or production page was created.
 
+**Phase 3 step 3 turn (2026-10-06):**
+- Initial commit `5c7e33e` (step 1 baseline, local git identity). Step 3 is left uncommitted for review.
+- Added the behavioural spec `nova/docs/designation-matching.md` and the shared corpus `nova/tests/fixtures/designation/corpus.json`:
+  - 34 normaliser vectors;
+  - 12 requested-text vectors;
+  - 80 match cases over 3 labelled fixture catalogues;
+  - 14 invalid-index cases.
+- Added the PHP (`app/src/Designation/`) and JS (`assets-src/js/designation.js`) implementations.
+- Verified: PHPUnit 174/174, node:test 145/145, PHPStan max clean, 17/17 JS mutants and 3/3 PHP mutants killed, PHP/JS differential fuzz 60,012 comparisons with 0 differences.
+- No schema, migration, import or Gate 2 change.
+
+**Step 3 review turn (2026-10-06):**
+- The owner approved step 3 with one refinement: fullwidth digits ０–９ fold to ASCII.
+- Added 16 normaliser vectors (all ten digits plus mixed/full cases, with the fullwidth solidus and letters NOT folded), 1 requested-text vector and 9 match cases.
+- Same change in PHP and JS. Re-verified:
+  - PHPUnit 200/200; node:test 171/171; PHPStan max and CS clean; Playwright 4/4;
+  - 21/21 JS and 5/5 PHP mutants killed;
+  - PHP/JS differential fuzz: 72,015 comparisons, 0 differences.
+- Choices frozen in `00`. Step 3 committed; `design/` untouched; no step 4 work.
+
 - **Not edited (all turns):**
   - the hosted documents (historical snapshots, D18);
   - `design/phase2-v2-corrections.zip` (kept as the pre-T-1 delivery);
