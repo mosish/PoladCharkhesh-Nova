@@ -1,0 +1,338 @@
+[
+ {
+  "id": "3",
+  "lang": "fa",
+  "name": "“6205” → requested 6205 (exact) kept through workspace, copy, link, WhatsApp, inquiry",
+  "ok": true,
+  "detail": "{\"ws\":\"6205\",\"copied\":\"6205\",\"link\":\"p-6205\",\"form\":\"6205\",\"match\":\"exact\",\"product\":\"6205\"}"
+ },
+ {
+  "id": "3t",
+  "lang": "fa",
+  "name": "“6205” → exact: explorer, workspace, WhatsApp and inquiry name the right base / variant roles",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "id": "3",
+  "lang": "fa",
+  "name": "“6205-2RS” → requested 6205-2RS (variant) kept through workspace, copy, link, WhatsApp, inquiry",
+  "ok": true,
+  "detail": "{\"ws\":\"6205-2RS\",\"copied\":\"6205-2RS\",\"link\":\"p-6205:6205-2RS\",\"form\":\"6205-2RS\",\"match\":\"variant\",\"product\":\"6205\"}"
+ },
+ {
+  "id": "3t",
+  "lang": "fa",
+  "name": "“6205-2RS” → variant, listed 6205: explorer, workspace, WhatsApp and inquiry name the right base / variant roles",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "id": "3",
+  "lang": "fa",
+  "name": "“6205-ZZ” → requested 6205-ZZ (variant) kept through workspace, copy, link, WhatsApp, inquiry",
+  "ok": true,
+  "detail": "{\"ws\":\"6205-ZZ\",\"copied\":\"6205-ZZ\",\"link\":\"p-6205:6205-ZZ\",\"form\":\"6205-ZZ\",\"match\":\"variant\",\"product\":\"6205\"}"
+ },
+ {
+  "id": "3t",
+  "lang": "fa",
+  "name": "“6205-ZZ” → variant, listed 6205: explorer, workspace, WhatsApp and inquiry name the right base / variant roles",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "id": "3",
+  "lang": "fa",
+  "name": "“6205 2rs” → requested 6205-2RS (variant) kept through workspace, copy, link, WhatsApp, inquiry",
+  "ok": true,
+  "detail": "{\"ws\":\"6205-2RS\",\"copied\":\"6205-2RS\",\"link\":\"p-6205:6205-2RS\",\"form\":\"6205-2RS\",\"match\":\"variant\",\"product\":\"6205\"}"
+ },
+ {
+  "id": "3t",
+  "lang": "fa",
+  "name": "“6205 2rs” → variant, listed 6205: explorer, workspace, WhatsApp and inquiry name the right base / variant roles",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "id": "3",
+  "lang": "fa",
+  "name": "“6205-2RSH” → requested 6205-2RSH (series) kept through workspace, copy, link, WhatsApp, inquiry",
+  "ok": true,
+  "detail": "{\"ws\":\"6205-2RSH\",\"copied\":\"6205-2RSH\",\"link\":\"p-6205:6205-2RSH\",\"form\":\"6205-2RSH\",\"match\":\"series\",\"product\":\"6205\"}"
+ },
+ {
+  "id": "3t",
+  "lang": "fa",
+  "name": "“6205-2RSH” → series, listed 6205: explorer, workspace, WhatsApp and inquiry name the right base / variant roles",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "id": "3",
+  "lang": "fa",
+  "name": "“6305” → requested 6305 (related) kept through workspace, copy, link, WhatsApp, inquiry",
+  "ok": true,
+  "detail": "{\"ws\":\"6305\",\"copied\":\"6305\",\"link\":\"p-6305-2rs:6305\",\"form\":\"6305\",\"match\":\"related\",\"product\":\"6305-2rs\"}"
+ },
+ {
+  "id": "3t",
+  "lang": "fa",
+  "name": "“6305” → related, listed 6305-2RS: explorer, workspace, WhatsApp and inquiry name the right base / variant roles",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "id": "3",
+  "lang": "fa",
+  "name": "“6305-2RS” → requested 6305-2RS (exact) kept through workspace, copy, link, WhatsApp, inquiry",
+  "ok": true,
+  "detail": "{\"ws\":\"6305-2RS\",\"copied\":\"6305-2RS\",\"link\":\"p-6305-2rs\",\"form\":\"6305-2RS\",\"match\":\"exact\",\"product\":\"6305-2rs\"}"
+ },
+ {
+  "id": "3t",
+  "lang": "fa",
+  "name": "“6305-2RS” → exact: explorer, workspace, WhatsApp and inquiry name the right base / variant roles",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "id": "3",
+  "lang": "fa",
+  "name": "“22220” → requested 22220 (related) kept through workspace, copy, link, WhatsApp, inquiry",
+  "ok": true,
+  "detail": "{\"ws\":\"22220\",\"copied\":\"22220\",\"link\":\"p-22220-e:22220\",\"form\":\"22220\",\"match\":\"related\",\"product\":\"22220-e\"}"
+ },
+ {
+  "id": "3t",
+  "lang": "fa",
+  "name": "“22220” → related, listed 22220 E: explorer, workspace, WhatsApp and inquiry name the right base / variant roles",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "id": "3",
+  "lang": "fa",
+  "name": "“22220 E” → requested 22220 E (exact) kept through workspace, copy, link, WhatsApp, inquiry",
+  "ok": true,
+  "detail": "{\"ws\":\"22220 E\",\"copied\":\"22220 E\",\"link\":\"p-22220-e\",\"form\":\"22220 E\",\"match\":\"exact\",\"product\":\"22220-e\"}"
+ },
+ {
+  "id": "3t",
+  "lang": "fa",
+  "name": "“22220 E” → exact: explorer, workspace, WhatsApp and inquiry name the right base / variant roles",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "id": "3",
+  "lang": "fa",
+  "name": "“22220e” → requested 22220 E (exact) kept through workspace, copy, link, WhatsApp, inquiry",
+  "ok": true,
+  "detail": "{\"ws\":\"22220 E\",\"copied\":\"22220 E\",\"link\":\"p-22220-e\",\"form\":\"22220 E\",\"match\":\"exact\",\"product\":\"22220-e\"}"
+ },
+ {
+  "id": "3t",
+  "lang": "fa",
+  "name": "“22220e” → exact: explorer, workspace, WhatsApp and inquiry name the right base / variant roles",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "id": "3b",
+  "lang": "fa",
+  "name": "Row click after typing 6206-ZZ opens 6206 with requested 6206-ZZ",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "id": "3c",
+  "lang": "fa",
+  "name": "Deep link #p-6205:6205-ZZ restores the requested variant",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "id": "3d",
+  "lang": "fa",
+  "name": "Deep link #p-6305-2rs:6305 restores the related request (6305 asked, 6305-2RS listed)",
+  "ok": true,
+  "detail": "درخواست: 6305 · در فهرست: 6305-2RS (نوع پسوندی) — کد درخواستی نیاز به تأیید دارد"
+ },
+ {
+  "id": "3e",
+  "lang": "fa",
+  "name": "Half-typed 6305-2: no series or related claim; 6305-2RS stays listed as a partial match",
+  "ok": true,
+  "detail": "«6305-2» دقیقاً در فهرست نیست؛ نزدیک‌ترین نتایج در پایین آمده است."
+ },
+ {
+  "id": "3",
+  "lang": "en",
+  "name": "“6205” → requested 6205 (exact) kept through workspace, copy, link, WhatsApp, inquiry",
+  "ok": true,
+  "detail": "{\"ws\":\"6205\",\"copied\":\"6205\",\"link\":\"p-6205\",\"form\":\"6205\",\"match\":\"exact\",\"product\":\"6205\"}"
+ },
+ {
+  "id": "3t",
+  "lang": "en",
+  "name": "“6205” → exact: explorer, workspace, WhatsApp and inquiry name the right base / variant roles",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "id": "3",
+  "lang": "en",
+  "name": "“6205-2RS” → requested 6205-2RS (variant) kept through workspace, copy, link, WhatsApp, inquiry",
+  "ok": true,
+  "detail": "{\"ws\":\"6205-2RS\",\"copied\":\"6205-2RS\",\"link\":\"p-6205:6205-2RS\",\"form\":\"6205-2RS\",\"match\":\"variant\",\"product\":\"6205\"}"
+ },
+ {
+  "id": "3t",
+  "lang": "en",
+  "name": "“6205-2RS” → variant, listed 6205: explorer, workspace, WhatsApp and inquiry name the right base / variant roles",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "id": "3",
+  "lang": "en",
+  "name": "“6205-ZZ” → requested 6205-ZZ (variant) kept through workspace, copy, link, WhatsApp, inquiry",
+  "ok": true,
+  "detail": "{\"ws\":\"6205-ZZ\",\"copied\":\"6205-ZZ\",\"link\":\"p-6205:6205-ZZ\",\"form\":\"6205-ZZ\",\"match\":\"variant\",\"product\":\"6205\"}"
+ },
+ {
+  "id": "3t",
+  "lang": "en",
+  "name": "“6205-ZZ” → variant, listed 6205: explorer, workspace, WhatsApp and inquiry name the right base / variant roles",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "id": "3",
+  "lang": "en",
+  "name": "“6205 2rs” → requested 6205-2RS (variant) kept through workspace, copy, link, WhatsApp, inquiry",
+  "ok": true,
+  "detail": "{\"ws\":\"6205-2RS\",\"copied\":\"6205-2RS\",\"link\":\"p-6205:6205-2RS\",\"form\":\"6205-2RS\",\"match\":\"variant\",\"product\":\"6205\"}"
+ },
+ {
+  "id": "3t",
+  "lang": "en",
+  "name": "“6205 2rs” → variant, listed 6205: explorer, workspace, WhatsApp and inquiry name the right base / variant roles",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "id": "3",
+  "lang": "en",
+  "name": "“6205-2RSH” → requested 6205-2RSH (series) kept through workspace, copy, link, WhatsApp, inquiry",
+  "ok": true,
+  "detail": "{\"ws\":\"6205-2RSH\",\"copied\":\"6205-2RSH\",\"link\":\"p-6205:6205-2RSH\",\"form\":\"6205-2RSH\",\"match\":\"series\",\"product\":\"6205\"}"
+ },
+ {
+  "id": "3t",
+  "lang": "en",
+  "name": "“6205-2RSH” → series, listed 6205: explorer, workspace, WhatsApp and inquiry name the right base / variant roles",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "id": "3",
+  "lang": "en",
+  "name": "“6305” → requested 6305 (related) kept through workspace, copy, link, WhatsApp, inquiry",
+  "ok": true,
+  "detail": "{\"ws\":\"6305\",\"copied\":\"6305\",\"link\":\"p-6305-2rs:6305\",\"form\":\"6305\",\"match\":\"related\",\"product\":\"6305-2rs\"}"
+ },
+ {
+  "id": "3t",
+  "lang": "en",
+  "name": "“6305” → related, listed 6305-2RS: explorer, workspace, WhatsApp and inquiry name the right base / variant roles",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "id": "3",
+  "lang": "en",
+  "name": "“6305-2RS” → requested 6305-2RS (exact) kept through workspace, copy, link, WhatsApp, inquiry",
+  "ok": true,
+  "detail": "{\"ws\":\"6305-2RS\",\"copied\":\"6305-2RS\",\"link\":\"p-6305-2rs\",\"form\":\"6305-2RS\",\"match\":\"exact\",\"product\":\"6305-2rs\"}"
+ },
+ {
+  "id": "3t",
+  "lang": "en",
+  "name": "“6305-2RS” → exact: explorer, workspace, WhatsApp and inquiry name the right base / variant roles",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "id": "3",
+  "lang": "en",
+  "name": "“22220” → requested 22220 (related) kept through workspace, copy, link, WhatsApp, inquiry",
+  "ok": true,
+  "detail": "{\"ws\":\"22220\",\"copied\":\"22220\",\"link\":\"p-22220-e:22220\",\"form\":\"22220\",\"match\":\"related\",\"product\":\"22220-e\"}"
+ },
+ {
+  "id": "3t",
+  "lang": "en",
+  "name": "“22220” → related, listed 22220 E: explorer, workspace, WhatsApp and inquiry name the right base / variant roles",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "id": "3",
+  "lang": "en",
+  "name": "“22220 E” → requested 22220 E (exact) kept through workspace, copy, link, WhatsApp, inquiry",
+  "ok": true,
+  "detail": "{\"ws\":\"22220 E\",\"copied\":\"22220 E\",\"link\":\"p-22220-e\",\"form\":\"22220 E\",\"match\":\"exact\",\"product\":\"22220-e\"}"
+ },
+ {
+  "id": "3t",
+  "lang": "en",
+  "name": "“22220 E” → exact: explorer, workspace, WhatsApp and inquiry name the right base / variant roles",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "id": "3",
+  "lang": "en",
+  "name": "“22220e” → requested 22220 E (exact) kept through workspace, copy, link, WhatsApp, inquiry",
+  "ok": true,
+  "detail": "{\"ws\":\"22220 E\",\"copied\":\"22220 E\",\"link\":\"p-22220-e\",\"form\":\"22220 E\",\"match\":\"exact\",\"product\":\"22220-e\"}"
+ },
+ {
+  "id": "3t",
+  "lang": "en",
+  "name": "“22220e” → exact: explorer, workspace, WhatsApp and inquiry name the right base / variant roles",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "id": "3b",
+  "lang": "en",
+  "name": "Row click after typing 6206-ZZ opens 6206 with requested 6206-ZZ",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "id": "3c",
+  "lang": "en",
+  "name": "Deep link #p-6205:6205-ZZ restores the requested variant",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "id": "3d",
+  "lang": "en",
+  "name": "Deep link #p-6305-2rs:6305 restores the related request (6305 asked, 6305-2RS listed)",
+  "ok": true,
+  "detail": "Requested: 6305 · listed in catalogue: 6305-2RS (suffixed variant) — requested designation requires confirmation"
+ },
+ {
+  "id": "3e",
+  "lang": "en",
+  "name": "Half-typed 6305-2: no series or related claim; 6305-2RS stays listed as a partial match",
+  "ok": true,
+  "detail": "No exact match for “6305-2”; the closest results are below."
+ }
+]

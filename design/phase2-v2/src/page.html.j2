@@ -1,0 +1,317 @@
+<!doctype html>
+<html lang="{{ lang }}" dir="{{ dir }}" class="no-js">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>{{ t.title }}</title>
+<meta name="description" content="{{ t.desc }}">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#0b1136">
+<link rel="alternate" hreflang="{{ other_lang }}" href="{{ other_file }}">
+<link rel="preload" href="assets/fonts/vazirmatn-Bold-{{ subset }}.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+@font-face{font-family:"Vazirmatn";src:url(assets/fonts/vazirmatn-Regular-{{ subset }}.woff2) format("woff2");font-weight:400;font-display:swap}
+@font-face{font-family:"Vazirmatn";src:url(assets/fonts/vazirmatn-Bold-{{ subset }}.woff2) format("woff2");font-weight:700;font-display:swap}
+{% if lang == 'fa' %}@font-face{font-family:"PC Code";src:url(assets/fonts/jbmono-400.woff2) format("woff2");font-weight:100 500;font-display:swap;unicode-range:U+002D-002F,U+0030-0039,U+0041-005A,U+0061-007A}@font-face{font-family:"PC Code";src:url(assets/fonts/jbmono-600.woff2) format("woff2");font-weight:600 900;font-display:swap;unicode-range:U+002D-002F,U+0030-0039,U+0041-005A,U+0061-007A}@font-face{font-family:"Vazirmatn";src:url(assets/fonts/jbmono-400.woff2) format("woff2");font-weight:400;font-display:swap;unicode-range:U+0041-005A,U+0061-007A}@font-face{font-family:"Vazirmatn";src:url(assets/fonts/jbmono-600.woff2) format("woff2");font-weight:700;font-display:swap;unicode-range:U+0041-005A,U+0061-007A}{% endif %}
+{% if lang == 'en' %}@font-face{font-family:"Vazirmatn";src:url(assets/fonts/vazirmatn-Regular-arabic.woff2) format("woff2");font-weight:400;font-display:swap;unicode-range:U+0600-06FF,U+200C-200F,U+FB50-FDFF,U+FE70-FEFF}@font-face{font-family:"Vazirmatn";src:url(assets/fonts/vazirmatn-Regular-arabic.woff2) format("woff2");font-weight:700;font-display:swap;unicode-range:U+0600-06FF,U+200C-200F,U+FB50-FDFF,U+FE70-FEFF}
+{% endif %}@font-face{font-family:"JetBrains Mono";src:url(assets/fonts/jbmono-400.woff2) format("woff2");font-weight:400;font-display:swap}
+@font-face{font-family:"JetBrains Mono";src:url(assets/fonts/jbmono-600.woff2) format("woff2");font-weight:600;font-display:swap}
+</style>
+<style>{{ crit_css|safe }}</style>
+<script type="module" src="assets/nova.js"></script>
+</head>
+<body>
+{% include "symbols.svg.j2" %}
+<a class="skip" href="#explorer">{{ t.skip }}</a>
+<aside class="proto" aria-label="Prototype"><div class="wrap"><span>{{ t.proto }}</span><a href="./">{{ t.proto_hub }}</a></div></aside>
+<header class="bar navy">
+  <div class="wrap bar__in">
+    <a class="brand" href="#top" aria-label="{{ t.brand }}">
+      <svg aria-hidden="true"><use href="#logo"/></svg>
+      <span><b>{{ t.brand }}</b><small lang="{{ other_lang }}">{{ t.brand_alt }}</small></span>
+    </a>
+    <nav class="bar__nav" aria-label="{{ t.nav_label }}">
+      {% for id, label in t.nav %}<a href="#{{ id }}">{{ label }}</a>{% endfor %}
+    </nav>
+    <span class="bar__sheet" aria-hidden="true"><span id="sheet-now">01</span> / 10</span>
+    <details class="menu">
+      <summary aria-label="{{ t.menu }}"><svg class="ico"><use href="#i-menu"/></svg></summary>
+      <nav aria-label="{{ t.menu }}">{% for id, label in t.nav %}<a href="#{{ id }}">{{ label }}</a>{% endfor %}</nav>
+    </details>
+    <div class="bar__tools">
+      <a class="lang" href="{{ other_file }}" hreflang="{{ other_lang }}" lang="{{ other_lang }}" data-lang-switch>{{ t.other_lang_short }}</a>
+      <a class="btn btn--line btn--sm bar__call" href="tel:{{ c.tel1 }}"><svg class="ico"><use href="#i-phone"/></svg><span class="num">{{ c.tel1_show }}</span></a>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+<!-- 01 HERO — navy field -->
+<section class="hero navy" id="find" data-sheet="01" aria-labelledby="h-hero">
+  <div class="wrap">
+    <div class="hero__grid">
+      <div class="hero__text">
+        <p class="hero__ref" aria-hidden="true">{{ t.hero_ref }}</p>
+        <h1 id="h-hero">{{ t.h1 }}</h1>
+        <p class="hero__lead">{{ t.lead }}</p>
+        <form class="search search--hero hero__search" role="search" aria-label="{{ t.search_hero_l }}" action="#explorer" data-search="hero">
+          <label class="sr" for="q-hero">{{ t.search_label }}</label>
+          <span class="search__ico"><svg class="ico"><use href="#i-search"/></svg></span>
+          <input id="q-hero" name="q" type="search" dir="auto" autocomplete="off" spellcheck="false" placeholder="{{ t.search_ph }}">
+          <button type="submit">{{ t.search_btn }}</button>
+        </form>
+        <div class="hero__ex"><span>{{ t.examples }}</span>{% for ex in examples %}<button class="chip" type="button" data-q="{{ ex }}">{{ ex }}</button>{% endfor %}</div>
+        <p class="hero__alt">{{ t.alt }} <a href="{{ wa(t.wa_photo) }}" rel="noopener">{{ t.alt_link }}</a></p>
+      </div>
+      <figure class="hero__fig" data-tilt>
+        {% include "hero.svg.j2" %}
+        <figcaption class="hero__cap"><span>DEEP GROOVE BALL BEARING · RENDER | SECTION A–A</span><span>PC-01-A · NTS</span></figcaption>
+      </figure>
+    </div>
+    <dl class="hero__facts">
+      <div><dt>{{ t.tb_address }}</dt><dd>{{ t.address }}</dd></div>
+      <div><dt>{{ t.tb_hours }}</dt><dd>{{ t.hours }}</dd></div>
+      <div><dt>{{ t.tb_phone }}</dt><dd><a href="tel:{{ c.land1 }}" class="num">{{ c.land1_show }}</a></dd></div>
+      <div><dt>{{ t.tb_mobile_wa }}</dt><dd><a href="tel:{{ c.tel1 }}" class="num">{{ c.tel1_show }}</a></dd></div>
+    </dl>
+  </div>
+</section>
+
+<!-- 02 FAMILIES — technical sheet -->
+<section class="sheet" id="families" data-sheet="02" aria-labelledby="h-fam">
+  <div class="wrap">
+    {{ sheethead(2, t.s2) }}
+    <div class="intro"><h2 id="h-fam">{{ t.fam_h }}</h2><p>{{ t.fam_p }}</p></div>
+    <div class="fam">
+      {% for f in families %}
+      <a class="fam__item" href="#explorer" data-filter="{{ f.slug }}">
+        <span class="fam__no">{{ "%02d"|format(loop.index) }}</span>
+        <svg class="fam__glyph" aria-hidden="true"><use href="#{{ f.glyph }}"/></svg>
+        <span class="fam__name">{{ f[lang] }}</span>
+        <span class="fam__alt" lang="{{ other_lang }}">{{ f[other_lang] }}</span>
+        <span class="fam__def">{{ f['def_' + lang] }}</span>
+        <span class="fam__go">{% if f.count == 1 %}{{ t.fam_count_one }}{% elif f.count %}{{ t.fam_count.format(n=num(f.count)) }}{% else %}{{ t.fam_none }}{% endif %}<svg class="ico ico--dir" aria-hidden="true"><use href="#i-arrow"/></svg></span>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- 03 EXPLORER — technical catalogue -->
+<section class="sheet explorer" id="explorer" data-sheet="03" aria-labelledby="h-exp">
+  <div class="wrap">
+    {{ sheethead(3, t.s3) }}
+    <div class="intro"><h2 id="h-exp">{{ t.exp_h }}</h2><p>{{ t.exp_p }}</p></div>
+    <div class="explorer__top">
+      <form class="search" role="search" aria-label="{{ t.search_exp_l }}" data-search="explorer">
+        <label class="sr" for="q">{{ t.search_label }}</label>
+        <span class="search__ico"><svg class="ico"><use href="#i-search"/></svg></span>
+        <input id="q" name="q" type="search" dir="auto" autocomplete="off" spellcheck="false" placeholder="{{ t.search_ph }}">
+        <button type="submit">{{ t.search_btn }}</button>
+      </form>
+      <p class="explorer__count" id="count" aria-live="polite">{{ t.count.format(n=num(products|length), total=num(products|length)) }}</p>
+    </div>
+    <div class="ask" id="ask" hidden>
+      <div><p id="ask-t"></p><p id="ask-p">{{ t.ask_zero_p }}</p></div>
+      <div class="ask__acts"><a class="btn" id="ask-wa" href="#"><svg class="ico"><use href="#i-chat"/></svg>{{ t.ask_btn }}</a><a class="btn btn--line" href="#contact" id="ask-form">{{ t.ask_form }}</a></div>
+    </div>
+    <div class="rail explorer__rail" role="group" aria-label="{{ t.f_family }}">
+      <button type="button" data-facet="f" data-v="" aria-pressed="true"><svg aria-hidden="true"><use href="#g-ball"/></svg><b>{{ t.rail_all }}</b><i>{{ num(products|length) }}</i></button>
+      {% for f in families %}<button type="button" data-facet="f" data-v="{{ f.slug }}" aria-pressed="false" {% if not f.count %}disabled{% endif %} title="{{ f[lang] }}"><svg aria-hidden="true"><use href="#{{ f.glyph }}"/></svg><b>{{ f['short_' + lang] }}</b><i>{{ num(f.count) }}</i></button>{% endfor %}
+    </div>
+    <div class="filters">
+      <div class="seg" role="group" aria-label="{{ t.f_bore }}"><span>{{ t.f_bore_s }}</span>
+        <button type="button" data-facet="r" data-v="" aria-pressed="true">{{ t.all }}</button>
+        {% for v, label in t.bores %}<button type="button" data-facet="r" data-v="{{ v }}" aria-pressed="false" dir="ltr">{{ label }}</button>{% endfor %}
+      </div>
+      <button class="toggle" type="button" data-facet="v" data-v="1" aria-pressed="false">{{ t.f_verified }}</button>
+    </div>
+    <div class="explorer__body">
+      <div>
+        <table class="cat" id="results">
+          <caption>{{ t.cat_cap }}</caption>
+          <thead><tr><th scope="col"><span class="sr">{{ t.col_fam }}</span></th><th scope="col">{{ t.col_code }}</th><th scope="col">{{ t.col_fam }}</th><th scope="col" class="n">d</th><th scope="col" class="n">D</th><th scope="col" class="n">{{ t.col_bt }}</th><th scope="col">{{ t.col_status }}</th></tr></thead>
+          <tbody>
+          {% for p in products %}
+          <tr data-k="{{ p.key }}" data-f="{{ p.family }}" data-d="{{ p.bore }}" data-s="{{ p.status }}" data-slug="{{ p.slug }}">
+            <td class="cat__g"><svg aria-hidden="true"><use href="#{{ fam[p.family].glyph }}"/></svg></td>
+            <td><a class="cat__code" href="#p-{{ p.slug }}" data-slug="{{ p.slug }}"><bdi dir="ltr">{{ p.code }}</bdi></a></td>
+            <td class="cat__fam">{{ fam[p.family][lang] }}</td>
+            {% for k, v in p.cols %}<td class="n{% if not v %} x{% endif %}">{% if v %}{{ v }}{% if k not in ('d', 'D', 'B') %}<sub>{{ k }}</sub>{% endif %}{% else %}—{% endif %}</td>{% endfor %}
+            <td class="dims"><bdi dir="ltr">{{ p.dims_show }}</bdi> <span class="u">mm</span></td>
+            <td>{% if p.status == 'verified' %}<span class="badge badge--ok" title="{{ t.st_ok_long }}"><span>{{ t.st_ok }}</span></span>{% else %}<span class="badge badge--pending" title="{{ t.st_pending_long }}"><span>{{ t.st_pending }}</span></span>{% endif %}</td>
+          </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      <aside class="ws" id="ws" aria-labelledby="ws-title" tabindex="-1">
+        <div class="ws__empty" id="ws-empty">
+          <svg viewBox="0 0 64 48" aria-hidden="true"><use href="#g-ball"/></svg>
+          <b id="ws-title">{{ t.ws_empty_h }}</b>
+          <p>{{ t.ws_empty_p }}</p>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<!-- 04 ANATOMY — Exploded Assembly, navy field, confined to this section -->
+<section class="ea navy lazy-sec" id="anatomy" data-sheet="04" aria-labelledby="h-ana">
+  <div class="wrap ea__intro">
+    {{ sheethead(4, t.s4) }}
+    <div class="intro" style="margin-top:clamp(24px,4vw,40px);margin-bottom:0"><h2 id="h-ana">{{ t.ana_h }}</h2><p>{{ t.ana_p }}</p></div>
+  </div>
+  <div class="ea__track">
+    <div class="wrap ea__stage">
+      <ol class="steps6" aria-label="{{ t.steps6_label }}">
+        {% for n, label in t.steps6 %}<li style="--a:{{ steps_range[loop.index0][0] }};--b:{{ steps_range[loop.index0][1] }}"><span class="mono">{{ n }}</span> <span class="s6l">{{ label }}</span></li>{% endfor %}
+      </ol>
+      <figure class="ea__fig"><div class="dwg">
+        {% include "ea.svg.j2" %}
+        <figcaption><span>6xxx-2RS<span class="opt"> · EXPLODED ASSEMBLY · AXIAL</span></span><span>PC-04-A · NTS</span></figcaption>
+      </div></figure>
+      <div class="ea__panel">
+        <table class="bom">
+          <caption>{{ t.bom_cap }}</caption>
+          <thead><tr><th scope="col">#</th><th scope="col">{{ t.bom_part }}</th><th scope="col">{{ t.bom_rel }}</th></tr></thead>
+          <tbody>
+            {% for b in t.bom %}<tr style="--a:{{ bom_range[loop.index0][0] }};--b:{{ bom_range[loop.index0][1] }}" data-i="{{ loop.index }}"><td>{{ loop.index }}</td><td><b>{{ b[0] }}</b><span>{{ b[1] }}</span></td><td>{% if b[2] %}<a href="#explorer" data-filter="{{ b[2] }}">{{ fam[b[2]]['short_' + lang] }}</a>{% else %}<span class="muted">—</span>{% endif %}</td></tr>{% endfor %}
+          </tbody>
+        </table>
+        <div class="related"><span>{{ t.related_h }}</span><div>{% for fs in ['seal', 'ball', 'housing', 'lubricant'] %}<a href="#explorer" data-filter="{{ fs }}">{{ fam[fs][lang] }}</a>{% endfor %}</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="wrap ea__out"><p>{{ t.ana_out }}</p></div>
+</section>
+
+<!-- 05 ENGINEERING -->
+<section class="sheet lazy-sec" id="engineering" data-sheet="05" aria-labelledby="h-eng">
+  <div class="wrap">
+    {{ sheethead(5, t.s5) }}
+    <div class="intro"><h2 id="h-eng">{{ t.eng_h }}</h2><p>{{ t.eng_p }}</p></div>
+    <div class="eng">
+      <figure class="decoder">
+        <div class="decoder__head"><h3>{{ t.dec_h }}</h3><span class="badge badge--ok"><span>{{ t.dec_badge }}</span></span></div>
+        <div class="decoder__code" aria-label="6205-2RS"><span data-n="1">6</span><span data-n="2">2</span><span data-n="3">05</span><span class="sep">-</span><span data-n="4">2RS</span></div>
+        <ol>{% for d in t.dec %}<li><div><b>{{ d[0] }}</b><span>{{ d[1] }}</span></div></li>{% endfor %}</ol>
+        <figcaption class="note">{{ t.dec_note }}</figcaption>
+      </figure>
+      <div class="tools">
+        <article class="tool">
+          <div style="display:flex;justify-content:space-between;gap:8px;align-items:center"><h3>{{ t.l10_h }}</h3><span class="badge badge--pending"><span>{{ t.phase5 }}</span></span></div>
+          <p class="formula">L<sub>10</sub> = (C / P)<sup>p</sup></p>
+          <p>{{ t.l10_p }}</p>
+          <p class="note">{{ t.indicative }}</p>
+        </article>
+        <article class="tool">
+          <div style="display:flex;justify-content:space-between;gap:8px;align-items:center"><h3>{{ t.ref_h }}</h3><span class="badge badge--pending"><span>{{ t.phase5 }}</span></span></div>
+          <p>{{ t.ref_p }}</p>
+        </article>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 06 APPLICATIONS -->
+<section class="sheet lazy-sec" id="applications" data-sheet="06" aria-labelledby="h-app">
+  <div class="wrap">
+    {{ sheethead(6, t.s6) }}
+    <div class="intro"><h2 id="h-app">{{ t.app_h }}</h2><p>{{ t.app_p }}</p></div>
+    <ul class="apps" role="list">
+      {% for a in t.apps %}<li><b>{{ a[0] }}</b><span class="tags">{% for fslug in a[1] %}<a class="tag" href="#explorer" data-filter="{{ fslug }}">{{ fam[fslug][lang] }}</a>{% endfor %}</span></li>{% endfor %}
+    </ul>
+  </div>
+</section>
+
+<!-- 07 DOCUMENTS -->
+<section class="sheet lazy-sec" id="documents" data-sheet="07" aria-labelledby="h-doc">
+  <div class="wrap">
+    {{ sheethead(7, t.s7) }}
+    <div class="intro"><h2 id="h-doc">{{ t.doc_h }}</h2><p>{{ t.doc_p }}</p></div>
+    <div class="empty"><svg class="ico" aria-hidden="true"><use href="#i-doc"/></svg><b>{{ t.doc_empty_h }}</b><span>{{ t.doc_empty_p }}</span></div>
+  </div>
+</section>
+
+<!-- 08 PROCESS -->
+<section class="sheet lazy-sec" id="process" data-sheet="08" aria-labelledby="h-pro">
+  <div class="wrap">
+    {{ sheethead(8, t.s8) }}
+    <div class="intro"><h2 id="h-pro">{{ t.pro_h }}</h2><p>{{ t.pro_p }}</p></div>
+    <ol class="steps">
+      {% for s in t.steps %}<li><b>{{ s[0] }}</b><p>{{ s[1] }}</p></li>{% endfor %}
+    </ol>
+  </div>
+</section>
+
+<!-- 09 COMPANY -->
+<section class="sheet company lazy-sec" id="company" data-sheet="09" aria-labelledby="h-co">
+  <div class="wrap">
+    {{ sheethead(9, t.s9) }}
+    <div class="intro"><h2 id="h-co">{{ t.co_h }}</h2><p>{{ t.co_p }}</p></div>
+    <dl class="tblock">
+      <div><dt>{{ t.tb_company }}</dt><dd>{{ t.brand }} · <span lang="{{ other_lang }}">{{ t.brand_other }}</span></dd></div>
+      <div><dt>{{ t.tb_address }}</dt><dd>{{ t.address }}</dd></div>
+      <div><dt>{{ t.tb_hours }}</dt><dd>{{ t.hours }}</dd></div>
+      <div><dt>{{ t.tb_mobile_wa }}</dt><dd><a href="tel:{{ c.tel1 }}" class="num">{{ c.tel1_show }}</a></dd></div>
+      <div><dt>{{ t.tb_mobile }}</dt><dd><a href="tel:{{ c.tel2 }}" class="num">{{ c.tel2_show }}</a></dd></div>
+      <div><dt>{{ t.tb_phone }}</dt><dd><a href="tel:{{ c.land1 }}" class="num">{{ c.land1_show }}</a> · <a href="tel:{{ c.land2 }}" class="num">{{ c.land2_show }}</a></dd></div>
+    </dl>
+  </div>
+</section>
+
+<!-- 10 CONTACT — navy field -->
+<section class="sheet navy" id="contact" data-sheet="10" aria-labelledby="h-con">
+  <div class="wrap">
+    {{ sheethead(10, t.s10) }}
+    <div class="contact__grid">
+      <div class="contact__side">
+        <h2 id="h-con" style="font-size:var(--fs-5);line-height:var(--lh-d)">{{ t.con_h }}</h2>
+        <p class="muted" style="font-size:var(--fs-1)">{{ t.con_p }}</p>
+        <a class="wa-big" href="{{ wa(t.wa_hello) }}" rel="noopener"><svg class="ico" aria-hidden="true"><use href="#i-chat"/></svg><b>{{ t.wa_big }}</b><span>{{ c.tel1_show }}</span></a>
+        <div class="channels">
+          <a href="tel:{{ c.tel2 }}"><svg class="ico"><use href="#i-phone"/></svg><span><small>{{ t.tb_mobile }}</small><span class="num">{{ c.tel2_show }}</span></span><svg class="ico ico--dir"><use href="#i-chev"/></svg></a>
+          <a href="tel:{{ c.land1 }}"><svg class="ico"><use href="#i-phone"/></svg><span><small>{{ t.tb_phone }}</small><span class="num">{{ c.land1_show }}</span></span><svg class="ico ico--dir"><use href="#i-chev"/></svg></a>
+          <a href="tel:{{ c.land2 }}"><svg class="ico"><use href="#i-phone"/></svg><span><small>{{ t.tb_phone }}</small><span class="num">{{ c.land2_show }}</span></span><svg class="ico ico--dir"><use href="#i-chev"/></svg></a>
+          <div><svg class="ico"><use href="#i-pin"/></svg><span><small>{{ t.tb_address }}</small>{{ t.address }}</span><span></span></div>
+          <div><svg class="ico"><use href="#i-clock"/></svg><span><small>{{ t.tb_hours }}</small>{{ t.hours }}</span><span></span></div>
+        </div>
+        <div class="closing">{% include "final.svg.j2" %}<p>{{ t.closing }}<br>PC-10-A · ASSEMBLY</p></div>
+      </div>
+      <form class="contact__form form" id="inquiry" novalidate>
+        <div class="field"><label for="f-name">{{ t.f_name }}</label><input class="input" id="f-name" name="name" autocomplete="name" required></div>
+        <div class="field"><label for="f-phone">{{ t.f_phone }}</label><input class="input ltr" id="f-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" required placeholder="{{ t.f_phone_ph }}"></div>
+        <div class="field"><label for="f-code">{{ t.f_code }}</label><input class="input ltr" id="f-code" name="code" autocomplete="off" spellcheck="false" placeholder="6205-2RS"><span class="hint">{{ t.f_code_hint }}</span></div>
+        <div class="field"><label for="f-qty">{{ t.f_qty }}</label><input class="input ltr" id="f-qty" name="qty" inputmode="numeric"></div>
+        <div class="field field--full"><label for="f-msg">{{ t.f_msg }}</label><textarea class="input" id="f-msg" name="msg" rows="4"></textarea></div>
+        <div class="field--full" style="display:flex;gap:12px;flex-wrap:wrap;align-items:center"><button class="btn btn--lg" type="submit"><svg class="ico ico--dir"><use href="#i-send"/></svg>{{ t.f_submit }}</button></div>
+        <p class="form__note">{{ t.f_note }}</p>
+        <p class="form__ok" id="form-ok" hidden>{{ t.f_proto }}</p>
+      </form>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer class="foot navy">
+  <div class="wrap">
+    <div class="foot__grid">
+      <div><b>{{ t.brand }}</b><p>{{ t.foot_p }}</p></div>
+      <nav aria-label="{{ t.foot_nav }}">{% for id, label in t.nav %}<a href="#{{ id }}">{{ label }}</a>{% endfor %}</nav>
+      <div><a href="{{ other_file }}" hreflang="{{ other_lang }}" lang="{{ other_lang }}" data-lang-switch>{{ t.other_lang_long }}</a></div>
+    </div>
+    <p class="foot__fine">{{ t.foot_fine }}</p>
+  </div>
+</footer>
+
+<nav class="dock navy" aria-label="{{ t.dock_label }}">
+  <a href="tel:{{ c.tel1 }}"><svg class="ico"><use href="#i-phone"/></svg>{{ t.dock_call }}</a>
+  <a class="is-primary" href="{{ wa(t.wa_hello) }}" rel="noopener"><svg class="ico"><use href="#i-chat"/></svg>{{ t.dock_wa }}</a>
+  <a href="#explorer" data-focus-search><svg class="ico"><use href="#i-search"/></svg>{{ t.dock_search }}</a>
+</nav>
+<div class="scrim" id="scrim" hidden></div>
+<script type="application/json" id="i18n">{{ js_strings }}</script>
+<link rel="stylesheet" href="assets/nova-rest.css">
+</body>
+</html>

@@ -1,0 +1,63 @@
+# Nova local development stack (D25). Development and QA only.
+# First run: `node tools/dev-init.mjs` (creates .env), then `docker compose up -d --build`.
+# All ports are bound to 127.0.0.1.
+
+name: nova
+
+x-db-password: &db-password ${NOVA_DB_PASSWORD:?Missing .env - run "node tools/dev-init.mjs" first}
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: docker/php/Dockerfile
+    image: nova-dev-web:1
+    ports:
+      - "127.0.0.1:${NOVA_HTTP_PORT:-8080}:80"
+    volumes:
+      - ./:/var/www/nova
+      - composer-cache:/tmp/composer-cache
+    environment:
+      NOVA_ENV: development
+      NOVA_DB_HOST: db
+      NOVA_DB_NAME: nova
+      NOVA_DB_TEST_NAME: nova_test
+      NOVA_DB_USER: nova
+      NOVA_DB_PASSWORD: *db-password
+      NOVA_SMTP_HOST: mail
+      NOVA_SMTP_PORT: "1025"
+      COMPOSER_CACHE_DIR: /tmp/composer-cache
+      TZ: UTC
+    depends_on:
+      db:
+        condition: service_healthy
+      mail:
+        condition: service_started
+
+  db:
+    image: mariadb:11.4.13-noble
+    environment:
+      MARIADB_DATABASE: nova
+      MARIADB_USER: nova
+      MARIADB_PASSWORD: *db-password
+      MARIADB_ROOT_PASSWORD: ${NOVA_DB_ROOT_PASSWORD:?Missing .env - run "node tools/dev-init.mjs" first}
+      TZ: UTC
+    volumes:
+      - db-data:/var/lib/mysql
+      - ./docker/mariadb/initdb:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 30s
+
+  # Local mail catcher: the inquiry/notification mail goes here, never out.
+  mail:
+    image: axllent/mailpit:v1.31.4
+    ports:
+      - "127.0.0.1:${NOVA_MAIL_UI_PORT:-8025}:8025"
+
+volumes:
+  db-data:
+  composer-cache:

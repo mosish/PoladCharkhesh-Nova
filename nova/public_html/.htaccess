@@ -1,0 +1,14 @@
+# Nova public docroot: skeleton only. Host routing, the release switch,
+# caching, redirects and the full security-header set come from the
+# .htaccess template built in Phase 3 step 13 (05 §24).
+
+Options -Indexes -MultiViews
+
+<IfModule mod_headers.c>
+    Header always set X-Content-Type-Options "nosniff"
+</IfModule>
+
+# Never serve hidden files (.env, .git, .htaccess, …).
+<FilesMatch "^\.">
+    Require all denied
+</FilesMatch>

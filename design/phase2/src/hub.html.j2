@@ -1,0 +1,172 @@
+<title>Nova Phase 2 Review</title>
+<style>
+@font-face{font-family:"Vazirmatn";src:url(assets/fonts/vazirmatn-Regular-fa.woff2) format("woff2");font-weight:400;font-display:swap}
+@font-face{font-family:"Vazirmatn";src:url(assets/fonts/vazirmatn-Bold-fa.woff2) format("woff2");font-weight:700;font-display:swap}
+@font-face{font-family:"JetBrains Mono";src:url(assets/fonts/jbmono-400.woff2) format("woff2");font-weight:400;font-display:swap}
+@font-face{font-family:"JetBrains Mono";src:url(assets/fonts/jbmono-600.woff2) format("woff2");font-weight:600;font-display:swap}
+</style>
+<link rel="stylesheet" href="assets/nova.css">
+<style>
+body { padding-bottom: 0; }
+.hub { padding-block: 32px 96px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 56px; }
+.hub h1 { font-size: var(--fs-5); max-width: 22ch; }
+.hub h2 { font-size: var(--fs-3); margin-bottom: 12px; }
+.hub .lead { color: var(--ink-2); font-size: var(--fs-1); max-width: 64ch; margin-top: 12px; }
+.status { display: flex; flex-wrap: wrap; gap: 8px 16px; margin-top: 16px; font-size: var(--fs--1); color: var(--ink-2); }
+.cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--col-gap); }
+.card { display: grid; gap: 10px; align-content: start; border: 1.5px solid var(--line); background: var(--sheet); color: var(--ink); text-decoration: none; padding: 0 0 16px; }
+.card img { width: 100%; height: auto; aspect-ratio: 16 / 10; object-fit: cover; object-position: top; border-bottom: 1px solid var(--line-3); background: var(--paper-2); }
+.card b { font-size: var(--fs-1); padding-inline: 16px; }
+.card span { color: var(--ink-2); font-size: var(--fs--1); padding-inline: 16px; }
+.card:hover { background: var(--tint); }
+.try { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 var(--col-gap); counter-reset: t; list-style: none; padding: 0; margin: 0; border-top: 1.5px solid var(--line); }
+.try li { padding: 12px 0 12px 36px; position: relative; border-bottom: 1px solid var(--line-3); font-size: var(--fs--1); }
+.try li::before { counter-increment: t; content: counter(t); position: absolute; left: 0; top: 12px; width: 24px; height: 24px; border-radius: 50%; border: 1.2px solid var(--line); font-family: var(--mono); font-size: 12px; display: grid; place-items: center; color: var(--line); }
+.gal { display: grid; gap: 24px; }
+.gal__row { display: grid; grid-template-columns: repeat(var(--n, 2), minmax(0, 1fr)); gap: 16px; align-items: start; }
+.gal figure { margin: 0; border: 1px solid var(--line-3); background: var(--sheet); }
+.gal img { width: 100%; height: auto; display: block; }
+.gal figcaption { font-size: .75rem; color: var(--ink-3); padding: 6px 10px; border-top: 1px solid var(--line-3); }
+.tbl-wrap { overflow-x: auto; }
+.tbl { width: 100%; font-size: .875rem; border-top: 1.5px solid var(--line); }
+.tbl th, .tbl td { text-align: start; padding: 9px 12px 9px 0; border-bottom: 1px solid var(--line-3); vertical-align: top; }
+.tbl thead th { font-size: .75rem; color: var(--ink-3); font-weight: 400; }
+.tbl td.r { font-family: var(--mono); white-space: nowrap; }
+.pass { color: var(--ok); font-weight: 700; }
+.gate li { margin-bottom: 6px; }
+.two { display: grid; grid-template-columns: 1fr 1fr; gap: var(--col-gap); }
+@media (max-width: 899px) { .cards, .two, .try { grid-template-columns: minmax(0, 1fr); } .gal__row { --n: 2 !important; } }
+@media (max-width: 499px) { .gal__row { --n: 1 !important; } }
+</style>
+
+{% include "symbols.svg.j2" %}
+<header class="bar"><div class="wrap bar__in">
+  <a class="brand" href="#top"><svg aria-hidden="true"><use href="#logo"/></svg><span><b>PoladCharkhesh-Nova</b><small>Phase 2 · Gate 2 review</small></span></a>
+  <nav class="bar__nav" aria-label="Review sections"><a href="#open">Prototypes</a><a href="#screens">Key screens</a><a href="#perf">Performance</a><a href="#gate">Gate 2</a></nav>
+</div></header>
+
+<main class="wrap hub" id="top">
+  <section>
+    <div class="sheethead" aria-hidden="true"><span class="sheethead__no">P2</span><span class="sheethead__name">Design system and visual prototypes</span><span class="sheethead__ticks"></span><span class="sheethead__ref">GATE 2</span></div>
+    <h1>The Drawing Sheet system, built and measured</h1>
+    <p class="lead">Working browser prototypes of the public site in Persian (RTL) and English (LTR), built with the production approach: one template, structured content, static output, hand-written CSS and two small scripts. Nothing here is the production application or database; product data is a 13-item sample for layout only.</p>
+    <div class="status"><span class="badge badge--ok"><span>Gate 1 approved with C1–C4</span></span><span class="badge badge--pending"><span>Gate 2 awaiting your review</span></span><span>Checked in Chromium · axe-core: 0 WCAG 2.1 AA violations · no horizontal scroll at 390 px</span></div>
+  </section>
+
+  <section id="open">
+    <h2>Open the prototypes</h2>
+    <div class="cards">
+      <a class="card" href="fa.html"><img src="shots/fa-d-hero.webp" alt="Persian prototype, first screen" width="960" height="600"><b lang="fa">نسخه فارسی (RTL)</b><span>Persian-first page as it would ship on poladcharkhesh.ir</span></a>
+      <a class="card" href="en.html"><img src="shots/en-d-fam.webp" alt="English prototype, product families" width="960" height="600"><b>English version (LTR)</b><span>English-first page as it would ship on poladcharkhesh.com</span></a>
+      <a class="card" href="system.html"><img src="shots/sys.webp" alt="Design system reference" width="960" height="600"><b>Design system v0.2</b><span>Tokens, type, grid, drawing language, components, motion, RTL rules, performance ledger</span></a>
+    </div>
+  </section>
+
+  <section>
+    <h2>Ten things to try</h2>
+    <ol class="try">
+      <li>Type <span class="mono">6205</span> in the first search box and press Enter: the explorer opens the product directly.</li>
+      <li>On the Persian page, type <span lang="fa">۶۲۰۵</span> with Persian digits: it still matches.</li>
+      <li>Search a code that isn't listed, e.g. <span class="mono">6310</span>: the no-result panel carries it into WhatsApp.</li>
+      <li>Open <span class="mono">UCP 208</span> or <span class="mono">TC 25×42×7</span> to see the "technical data pending" treatment.</li>
+      <li>Switch the workspace tabs with the arrow keys; in Persian, Left moves forward.</li>
+      <li>Scroll slowly through "Inside a bearing": the bearing comes apart and the parts list follows.</li>
+      <li>Switch language from inside an open product: the other page opens on the same product.</li>
+      <li>Narrow the window below 900 px: action dock, menu, and the workspace as a bottom sheet.</li>
+      <li>Turn on reduced motion in your OS: the assembly shows exploded and static, nothing animates.</li>
+      <li>Switch your OS to dark mode: the Blueprint theme comes from the same tokens.</li>
+    </ol>
+  </section>
+
+  <section id="screens">
+    <h2>Key screens</h2>
+    <div class="gal">
+      <div class="gal__row" style="--n:2">
+        <figure><img src="shots/fa-d-exp.webp" alt="Persian explorer with the 6205 workspace docked on the left" loading="lazy" width="960" height="600"><figcaption>Explorer + workspace, Persian desktop (workspace docks at the inline end)</figcaption></figure>
+        <figure><img src="shots/en-d-exp-data.webp" alt="English explorer with the Data tab of 6205" loading="lazy" width="960" height="600"><figcaption>Data tab: sourced dimensions, pending load ratings</figcaption></figure>
+      </div>
+      <div class="gal__row" style="--n:2">
+        <figure><img src="shots/fa-d-ea.webp" alt="Exploded Assembly mid-scroll, Persian" loading="lazy" width="960" height="600"><figcaption>Exploded Assembly mid-scroll, with the parts list following</figcaption></figure>
+        <figure><img src="shots/en-d-eng.webp" alt="Engineering desk with the code decoder" loading="lazy" width="960" height="600"><figcaption>Engineering desk: code decoder (general rule) and Phase 5 tools</figcaption></figure>
+      </div>
+      <div class="gal__row" style="--n:2">
+        <figure><img src="shots/fa-d-con.webp" alt="Persian contact and inquiry sheet" loading="lazy" width="960" height="600"><figcaption>Sheet 10: inquiry form, verified contact channels</figcaption></figure>
+        <figure><img src="shots/en-d-dark-exp.webp" alt="English explorer in the Blueprint dark theme" loading="lazy" width="960" height="600"><figcaption>Blueprint theme (device dark mode)</figcaption></figure>
+      </div>
+      <div class="gal__row" style="--n:4">
+        <figure><img src="shots/fa-m-hero.webp" alt="Persian mobile first screen" loading="lazy" width="390" height="844"><figcaption>Mobile, Persian: first screen + action dock</figcaption></figure>
+        <figure><img src="shots/fa-m-sheet.webp" alt="Persian mobile product sheet" loading="lazy" width="390" height="844"><figcaption>Mobile: product as a bottom sheet</figcaption></figure>
+        <figure><img src="shots/en-m-exp.webp" alt="English mobile explorer" loading="lazy" width="390" height="844"><figcaption>Mobile, English: stacked result rows</figcaption></figure>
+        <figure><img src="shots/fa-m-ea.webp" alt="Persian mobile exploded assembly" loading="lazy" width="390" height="844"><figcaption>Mobile: Exploded Assembly</figcaption></figure>
+      </div>
+      <div class="gal__row" style="--n:2">
+        <figure><img src="shots/fa-d-rm-ea.webp" alt="Reduced-motion anatomy, static exploded" loading="lazy" width="960" height="600"><figcaption>Reduced motion: static exploded drawing, no sticky track</figcaption></figure>
+        <figure><img src="shots/fa-d-fallback-ea.webp" alt="Fallback driver without scroll timelines" loading="lazy" width="960" height="600"><figcaption>Fallback path (no scroll timelines, e.g. Firefox): same result via a 1 KB driver</figcaption></figure>
+      </div>
+    </div>
+  </section>
+
+  <section id="perf">
+    <h2>Performance, measured against the Gate 1 budget</h2>
+    <p class="lead">Chromium, 390 px phone viewport, cache disabled, 4× CPU slowdown, served with gzip like shared hosting. "Slow 4G" is 1.6 Mbps with 150 ms latency; "3G-class" is 400 kbps with 400 ms.</p>
+    <div class="tbl-wrap"><table class="tbl">
+      <thead><tr><th>Metric</th><th>Budget (Gate 1)</th>{% for r in perf %}<th>{{ r.lang }} · {{ r.profile.split(' (')[0] }}</th>{% endfor %}</tr></thead>
+      <tbody>
+        <tr><td>First-view transfer</td><td class="r">≤ 120 KB</td>{% for r in perf %}<td class="r pass">{{ '%.1f'|format(r.total/1024) }} KB</td>{% endfor %}</tr>
+        <tr><td>Requests</td><td class="r">≤ 8</td>{% for r in perf %}<td class="r pass">{{ r.requests }}</td>{% endfor %}</tr>
+        <tr><td>HTML (incl. inline SVG)</td><td class="r">≤ 30 KB</td>{% for r in perf %}<td class="r pass">{{ '%.1f'|format(r.html/1024) }} KB</td>{% endfor %}</tr>
+        <tr><td>CSS</td><td class="r">≤ 14 KB</td>{% for r in perf %}<td class="r pass">{{ '%.1f'|format(r.css/1024) }} KB</td>{% endfor %}</tr>
+        <tr><td>JS, initial</td><td class="r">≤ 12 KB</td>{% for r in perf %}<td class="r pass">{{ '%.1f'|format(r.js/1024) }} KB</td>{% endfor %}</tr>
+        <tr><td>Fonts</td><td class="r">≤ 60 KB</td>{% for r in perf %}<td class="r pass">{{ '%.1f'|format(r.fonts/1024) }} KB</td>{% endfor %}</tr>
+        <tr><td>LCP</td><td class="r">≤ 1.8 s</td>{% for r in perf %}<td class="r {{ 'pass' if r.lcp <= 1800 else '' }}">{{ '%.2f'|format(r.lcp/1000) }} s</td>{% endfor %}</tr>
+        <tr><td>CLS</td><td class="r">≤ 0.05</td>{% for r in perf %}<td class="r pass">{{ '%.3f'|format(r.cls) }}</td>{% endfor %}</tr>
+        <tr><td>Interaction latency (tap, type, tab)</td><td class="r">INP ≤ 150 ms</td>{% for r in perf %}<td class="r {{ 'pass' if r.inp <= 150 else '' }}">{{ r.inp }} ms</td>{% endfor %}</tr>
+        <tr><td>Loaded on first product open</td><td class="r">≤ 15 KB</td>{% for r in perf %}<td class="r pass">{{ r.onDemandKB }} KB</td>{% endfor %}</tr>
+      </tbody></table></div>
+    <p class="lead" style="font-size:var(--fs--1)">Lab numbers from one browser engine; field numbers from real phones in Iran come after deployment. Hover-only events (pointerover) are excluded from interaction latency, as they are from INP. Per-decision costs are in the <a href="system.html#perf">performance ledger</a>.</p>
+  </section>
+
+  <section id="gate">
+    <h2>Gate 2 checklist</h2>
+    <div class="tbl-wrap"><table class="tbl gate">
+      <thead><tr><th>#</th><th>Item</th><th>What's proposed</th><th>Where to see it</th></tr></thead>
+      <tbody>
+        <tr><td class="r">G2-1</td><td>Visual language</td><td>Drawing Sheet: paper and navy ink, drafting conventions, ten numbered sheets, one blueprint band for Anatomy</td><td><a href="fa.html">fa</a> · <a href="en.html">en</a></td></tr>
+        <tr><td class="r">G2-2</td><td>Typography</td><td>Vazirmatn 400/700 + JetBrains Mono 400/600, subset; type scale; Latin digits for codes, Persian digits for prose and phones; Solar Hijri dates on fa</td><td><a href="system.html#type">system#type</a></td></tr>
+        <tr><td class="r">G2-3</td><td>Colour and surfaces</td><td>Whiteprint default, Blueprint dark from the device setting, measured contrast</td><td><a href="system.html#color">system#color</a></td></tr>
+        <tr><td class="r">G2-4</td><td>Spacing, grid, breakpoints</td><td>4 px base; 12 columns, 1240 px; breakpoints 1100 / 900 / 700 / 600</td><td><a href="system.html#space">system#space</a></td></tr>
+        <tr><td class="r">G2-5</td><td>Technical drawing language</td><td>Line types, sections, dimensions, balloons, title blocks; 10 family glyphs; drawings generated from dimensions</td><td><a href="system.html#drawing">system#drawing</a></td></tr>
+        <tr><td class="r">G2-6</td><td>Product Explorer</td><td>Static list + family / bore / verified filters, match highlighting, exact-match opens, no-result to WhatsApp</td><td><a href="en.html#explorer">en#explorer</a></td></tr>
+        <tr><td class="r">G2-7</td><td>Product Workspace</td><td>Docked panel (desktop) / bottom sheet (mobile); Overview · Drawing · Data · Documents; sticky WhatsApp / Call / Inquiry</td><td><a href="fa.html#p-6205">fa#6205</a></td></tr>
+        <tr><td class="r">G2-8</td><td>RTL / LTR rules</td><td>Mirror layout, never drawings or codes; logical properties; isolation; search normalisation</td><td><a href="system.html#bidi">system#bidi</a></td></tr>
+        <tr><td class="r">G2-9</td><td>Drawing Set narrative</td><td>Sheet heads, scroll-driven draw-on, raceway on the process steps</td><td>Both pages</td></tr>
+        <tr><td class="r">G2-10</td><td>Exploded Assembly</td><td>One sticky stage (260 vh desktop, 200 vh mobile), 6-part bill of materials linked to families</td><td><a href="fa.html#anatomy">fa#anatomy</a></td></tr>
+        <tr><td class="r">G2-11</td><td>Reduced motion</td><td>No animation, no sticky track, static exploded drawing</td><td>OS setting</td></tr>
+        <tr><td class="r">G2-12</td><td>Performance</td><td>All Gate 1 budgets met in lab measurements (table above)</td><td><a href="#perf">#perf</a></td></tr>
+      </tbody></table></div>
+  </section>
+
+  <section>
+    <h2>Decisions that need your input</h2>
+    <div class="tbl-wrap"><table class="tbl">
+      <thead><tr><th>#</th><th>Question</th><th>Recommendation</th></tr></thead>
+      <tbody>
+        <tr><td class="r">Q1</td><td>Ship the Blueprint dark theme in v1?</td><td>Yes, automatic from the device setting, no toggle. Cost ≈ 0.6 KB CSS plus one extra QA pass.</td></tr>
+        <tr><td class="r">Q2</td><td>Phone numbers on Persian pages in Persian or Latin digits?</td><td>Persian digits on screen, Latin digits inside <code>tel:</code> and WhatsApp links (as built).</td></tr>
+        <tr><td class="r">Q3</td><td>Logo</td><td>The prototype uses a placeholder concentric mark. Please supply the real logo as SVG; it replaces one <code>&lt;symbol&gt;</code>.</td></tr>
+        <tr><td class="r">Q4</td><td>Admin Control Center visuals</td><td>Not in your Phase 2 focus list, so not drawn here. Proposal: the admin reuses these tokens in a plain utilitarian layout; wireframes come at the start of Phase 4b.</td></tr>
+        <tr><td class="r">Q5</td><td>Copy</td><td>All prototype text is my draft for layout. Final Persian and English copy becomes CMS content; please mark anything you want changed.</td></tr>
+      </tbody></table></div>
+  </section>
+
+  <section class="two">
+    <div>
+      <h2>Not done in Phase 2</h2>
+      <p class="lead" style="font-size:var(--fs--1)">No application, database, admin, Publish Engine or real inquiry handling; the form only validates. Engineering tools are previews (Phase 5). Product data is a 13-item sample whose boundary dimensions were checked against public distributor listings; load ratings are deliberately empty. Superdesign and frontend-design were not available in this session, so exploration was done directly in code; testing used Chromium only, with Firefox's fallback path simulated.</p>
+    </div>
+    <div>
+      <h2>Files</h2>
+      <p class="lead" style="font-size:var(--fs--1)">Prototype source (template, strings, sample catalogue, build script) and the built pages are saved in your project folder under <span class="mono">design/phase2/</span>. The CSS file is the starting point for the production stylesheet.</p>
+    </div>
+  </section>
+</main>

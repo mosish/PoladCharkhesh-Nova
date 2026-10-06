@@ -1,0 +1,331 @@
+<!doctype html>
+<html lang="en" dir="ltr" class="no-js">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Nova Design System</title>
+<meta name="robots" content="noindex">
+<style>
+@font-face{font-family:"Vazirmatn";src:url(assets/fonts/vazirmatn-Regular-fa.woff2) format("woff2");font-weight:400;font-display:swap}
+@font-face{font-family:"Vazirmatn";src:url(assets/fonts/vazirmatn-Bold-fa.woff2) format("woff2");font-weight:700;font-display:swap}
+@font-face{font-family:"Vazirmatn";src:url(assets/fonts/vazirmatn-Regular-latin.woff2) format("woff2");font-weight:400;font-display:swap;unicode-range:U+0041-005A,U+0061-007A}
+@font-face{font-family:"Vazirmatn";src:url(assets/fonts/vazirmatn-Bold-latin.woff2) format("woff2");font-weight:700;font-display:swap;unicode-range:U+0041-005A,U+0061-007A}
+@font-face{font-family:"JetBrains Mono";src:url(assets/fonts/jbmono-400.woff2) format("woff2");font-weight:400;font-display:swap}
+@font-face{font-family:"JetBrains Mono";src:url(assets/fonts/jbmono-600.woff2) format("woff2");font-weight:600;font-display:swap}
+</style>
+<link rel="stylesheet" href="assets/nova.css">
+<style>
+.ds { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 48px; align-items: start; padding-block: 32px 96px; }
+.ds-nav { position: sticky; top: calc(var(--bar-h) + 16px); display: grid; gap: 2px; font-size: .875rem; }
+.ds-nav a { color: var(--ink-2); text-decoration: none; padding: 4px 0; border-inline-start: 2px solid transparent; padding-inline-start: 10px; }
+.ds-nav a:hover { color: var(--ink); border-color: var(--line); }
+.ds-nav b { font-size: .6875rem; color: var(--ink-3); font-family: var(--mono); letter-spacing: .06em; text-transform: uppercase; margin: 12px 0 4px; }
+.ds main > section { padding-block: 40px; border-top: 1.5px solid var(--line); }
+.ds main > section:first-child { border-top: 0; padding-top: 0; }
+.ds h2 { font-size: var(--fs-3); margin-bottom: 8px; }
+.ds h3 { font-size: var(--fs-1); margin: 28px 0 10px; }
+.ds p.lead { color: var(--ink-2); max-width: 70ch; margin-bottom: 16px; }
+.ds-rules { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 0; border-top: 1px solid var(--line-3); border-inline-start: 1px solid var(--line-3); }
+.ds-rules > div { padding: 16px; border-inline-end: 1px solid var(--line-3); border-bottom: 1px solid var(--line-3); }
+.ds-rules b { display: block; margin-bottom: 4px; }
+.ds-rules span { color: var(--ink-2); font-size: .9375rem; }
+.sw { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
+.sw div { border: 1px solid var(--line-3); background: var(--sheet); font-size: .75rem; }
+.sw i { display: block; height: 52px; border-bottom: 1px solid var(--line-3); }
+.sw span { display: block; padding: 6px 8px; line-height: 1.4; }
+.sw code { color: var(--ink-3); }
+.tbl-wrap { overflow-x: auto; }
+.tbl { width: 100%; font-size: .875rem; border-top: 1.5px solid var(--line); }
+.tbl th, .tbl td { text-align: start; padding: 8px 10px 8px 0; border-bottom: 1px solid var(--line-3); vertical-align: top; }
+.tbl thead th { font-size: .75rem; color: var(--ink-3); font-weight: 400; }
+.tbl td.r { text-align: end; font-family: var(--mono); white-space: nowrap; }
+.ok { color: var(--ok); } .warn { color: var(--pending); }
+.spec-row { display: grid; grid-template-columns: 140px minmax(0, 1fr); gap: 16px; align-items: baseline; padding: 10px 0; border-bottom: 1px solid var(--line-3); }
+.spec-row small { font-family: var(--mono); color: var(--ink-3); font-size: .6875rem; }
+.pair { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.pair > * { min-width: 0; }
+.pane { border: 1px dashed var(--line-2); padding: 16px; background: var(--paper); }
+.pane > small { display: block; font-family: var(--mono); font-size: .6875rem; color: var(--ink-3); margin-bottom: 10px; }
+.stack { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.space { display: grid; gap: 6px; }
+.space div { display: grid; grid-template-columns: 70px 1fr; align-items: center; gap: 12px; font-family: var(--mono); font-size: .75rem; color: var(--ink-3); }
+.space i { display: block; height: 10px; background: var(--tint-2); }
+.gridshow { position: relative; height: 120px; display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--col-gap); }
+.gridshow i { background: color-mix(in srgb, var(--tint-2) 45%, transparent); border-inline: 1px solid var(--line-2); }
+.glyphs { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); border-top: 1px solid var(--line-3); border-inline-start: 1px solid var(--line-3); }
+.glyphs div { padding: 14px; border-inline-end: 1px solid var(--line-3); border-bottom: 1px solid var(--line-3); font-size: .75rem; color: var(--ink-2); display: grid; gap: 6px; justify-items: start; }
+.glyphs svg { width: 96px; height: 72px; color: var(--line); }
+.mini-ws { border: 1.5px solid var(--line); background: var(--sheet); }
+.icons { display: flex; flex-wrap: wrap; gap: 16px; }
+.icons span { display: grid; justify-items: center; gap: 4px; font-family: var(--mono); font-size: .625rem; color: var(--ink-3); width: 64px; }
+.icons svg { width: 24px; height: 24px; color: var(--ink); }
+@media (max-width: 899px) { .ds { grid-template-columns: minmax(0, 1fr); } .ds-nav { display: none; } .pair { grid-template-columns: 1fr; } .glyphs { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+</style>
+</head>
+<body>
+{% include "symbols.svg.j2" %}
+<aside class="proto" aria-label="Prototype"><div class="wrap"><span>Phase 2 V2 · Design system v0.3 · for Gate 2 review</span><a href="./">Review hub</a></div></aside>
+<header class="bar navy"><div class="wrap bar__in">
+  <a class="brand" href="./"><svg aria-hidden="true"><use href="#logo"/></svg><span><b>Nova design system</b><small>Polad Charkhesh · v0.3</small></span></a>
+  <nav class="bar__nav" aria-label="Prototypes"><a href="fa.html" lang="fa">نسخه فارسی</a><a href="en.html">English prototype</a><a href="admin.html">Admin wireframes</a></nav>
+</div></header>
+<div class="wrap ds">
+<nav class="ds-nav" aria-label="Design system sections">
+  <b>Foundations</b><a href="#principles">Principles</a><a href="#color">Colour and surfaces</a><a href="#type">Typography</a><a href="#space">Spacing and grid</a><a href="#shape">Lines, shape, elevation</a>
+  <b>Language</b><a href="#drawing">Technical drawing</a><a href="#bidi">Persian RTL / English LTR</a>
+  <b>Components</b><a href="#controls">Controls</a><a href="#data">Data display</a><a href="#explorer">Explorer and workspace</a><a href="#forms">Forms and contact</a>
+  <b>Behaviour</b><a href="#motion">Motion and reduced motion</a><a href="#perf">Performance ledger</a>
+</nav>
+<main>
+
+<section id="principles">
+  <h2>Principles</h2>
+  <p class="lead">The website is a numbered set of engineering drawings. Every visual rule below exists either because engineers already read it that way, or because it keeps the page fast on a weak connection.</p>
+  <div class="ds-rules">
+    <div><b>Drawing, not decoration</b><span>Graphics follow drafting conventions (line types, sections, dimensions, balloons, title blocks) and are generated from product data wherever possible.</span></div>
+    <div><b>Paper for reading, navy for moments</b><span>Data and reading happen on paper sheets. Deep navy fields mark the moments of the story: find (hero), understand (Anatomy), talk (contact) and the footer that closes it.</span></div>
+    <div><b>Every colour has one job</b><span>Brand navy is ink and action on paper; icy blue is interaction and focus; pale ice is the action on navy; steel is only for rendering metal; brass is the one warm accent and marks "the part in focus"; amber is only for pending data.</span></div>
+    <div><b>Metal only where it is the product</b><span>Restrained metallic gradients appear only on bearing renderings (hero, assembled state, closing mark). UI chrome has no glass, glow, blur or shadow.</span></div>
+    <div><b>Codes are sacred</b><span>Part codes, dimensions, units, drawing references and phone numbers use Latin digits, isolated left-to-right, in both languages. Persian prose and ordinary counts use Persian digits.</span></div>
+    <div><b>Honest data, weight as input</b><span>Verified and pending are always visible. Every visual decision has a byte and CPU cost, listed in the performance ledger at the end of this page.</span></div>
+  </div>
+</section>
+
+<section id="color">
+  <h2>Colour and surfaces</h2>
+  <p class="lead">Fixed brand and material constants, then one semantic token set in three contexts: Light (default), Dark (follows the device setting, no toggle) and the Navy field (<code>.navy</code>: hero, Anatomy, contact and footer, in both themes). Values below are read from <code>nova.css</code>, so this page cannot drift from the code.</p>
+  <h3>Brand and material constants</h3>
+  <div class="sw">{% for k, v, role in constants %}<div><i style="background:{{ v }}"></i><span><b>--{{ k }}</b><br><code>{{ v }}</code><br>{{ role }}</span></div>{% endfor %}</div>
+  {% for name, pal in palettes %}
+  <h3>{{ name }}</h3>
+  <div class="sw">{% for k, v, role in pal %}<div><i style="background:{{ v }}"></i><span><b>--{{ k }}</b><br><code>{{ v }}</code><br>{{ role }}</span></div>{% endfor %}</div>
+  {% endfor %}
+  <h3>Contrast, measured (WCAG 2.1)</h3>
+  <div class="tbl-wrap"><table class="tbl"><thead><tr><th>Pair</th><th>Use</th><th class="r">Light</th><th class="r">Dark</th><th class="r">Navy field</th><th>Needs</th></tr></thead><tbody>
+  {% for row in contrast %}<tr><td><code>{{ row[0] }}</code></td><td>{{ row[1] }}</td>{% for v in row[2] %}<td class="r {{ 'ok' if v >= row[3] else 'warn' }}">{{ '%.1f'|format(v) }}:1</td>{% endfor %}<td>{{ row[3] }}:1</td></tr>{% endfor %}
+  </tbody></table></div>
+  <h3>Surface hierarchy</h3>
+  <div class="spec-row"><small>--paper</small><span>The page. Sections sit directly on it, separated by rules, not by boxes.</span></div>
+  <div class="spec-row"><small>--paper-2</small><span>Recessed: hover rows, the drawing frame inside the band.</span></div>
+  <div class="spec-row"><small>--sheet</small><span>Raised: inputs, the product workspace, title blocks, drawing frames. Always with a border; never with a shadow.</span></div>
+  <div class="spec-row"><small>.navy</small><span>A whole section re-tokened to deep navy: paper becomes navy, ink becomes near-white, the action becomes pale ice with navy text, the accent becomes light brass. Components inside need no special cases.</span></div>
+  <div class="spec-row"><small>metal</small><span>Steel gradients (<code>--steel-*</code>) and a brass cage are allowed only inside bearing renderings. Never on buttons, cards or backgrounds.</span></div>
+</section>
+
+<section id="type">
+  <h2>Typography</h2>
+  <p class="lead">Two families, two weights each, subset per language and self-hosted. Persian pages load {{ fonts.fa_total }} KB of fonts; English pages {{ fonts.en_total }} KB.</p>
+  <div class="tbl-wrap"><table class="tbl"><thead><tr><th>File</th><th>Coverage</th><th>Used on</th><th class="r">Size</th></tr></thead><tbody>
+  {% for f in fonts.files %}<tr><td><code>{{ f[0] }}</code></td><td>{{ f[1] }}</td><td>{{ f[2] }}</td><td class="r">{{ f[3] }} KB</td></tr>{% endfor %}
+  <tr><td colspan="3" class="muted">For comparison: Vazirmatn full static Regular 50.7 KB; full variable font 111 KB; variable subset 47.7 KB; JetBrains Mono Latin with ligatures 21.2 KB.</td><td></td></tr>
+  </tbody></table></div>
+  <h3>Scale (ratio ≈ 1.25, display sizes fluid)</h3>
+  {% for tok, px, fa_s, en_s, w in scale %}
+  <div class="spec-row"><small>--{{ tok }} · {{ px }}</small><div class="pair"><span lang="fa" dir="rtl" style="font-size:var(--{{ tok }});font-weight:{{ w }};line-height:var(--lh-h)">{{ fa_s }}</span><span lang="en" style="font-size:var(--{{ tok }});font-weight:{{ w }};line-height:var(--lh-h)">{{ en_s }}</span></div></div>
+  {% endfor %}
+  <div class="spec-row"><small>mono · codes</small><div class="pair"><span class="mono" style="font-size:1.875rem;font-weight:600">22220 E</span><span class="mono" style="font-size:1rem">25 × 52 × 15 mm · Ø180 · n lim</span></div></div>
+  <h3>Rules</h3>
+  <div class="ds-rules">
+    <div><b>Line height</b><span>Persian body 1.85, headings 1.45 (tall ascenders and descenders). English body 1.6, headings 1.15.</span></div>
+    <div><b>No letter-spacing on Persian</b><span>Tracking breaks cursive joins. Uppercase and tracking are for Latin labels and mono captions only.</span></div>
+    <div><b>Digits</b><span>Latin in both languages for codes, dimensions, units, drawing references and phone numbers (<span class="mono">6205-2RS · 25 mm · PC-04-A · 0912 719 5313</span>). Persian prose and ordinary counts use Persian digits (<span lang="fa">۱۳ محصول</span>).</span></div>
+    <div><b>Dates</b><span>Persian pages show the Solar Hijri calendar (<span lang="fa">۱۲ مهر ۱۴۰۵</span>) via <code>Intl</code> in the browser or PHP <code>intl</code> at publish; English pages show 4 Oct 2026.</span></div>
+    <div><b>Fallbacks and preload</b><span>Segoe UI, Tahoma and system fonts behind Vazirmatn; <code>font-display: swap</code>. The Bold weight is preloaded because the hero headline is the LCP element.</span></div>
+    <div><b>Minimum size</b><span>No UI label below 13 px (<code>--fs--2</code>). Running text stays within 50–70 characters; headings use <code>text-wrap: balance</code>.</span></div>
+  </div>
+</section>
+
+<section id="space">
+  <h2>Spacing and grid</h2>
+  <p class="lead">A 4 px base. Layout spacing comes from grid gaps, never from margins on individual blocks.</p>
+  <div class="space">{% for k, v in spacing %}<div><span>--{{ k }} {{ v }}</span><i style="width:{{ v }}"></i></div>{% endfor %}</div>
+  <h3>Grid</h3>
+  <p class="lead">12 columns, max width 1280 px, gutter clamp(16 px, 4vw, 48 px), column gap clamp(16 px, 2.4vw, 32 px). The hero splits 6 / 6. The overlay below is the live grid at this window size.</p>
+  <div class="gridshow" aria-hidden="true">{% for i in range(12) %}<i></i>{% endfor %}</div>
+  <h3>Breakpoints (where layout actually changes)</h3>
+  <div class="tbl-wrap"><table class="tbl"><thead><tr><th>Width</th><th>Change</th></tr></thead><tbody>
+    <tr><td class="mono">≥ 1100</td><td>Catalogue table + 440 px docked workspace; families in 5 columns; hero two columns.</td></tr>
+    <tr><td class="mono">900–1099</td><td>Workspace narrows to 320–380 px; families in 2 columns.</td></tr>
+    <tr><td class="mono">&lt; 900</td><td>Mobile mode: header menu, bottom action dock (Call · WhatsApp · Search), hero stacks with the search inside the first viewport, workspace becomes a bottom sheet, Anatomy stacks with a numbers-only stage strip.</td></tr>
+    <tr><td class="mono">&lt; 700</td><td>Catalogue rows become two-line records (code + status / family / d × D × B); the ask panel stacks.</td></tr>
+    <tr><td class="mono">&lt; 600</td><td>Sheet heads drop the tick ruler and reference; forms go single-column.</td></tr>
+  </tbody></table></div>
+</section>
+
+<section id="shape">
+  <h2>Lines, shape and elevation</h2>
+  <div class="ds-rules">
+    <div><b>Radius 2 px</b><span>Drawing sheets have square corners. The only round things are bearings, balloons and status dots.</span></div>
+    <div><b>1.5 px structural</b><span>Section rules, sheet heads, inputs, the workspace frame, the action dock.</span></div>
+    <div><b>1 px dividers</b><span>Rows, cells, title-block partitions.</span></div>
+    <div><b>Dashed means "not final"</b><span>Pending data, empty states, example chips. Never used for decoration.</span></div>
+    <div><b>No shadows, blur or glow</b><span>Elevation comes from surface colour plus a border; gradients exist only as metal inside bearing renderings. This also keeps painting cheap on low-end phones.</span></div>
+    <div><b>Focus</b><span>2 px signal-blue outline, 2 px offset, on every interactive element.</span></div>
+  </div>
+</section>
+
+<section id="drawing">
+  <h2>Technical drawing language</h2>
+  <p class="lead">Simplified ISO 128-style conventions. Drawings are never mirrored on Persian pages and always read left to right.</p>
+  <figure class="dwg" style="margin:0">
+    <svg class="dwg-svg draw" viewBox="0 0 760 250" role="img" aria-label="Line conventions">
+      <g font-family="JetBrains Mono, monospace" font-size="11" style="fill:var(--ink-3)">
+        <text x="20" y="34">OBJECT 1.5</text><path class="ln-obj" data-d pathLength="1" d="M130 30H330"/>
+        <text x="20" y="64">THIN 0.9</text><path class="ln-thin" d="M130 60H330"/>
+        <text x="20" y="94">HIDDEN</text><path class="ln-hid" d="M130 90H330"/>
+        <text x="20" y="124">CENTRE</text><path class="ln-ctr" d="M130 120H330"/>
+        <text x="20" y="164">DIMENSION</text><path class="ln-dim" d="M150 140V178M310 140V178"/><path class="ln-dim" d="M150 170H310" marker-start="url(#ar)" marker-end="url(#ar)"/><text class="dim-t" x="230" y="164" text-anchor="middle">Ø52</text>
+        <text x="20" y="214">SECTION</text><rect class="fill-sec" x="150" y="196" width="160" height="30"/>
+        <text x="400" y="34">LEADER + BALLOON</text>
+      </g>
+      <g class="balloon"><path class="ln-thin" d="M470 120L520 70"/><circle cx="532" cy="58" r="13"/><text x="532" y="62.5">3</text></g>
+      <circle class="fill-paper" cx="470" cy="128" r="14"/>
+      <g font-family="JetBrains Mono, monospace" font-size="11" style="fill:var(--ink-3)"><text x="600" y="34">STATUS</text></g>
+      <rect x="600" y="50" width="130" height="26" style="fill:var(--ok-bg);stroke:var(--ok)"/><text x="614" y="67" font-size="12" style="fill:var(--ok)">■ Verified</text>
+      <rect x="600" y="88" width="130" height="26" style="fill:var(--pending-bg);stroke:var(--pending-line);stroke-dasharray:4 3"/><text x="614" y="105" font-size="12" style="fill:var(--pending)">◌ Pending</text>
+    </svg>
+    <figcaption><span>LINE TYPES · SECTION HATCH · BALLOONS</span><span>NTS</span></figcaption>
+  </figure>
+  <h3>Sheet head and title block</h3>
+  {{ sheethead(3, 'Product explorer') }}
+  <dl class="tblock" style="--cols:4"><div><dt>Company</dt><dd>Polad Charkhesh</dd></div><div><dt>Address</dt><dd>No. 433, Dardasht St, Narmak, Tehran</dd></div><div><dt>Working hours</dt><dd>08:00–16:00</dd></div><div><dt>Landline</dt><dd class="num">021 7720 9117</dd></div></dl>
+  <h3>Family glyphs (schematic half-sections, one <code>&lt;symbol&gt;</code> each, reused by <code>&lt;use&gt;</code>)</h3>
+  <div class="glyphs">{% for f in families %}<div><svg aria-hidden="true"><use href="#{{ f.glyph }}"/></svg><b>{{ f.en }}</b><span lang="fa">{{ f.fa }}</span></div>{% endfor %}</div>
+  <h3>Generated product drawings</h3>
+  <p class="lead">Each product's section drawing is built from its boundary dimensions (d, D, B/T/C/H) with the family's template, so a drawing exists even before any photo. Open any product in the prototypes to see one. In production the Publish Engine renders the SVG into the product's HTML.</p>
+</section>
+
+<section id="bidi">
+  <h2>Persian RTL / English LTR</h2>
+  <div class="tbl-wrap"><table class="tbl"><thead><tr><th>Mirror</th><th>Never mirror</th></tr></thead><tbody>
+    <tr><td>Page layout, grid order, navigation, the explorer (filters start, workspace end), the Exploded Assembly layout, sticky footers, directional icons (arrows, chevrons, send).</td><td>Technical drawings, dimension text, part codes, numbers inside codes, units, phone numbers (isolated LTR), the logo mark, the decoder breakdown order.</td></tr>
+  </tbody></table></div>
+  <h3>Mechanics</h3>
+  <div class="ds-rules">
+    <div><b>Logical properties only</b><span><code>margin-inline</code>, <code>inset-inline-start</code>, <code>border-inline-end</code>, <code>text-align: start</code>; no left/right in the stylesheet except inside drawings.</span></div>
+    <div><b>Isolate, don't flip blocks</b><span>Codes sit in <code>&lt;bdi dir="ltr"&gt;</code> inside an RTL block, so they keep their order but align to the start of the Persian line.</span></div>
+    <div><b>Inputs</b><span>Search uses <code>dir="auto"</code>: a typed code runs LTR, typed Persian runs RTL; the Persian placeholder is forced RTL and isolates its example code.</span></div>
+    <div><b>Search normalisation</b><span>Persian and Arabic digits, Arabic ي/ك, spaces, hyphens, slashes and × are normalised, so typing ۶۲۰۵ (Persian digits) finds 6205.</span></div>
+    <div><b>Keyboard</b><span>Arrow keys in the workspace tabs follow reading direction (Left = next in Persian).</span></div>
+    <div><b>Second script on each page</b><span>English pages load a Persian-only subset (11.6 KB) so the brand name and family names in Persian shape correctly.</span></div>
+  </div>
+  <h3>Same component, both directions</h3>
+  <div class="pair">
+    {% for L in ['fa', 'en'] %}
+    <div class="pane" lang="{{ L }}" dir="{{ 'rtl' if L == 'fa' else 'ltr' }}"><small>{{ L|upper }} · {{ 'RTL' if L == 'fa' else 'LTR' }}</small>
+      <table class="cat"><thead><tr><th scope="col"><span class="sr">{{ 'خانواده' if L == 'fa' else 'Family' }}</span></th><th scope="col">{{ 'کد' if L == 'fa' else 'Code' }}</th><th scope="col">{{ 'خانواده' if L == 'fa' else 'Family' }}</th><th scope="col" class="n">d</th><th scope="col" class="n">D</th><th scope="col" class="n">B / T</th><th scope="col">{{ 'وضعیت' if L == 'fa' else 'Status' }}</th></tr></thead><tbody>
+        {% for p in sample_rows %}<tr><td class="cat__g"><svg aria-hidden="true"><use href="#{{ fam[p.family].glyph }}"/></svg></td><td><a class="cat__code" href="{{ L }}.html#p-{{ p.slug }}"><bdi dir="ltr">{{ p.code }}</bdi></a></td><td class="cat__fam">{{ fam[p.family]['short_' + L] }}</td>{% for k, v in p.cols %}<td class="n{% if not v %} x{% endif %}">{% if v %}{{ v }}{% if k not in ('d', 'D', 'B') %}<sub>{{ k }}</sub>{% endif %}{% else %}—{% endif %}</td>{% endfor %}<td class="dims"><bdi dir="ltr">{{ p.dims_show }}</bdi> <span class="u">mm</span></td><td>{% if p.status == 'verified' %}<span class="badge badge--ok"><span>{{ 'تأییدشده' if L == 'fa' else 'Verified' }}</span></span>{% else %}<span class="badge badge--pending"><span>{{ 'در انتظار تأیید' if L == 'fa' else 'Pending' }}</span></span>{% endif %}</td></tr>{% endfor %}
+      </tbody></table>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+
+<section id="controls">
+  <h2>Controls</h2>
+  <h3>Buttons</h3>
+  <div class="stack"><a class="btn" href="#controls"><svg class="ico"><use href="#i-chat"/></svg>Check availability on WhatsApp</a><a class="btn btn--line" href="#controls">Inquiry form</a><a class="btn btn--ghost" href="#controls">Ghost</a><a class="btn btn--line btn--icon" href="#controls" aria-label="Call"><svg class="ico"><use href="#i-phone"/></svg></a><a class="btn btn--sm" href="#controls">Small</a><a class="btn btn--lg" href="#controls">Large</a><button class="btn" type="button" disabled>Disabled</button></div>
+  <p class="lead" style="margin-top:12px">One action colour across the site, never a brand green, even for WhatsApp: brand navy on paper, pale ice with navy text on navy fields. Minimum target 44 px (36 px for the small size in dense toolbars).</p>
+  <div class="navy" style="padding:20px;margin-top:12px"><div class="stack"><a class="btn" href="#controls"><svg class="ico"><use href="#i-chat"/></svg>Ask about this code</a><a class="btn btn--line" href="#controls">Inquiry form</a><a class="wa-big" href="#controls" style="max-width:360px"><svg class="ico" aria-hidden="true"><use href="#i-chat"/></svg><b>{{ t.wa_big }}</b><span>0912 719 5313</span></a></div></div>
+  <h3>Hero search (navy field) and explorer search</h3>
+  <div class="navy" style="padding:20px"><form class="search search--hero" role="search" aria-label="Hero search specimen" lang="fa" dir="rtl" onsubmit="return false"><span class="search__ico"><svg class="ico"><use href="#i-search"/></svg></span><input type="search" dir="auto" aria-label="Hero search specimen" placeholder="کد قطعه، مثلاً &#x2066;6205-2RS&#x2069;"><button type="submit">جستجو</button></form></div>
+  <div class="pair" style="margin-top:12px">
+    <form class="search" role="search" aria-label="Persian specimen" lang="fa" dir="rtl" onsubmit="return false"><span class="search__ico"><svg class="ico"><use href="#i-search"/></svg></span><input type="search" dir="auto" aria-label="Persian specimen" placeholder="کد قطعه، مثلاً &#x2066;6205-2RS&#x2069;"><button type="submit">جستجو</button></form>
+    <form class="search" role="search" aria-label="English specimen" onsubmit="return false"><span class="search__ico"><svg class="ico"><use href="#i-search"/></svg></span><input type="search" dir="auto" aria-label="English specimen" placeholder="Part code, e.g. 6205-2RS"><button type="submit">Search</button></form>
+  </div>
+  <h3>Family rail with counts, bore segments, verified toggle</h3>
+  <div class="rail" role="group" aria-label="Family specimen"><button type="button" aria-pressed="true"><svg aria-hidden="true"><use href="#g-ball"/></svg><b>All</b><i>13</i></button>{% for f in families[:5] %}<button type="button" aria-pressed="false" {% if not f.count %}disabled{% endif %}><svg aria-hidden="true"><use href="#{{ f.glyph }}"/></svg><b>{{ f.short_en }}</b><i>{{ f.count }}</i></button>{% endfor %}</div>
+  <div class="filters" style="margin-top:10px"><div class="seg" role="group" aria-label="Bore specimen"><span>d (mm)</span><button type="button" aria-pressed="true">All</button>{% for v, label in t.bores %}<button type="button" aria-pressed="false" dir="ltr">{{ label }}</button>{% endfor %}</div><button class="toggle" type="button" aria-pressed="true">Verified data only</button></div>
+  <h3>"Ask about this code" (the query is kept, never a dead end)</h3>
+  <div class="ask"><div><p>{{ t.ask_zero.split('{q}')[0] }}<b class="ask__q">6208</b>{{ t.ask_zero.split('{q}')[1] }}</p><p>{{ t.ask_zero_p }}</p></div><div class="ask__acts"><a class="btn" href="#controls"><svg class="ico"><use href="#i-chat"/></svg>Ask about this code</a><a class="btn btn--line" href="#controls">Inquiry form</a></div></div>
+  <h3>Badges, chips, tags</h3>
+  <div class="stack"><button class="chip" type="button">6205</button><button class="chip" type="button">22220 E</button>
+    <span class="badge badge--ok"><span>Dimensions verified</span></span><span class="badge badge--pending"><span>Technical data pending / Unverified</span></span><a class="tag" href="#controls">Spherical roller bearings</a></div>
+  <h3>Icons (1.5 px stroke, 24 grid, one sprite in the page)</h3>
+  <div class="icons">{% for i in ['search','close','phone','chat','arrow','chev','copy','link','doc','ext','menu','pin','clock','send'] %}<span><svg aria-hidden="true" class="ico"><use href="#i-{{ i }}"/></svg>{{ i }}</span>{% endfor %}</div>
+</section>
+
+<section id="data">
+  <h2>Data display</h2>
+  <div class="pair">
+    <div class="pane"><small>SPEC TABLE + SOURCE</small>
+      <table class="spec"><caption>Boundary dimensions</caption><thead><tr><th scope="col">Property</th><th scope="col" class="sym">Symbol</th><th scope="col" class="val">mm</th></tr></thead>
+      <tbody><tr><th scope="row">Bore diameter</th><td class="sym">d</td><td class="val">25</td></tr><tr><th scope="row">Outside diameter</th><td class="sym">D</td><td class="val">52</td></tr><tr><th scope="row">Width</th><td class="sym">B</td><td class="val">15</td></tr></tbody></table>
+      <p class="src"><span>Source:</span><a href="https://www.123bearing.com/bearing-housing/deep-groove-bearing/single-row/6205-skf" target="_blank" rel="noopener">123bearing.com — 6205</a><span>checked 4 Oct 2026 · prototype</span></p>
+    </div>
+    <div class="pane"><small>PENDING DATA</small>
+      <div class="pendingbox"><b>Load ratings and speeds</b><span>These values are not yet recorded from a verified source, so none are shown.</span><ul><li>C · Basic dynamic load rating</li><li>C0 · Basic static load rating</li><li>n lim · Limiting speed</li></ul></div>
+      <div class="empty" style="margin-top:12px"><svg class="ico" aria-hidden="true"><use href="#i-doc"/></svg><b>No datasheet published yet</b><span>Empty states say what will appear here and when.</span></div>
+    </div>
+  </div>
+  <h3>Workspace readout (boundary dimensions at a glance)</h3>
+  <div class="ws" style="position:static;max-height:none;max-width:440px"><div class="readout" style="--n:3"><div><small>d · Bore diameter</small><b>25</b><span>mm</span></div><div><small>D · Outside diameter</small><b>52</b><span>mm</span></div><div><small>B · Width</small><b>15</b><span>mm</span></div></div></div>
+  <h3>Document row (sample, not real content)</h3>
+  <div class="channels" style="max-width:640px"><a href="#data"><svg class="ico"><use href="#i-doc"/></svg><span><small>PDF · English · 320 KB · 4 Oct 2026</small>Sample datasheet title</span><svg class="ico"><use href="#i-ext"/></svg></a></div>
+</section>
+
+<section id="explorer">
+  <h2>Explorer and workspace</h2>
+  <div class="ds-rules">
+    <div><b>A catalogue, not product cards</b><span>A real table: drawing glyph, designation, family, d / D / B (or the family's own symbols), provenance. Every row is a crawlable link; JavaScript only hides rows.</span></div>
+    <div><b>Family rail with counts</b><span>Short family names, glyph and count; empty families are disabled rather than hidden, so the range stays visible.</span></div>
+    <div><b>Exact match lands on the answer</b><span>Submitting an exact code (or a search with one result) scrolls to the results and opens the workspace with its actions in view.</span></div>
+    <div><b>No match keeps the query</b><span>The typed code is carried into "Ask about this code" (WhatsApp) and the inquiry form; a partial match shows a softer version of the same offer.</span></div>
+    <div><b>Workspace, desktop</b><span>Docked at the inline end, sticky, no inner page-in-page: designation, d/D/B readout, tabs (Overview · Specifications · Documents), drawing before imagery, and a footer with WhatsApp / Call / Inquiry.</span></div>
+    <div><b>Workspace, mobile</b><span>A bottom sheet sized to its content (max 88% height): the page behind is inert; Esc, scrim, drag-down and close all dismiss; focus returns to the row. The dock hides while it is open.</span></div>
+  </div>
+  <p class="lead" style="margin-top:16px">Try it: <a href="fa.html#p-22220-e" lang="fa">۲۲۲۲۰ E در نسخه فارسی</a> · <a href="en.html#p-ucp-208">UCP 208 (pending data) in English</a></p>
+</section>
+
+<section id="forms">
+  <h2>Forms and contact</h2>
+  <form class="form" style="max-width:720px" novalidate onsubmit="return false">
+    <div class="field"><label for="x1">Full name</label><input class="input" id="x1"></div>
+    <div class="field is-err"><label for="x2">Phone number</label><input class="input ltr" id="x2" aria-invalid="true" aria-describedby="x2e"><span class="err" id="x2e">This field is required.</span></div>
+    <div class="field field--full"><label for="x3">Part code</label><input class="input ltr" id="x3" placeholder="6205-2RS"><span class="hint">Don't know the code? Leave it empty and describe the application.</span></div>
+  </form>
+  <p class="lead" style="margin-top:12px">No price, quantity-based totals or "add to cart" anywhere. The only submit action is "Send inquiry", and WhatsApp sits beside it as an equal alternative.</p>
+</section>
+
+<section id="motion">
+  <h2>Motion and reduced motion</h2>
+  <div class="tbl-wrap"><table class="tbl"><thead><tr><th>Token</th><th>Value</th><th>Use</th></tr></thead><tbody>
+    <tr><td class="mono">--t-fast</td><td class="mono">120ms</td><td>Hover and pressed states</td></tr>
+    <tr><td class="mono">--t</td><td class="mono">240ms</td><td>Bottom sheet, scrim</td></tr>
+    <tr><td class="mono">--t-slow</td><td class="mono">520ms</td><td>Fallback draw-on</td></tr>
+    <tr><td class="mono">--ease</td><td class="mono">cubic-bezier(.2,.7,.2,1)</td><td>Everything time-based</td></tr>
+  </tbody></table></div>
+  <h3>Behaviours and their drivers</h3>
+  <div class="tbl-wrap"><table class="tbl"><thead><tr><th>Behaviour</th><th>Chrome / Edge, Safari 26+</th><th>Browsers without scroll timelines</th><th>Reduced motion</th></tr></thead><tbody>
+    <tr><td><b>Drawing Set</b>: each sheet's line work draws as it enters; the process raceway extends</td><td>CSS <code>view-timeline</code>, no JS</td><td>IntersectionObserver adds <code>.is-drawn</code> once</td><td>Drawn from the start</td></tr>
+    <tr><td><b>Hero bearing</b>: the rolling elements turn a few degrees with scroll and lean toward the pointer</td><td>CSS <code>scroll(root)</code> timeline drives <code>--sr</code>; a rAF-throttled pointer handler sets <code>--pr</code> (fine pointers only)</td><td>Passive scroll listener while the hero is visible</td><td>Static</td></tr>
+    <tr><td><b>Exploded Assembly</b>: one progress value <code>--p</code> drives six stages (table below)</td><td>CSS <code>view-timeline</code> on the track animates the registered <code>--p</code>; everything else is derived in CSS</td><td>One passive scroll listener, active only while the stage is on screen, sets <code>--p</code></td><td>No sticky track; the complete dimensioned technical state, with every balloon and the full parts list</td></tr>
+    <tr><td><b>Workspace sheet</b> (mobile)</td><td colspan="2">240 ms transform, compositor-only</td><td>Instant</td></tr>
+    <tr><td><b>Scroll to explorer</b> after a search</td><td colspan="2">Smooth scroll</td><td>Jump</td></tr>
+  </tbody></table></div>
+  <h3>Exploded Assembly: six stages from one value</h3>
+  <div class="tbl-wrap"><table class="tbl"><thead><tr><th>Stage</th><th class="r">Progress --p</th><th>What changes</th></tr></thead><tbody>
+    <tr><td>01 Assembled</td><td class="r">0–0.10</td><td>Metallic rendering, parts together on the shaft</td></tr>
+    <tr><td>02 Separated</td><td class="r">0.10–0.30</td><td>Parts slide apart along the axis; metal fades to the hatched technical layer</td></tr>
+    <tr><td>03 Dimensioned</td><td class="r">0.30–0.45</td><td>Ød, ØD and B dimensions draw in</td></tr>
+    <tr><td>04 Explained</td><td class="r">0.45–0.72</td><td>Balloons 1–6 and parts-list rows light in turn (brass ring + row tint)</td></tr>
+    <tr><td>05 Related</td><td class="r">0.72–0.86</td><td>Related product families are underlined in brass; links go to the filtered explorer</td></tr>
+    <tr><td>06 Resolved</td><td class="r">0.86–1.00</td><td>Parts reassemble; annotations fade; metal returns</td></tr>
+  </tbody></table></div>
+  <p class="lead" style="margin-top:12px">Desktop track 320 vh; mobile 190 vh with a numbers-only stage strip and the active stage name below it.</p>
+  <h3>Live specimen</h3>
+  <figure class="dwg" style="margin:0;max-width:520px">{% include "final.svg.j2" %}<figcaption><span>DRAW-ON · SCROLL-DRIVEN</span><span>NTS</span></figcaption></figure>
+  <p class="lead" style="margin-top:12px">Rules: only <code>transform</code>, <code>opacity</code> and <code>stroke-dashoffset</code> animate; no parallax; no continuous rotation; nothing waits for animation to become readable; one sticky stage on the whole page.</p>
+</section>
+
+<section id="perf">
+  <h2>Performance ledger</h2>
+  <p class="lead">Measured on this prototype with Chromium, a 390 px phone viewport, 4× CPU slowdown and cache disabled. Numbers are compressed transfer sizes.</p>
+  <div class="tbl-wrap"><table class="tbl"><thead><tr><th>Decision</th><th>Cost</th><th>Measured / effect</th></tr></thead><tbody>
+  {% for r in ledger %}<tr><td>{{ r[0] }}</td><td>{{ r[1] }}</td><td>{{ r[2] }}</td></tr>{% endfor %}
+  </tbody></table></div>
+</section>
+</main>
+</div>
+</body>
+</html>

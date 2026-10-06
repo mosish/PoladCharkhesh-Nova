@@ -1,0 +1,8 @@
+parameters:
+    level: max
+    paths:
+        - app/src
+        - tests/unit
+        - tests/integration
+        - docker/dev-www
+    tmpDir: .phpstan.cache

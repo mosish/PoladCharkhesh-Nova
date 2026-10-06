@@ -1,0 +1,9 @@
+# Development-only checks, served at /_dev/ by the dev virtual host. Never deployed.
+
+RewriteEngine On
+RewriteBase /_dev/
+RewriteRule ^rewrite-check$ index.php?check=rewrite [END,QSA]
+
+<IfModule mod_headers.c>
+    Header always set X-Robots-Tag "noindex, nofollow"
+</IfModule>

@@ -1,0 +1,282 @@
+<title>Nova Phase 2 V2 Review</title>
+<style>
+@font-face{font-family:"Vazirmatn";src:url(assets/fonts/vazirmatn-Regular-fa.woff2) format("woff2");font-weight:400;font-display:swap}
+@font-face{font-family:"Vazirmatn";src:url(assets/fonts/vazirmatn-Bold-fa.woff2) format("woff2");font-weight:700;font-display:swap}
+@font-face{font-family:"Vazirmatn";src:url(assets/fonts/vazirmatn-Regular-latin.woff2) format("woff2");font-weight:400;font-display:swap;unicode-range:U+0041-005A,U+0061-007A}
+@font-face{font-family:"Vazirmatn";src:url(assets/fonts/vazirmatn-Bold-latin.woff2) format("woff2");font-weight:700;font-display:swap;unicode-range:U+0041-005A,U+0061-007A}
+@font-face{font-family:"JetBrains Mono";src:url(assets/fonts/jbmono-400.woff2) format("woff2");font-weight:400;font-display:swap}
+@font-face{font-family:"JetBrains Mono";src:url(assets/fonts/jbmono-600.woff2) format("woff2");font-weight:600;font-display:swap}
+</style>
+<link rel="stylesheet" href="assets/nova.css">
+<style>
+body { padding-bottom: 0; }
+.hub { padding-block: 40px 96px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 64px; }
+.hub h2 { font-size: var(--fs-4); margin-bottom: 10px; }
+.hub h3 { font-size: var(--fs-1); margin: 22px 0 10px; }
+.hub .lead { color: var(--ink-2); font-size: var(--fs-0); max-width: 75ch; margin-top: 8px; }
+.intro-hero { padding-block: 48px 40px; }
+.intro-hero h1 { font-size: var(--fs-5); max-width: 24ch; margin-top: 14px; }
+.intro-hero p { color: #c9d1ee; max-width: 72ch; margin-top: 14px; font-size: var(--fs-1); }
+.status { display: flex; flex-wrap: wrap; gap: 8px 12px; margin-top: 20px; font-size: var(--fs--1); }
+.kick { font-family: var(--mono); font-size: var(--fs--2); letter-spacing: .06em; color: var(--ice-2); }
+.cards { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: var(--col-gap); }
+.card { display: grid; gap: 8px; align-content: start; border: 1.5px solid var(--line); background: var(--sheet); color: var(--ink); text-decoration: none; padding: 0 0 14px; }
+.card img { width: 100%; height: auto; aspect-ratio: 16 / 10; object-fit: cover; object-position: top; border-bottom: 1px solid var(--line-3); background: var(--paper-2); }
+.card b { font-size: var(--fs-1); padding-inline: 14px; }
+.card span { color: var(--ink-2); font-size: var(--fs--1); padding-inline: 14px; }
+.card:hover { background: var(--tint); }
+.deliv { display: grid; gap: 40px; }
+.deliv > div { display: grid; grid-template-columns: 56px minmax(0, 1fr); gap: 0 18px; }
+.deliv .no { font-family: var(--mono); font-weight: 600; color: var(--line); font-size: 1.05rem; border: 1.5px solid var(--line); height: 34px; display: grid; place-items: center; }
+.deliv h3 { margin: 4px 0 4px; }
+.deliv p { color: var(--ink-2); font-size: var(--fs--1); max-width: 90ch; }
+.gal { display: grid; grid-template-columns: repeat(var(--n, 2), minmax(0, 1fr)); gap: 14px; margin-top: 12px; align-items: start; }
+.gal figure { margin: 0; border: 1px solid var(--line-3); background: var(--sheet); }
+.gal img { width: 100%; height: auto; display: block; }
+.gal figcaption { font-size: var(--fs--2); color: var(--ink-3); padding: 6px 10px; border-top: 1px solid var(--line-3); }
+.ba { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 12px; }
+.ba--m { max-width: 620px; }
+.ba figure { margin: 0; border: 1px solid var(--line-3); background: var(--sheet); }
+.ba img { width: 100%; height: auto; display: block; }
+.ba figcaption { font-size: var(--fs--2); padding: 6px 10px; border-top: 1px solid var(--line-3); display: flex; gap: 8px; }
+.ba figcaption b { font-family: var(--mono); color: var(--line); }
+.tbl-wrap { overflow-x: auto; }
+.tbl { width: 100%; font-size: .875rem; border-top: 1.5px solid var(--line); }
+.tbl th, .tbl td { text-align: start; padding: 9px 12px 9px 0; border-bottom: 1px solid var(--line-3); vertical-align: top; }
+.tbl thead th { font-size: var(--fs--2); color: var(--ink-3); font-weight: 400; }
+.tbl td.r { font-family: var(--mono); white-space: nowrap; }
+.tbl td.chg { font-family: var(--mono); white-space: nowrap; font-size: var(--fs--2); }
+.better { color: var(--ok); font-weight: 700; } .worse { color: var(--pending); font-weight: 700; }
+.tbl td.pass { color: var(--ok); font-weight: 700; }
+.two { display: grid; grid-template-columns: 1fr 1fr; gap: var(--col-gap); }
+.ticks { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; font-size: var(--fs--1); color: var(--ink-2); }
+.ticks li { padding-inline-start: 18px; position: relative; }
+.ticks li::before { content: ""; position: absolute; inset-inline-start: 0; top: .75em; width: 9px; height: 1.5px; background: var(--line); }
+.ticks b { color: var(--ink); }
+.try { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 var(--col-gap); counter-reset: t; list-style: none; padding: 0; margin: 0; border-top: 1.5px solid var(--line); }
+.try li { padding: 11px 0 11px 36px; position: relative; border-bottom: 1px solid var(--line-3); font-size: var(--fs--1); }
+.try li::before { counter-increment: t; content: counter(t); position: absolute; left: 0; top: 11px; width: 24px; height: 24px; border-radius: 50%; border: 1.2px solid var(--line); font-family: var(--mono); font-size: 12px; display: grid; place-items: center; color: var(--line); }
+@media (max-width: 1099px) { .cards { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 899px) { .two, .try { grid-template-columns: minmax(0, 1fr); } .gal { --n: 2 !important; } .deliv > div { grid-template-columns: minmax(0, 1fr); gap: 8px; } .deliv .no { width: 56px; } }
+@media (max-width: 599px) { .cards, .ba { grid-template-columns: minmax(0, 1fr); } .gal { --n: 1 !important; } }
+</style>
+
+{% include "symbols.svg.j2" %}
+<header class="bar navy"><div class="wrap bar__in">
+  <a class="brand" href="#top"><svg aria-hidden="true"><use href="#logo"/></svg><span><b>PoladCharkhesh-Nova</b><small>PHASE 2 V2 · GATE 2 REVIEW</small></span></a>
+  <nav class="bar__nav" aria-label="Review sections"><a href="#corrections">Corrections</a><a href="#open">Prototypes</a><a href="#changes">V1 → V2</a><a href="#deliverables">Deliverables</a><a href="#perf">Performance</a><a href="#gate">Gate 2</a></nav>
+</div></header>
+
+<section class="navy intro-hero" id="top" aria-labelledby="hub-h1">
+  <div class="wrap">
+    <p class="kick">P2 · V2 · VISUAL REFINEMENT + TARGETED CORRECTIONS · FOR GATE 2 REVIEW</p>
+    <h1 id="hub-h1">Drawing Sheet, refined: precision engineering on a deep-navy field</h1>
+    <p>V2 keeps the engineering language from V1 (dimension lines, sections, drawing numbers, provenance) and adds what the previous site did well: deep navy, icy interaction, restrained metal, large Persian type and a strong two-column hero. It drops what it did badly. Everything here is a working browser prototype built the production way. It is not the application: there is no database, admin or Publish Engine yet.</p>
+    <div class="status"><span class="badge badge--ok"><span>Gate 1 approved (C1–C4)</span></span><span class="badge badge--ok"><span>Correction round: items 1–12 and T-1 addressed</span></span><span class="badge badge--pending"><span>Gate 2: awaiting your review, not approved</span></span><span class="badge badge--pending"><span>Phase 3 not started</span></span></div>
+  </div>
+</section>
+
+<main class="wrap hub">
+  <section id="corrections">
+    <h2>Gate 2 correction round: items 1–12</h2>
+    <p class="lead">Targeted fixes only. The V2 visual direction, hero, explorer, workspace, Exploded Assembly concept and Admin IA are unchanged. Each row says what was wrong in V2 as first delivered, what changed, and which scripted check proves it (results below).</p>
+    <div class="tbl-wrap"><table class="tbl">
+      <thead><tr><th>#</th><th>Before (V2 as delivered)</th><th>After (corrected V2)</th><th>Proof</th></tr></thead>
+      <tbody>
+        {% for r in report %}<tr><td class="r">{{ r[0] }}</td><td>{{ r[1] }}</td><td>{{ r[2]|safe }}</td><td class="r">{{ r[3] }}</td></tr>{% endfor %}
+      </tbody></table></div>
+    <h3>Before / after</h3>
+    {% for b, a, cap, mob in corr_pairs %}
+    <div class="ba{% if mob %} ba--m{% endif %}"><figure><img src="shots-v2c/{{ b }}.webp" alt="Before: {{ cap }}" loading="lazy"><figcaption><b>BEFORE</b>{{ cap }}</figcaption></figure><figure><img src="shots-v2c/{{ a }}.webp" alt="After: {{ cap }}" loading="lazy"><figcaption><b>AFTER</b>{{ cap }}</figcaption></figure></div>
+    {% endfor %}
+    <h3>New states, corrected V2</h3>
+    <div class="gal" style="--n:3">{% for f, cap in corr_new %}<figure><a href="shots-v2c/{{ f }}.webp"><img src="shots-v2c/{{ f }}.webp" alt="{{ cap }}" loading="lazy"></a><figcaption>{{ cap }}</figcaption></figure>{% endfor %}</div>
+
+    <h3 id="qa">Correction-round QA: {{ qa_pass }} of {{ qa_total }} scripted checks passed (Persian and English, before the T-1 fix)</h3>
+    <p class="lead" style="font-size:var(--fs--1)">Playwright with Chromium; network delays and failures are injected by request routing; the clipboard is stubbed so copied values can be read back. Script: <span class="mono">qa/scenarios.js</span>. The group 3 rows for 6305 and 22220 record the behaviour before T-1; the re-run below supersedes them.</p>
+    <div class="tbl-wrap"><table class="tbl">
+      <thead><tr><th>Check</th><th>What is asserted</th><th>fa</th><th>en</th></tr></thead>
+      <tbody>
+        {% for r in qa_rows %}<tr><td class="r">{{ r.id }}</td><td>{{ r.name }}</td><td class="r {{ 'pass' if r.fa == '✓' else '' }}">{{ r.fa }}</td><td class="r {{ 'pass' if r.en == '✓' else '' }}">{{ r.en }}</td></tr>{% endfor %}
+      </tbody></table></div>
+    {% if t1_total %}
+    <h3 id="qa-t1">T-1 focused re-run on the fixed build: {{ t1_pass }} of {{ t1_total }} designation and variant checks pass</h3>
+    <p class="lead" style="font-size:var(--fs--1)">Only the designation and variant checks were re-run (<span class="mono">ONLY=designation node scenarios.js</span>, in the installed Chrome through Playwright). <span class="mono">3t</span> compares the explorer panel, workspace note, WhatsApp text and inquiry context with the wording for each match type, and fails if a related match calls the listed designation a base series. {% if t1_before_total %}On the build before the fix, {{ t1_before_fail }} of these {{ t1_before_total }} checks fail, all on T-1 cases.{% endif %}</p>
+    <div class="tbl-wrap"><table class="tbl">
+      <thead><tr><th>Check</th><th>What is asserted</th><th>fa</th><th>en</th></tr></thead>
+      <tbody>
+        {% for r in t1_rows %}<tr><td class="r">{{ r.id }}</td><td>{{ r.name }}</td><td class="r {{ 'pass' if r.fa == '✓' else '' }}">{{ r.fa }}</td><td class="r {{ 'pass' if r.en == '✓' else '' }}">{{ r.en }}</td></tr>{% endfor %}
+      </tbody></table></div>
+    {% endif %}
+    <h3>Accessibility (axe-core, WCAG 2.0/2.1 A + AA + best practices)</h3>
+    <div class="tbl-wrap"><table class="tbl">
+      <thead><tr><th>State</th><th>V2 as delivered</th><th>Corrected</th></tr></thead>
+      <tbody>
+        {% for name, before, after in axe_rows %}<tr><td>{{ name }}</td><td class="r">{{ before }}</td><td class="r {{ 'pass' if after == '0 issues' else '' }}">{{ after }}</td></tr>{% endfor %}
+      </tbody></table></div>
+    <p class="lead" style="font-size:var(--fs--1)">The one remaining finding is <span class="mono">html-has-lang</span> on this review hub when it is served locally as a fragment; the artifact viewer supplies the page skeleton. Public pages, the design system and the Admin wireframes scan clean. For the Admin this is a scan of static wireframes, not a WCAG claim for the future application: the corrected colours (placeholder text now 4.5:1 or better) and the semantic-control requirements carry into its implementation. No screen-reader session was run.</p>
+
+    <h3>Performance delta vs V2 as delivered (FCP and LCP reported separately)</h3>
+    <p class="lead" style="font-size:var(--fs--1)">The same harness as before: 390 px phone, 4× CPU slowdown, cache disabled, gzip. Paint times are the median of three runs per build and profile, measured back to back; single runs varied by up to about 100 ms on Slow 4G. The build now minifies JavaScript, as a workstation build step; production still runs no Node. For a like-for-like comparison, the "before" column is V2 as delivered with the same minification applied. Unminified, V2 as delivered was {{ v2a_unmin }}.</p>
+    <div class="tbl-wrap"><table class="tbl">
+      <thead><tr><th>Metric</th><th>Gate 1 budget (superseded: D14/D17)</th>{% for k in perf_keys %}<th>{{ k[0] }} · {{ k[1] }}<br>before → after</th>{% endfor %}</tr></thead>
+      <tbody>
+        {% for label, budget, fn, fmt, lower_better in perf_rows2 %}
+        <tr><td>{{ label }}</td><td class="r">{{ budget }}</td>{% for k in perf_keys %}{% set a = fn(pv2a[k]) %}{% set b = fn(pv2c[k]) %}<td class="chg">{{ fmt(a) }} → <span class="{{ 'better' if (b < a if lower_better else b > a) else ('worse' if b != a else '') }}">{{ fmt(b) }}</span></td>{% endfor %}</tr>
+        {% endfor %}
+      </tbody></table></div>
+    <div class="tbl-wrap" style="margin-top:12px"><table class="tbl">
+      <thead><tr><th>Interaction, phone, 4× CPU slowdown (3 runs; lab event duration, a proxy for INP, not field data)</th><th>Before</th><th>After</th><th>INP target</th></tr></thead>
+      <tbody>
+        <tr><td>First product open</td><td class="r">{{ inp2['8093'].first|min }}–{{ inp2['8093'].first|max }} ms</td><td class="r">{{ inp2['8090'].first|min }}–{{ inp2['8090'].first|max }} ms</td><td class="r">≤ 150 ms</td></tr>
+        <tr><td>Re-opening a product</td><td class="r">{{ inp2['8093'].reopen|min }}–{{ inp2['8093'].reopen|max }} ms</td><td class="r better">{{ inp2['8090'].reopen|min }}–{{ inp2['8090'].reopen|max }} ms</td><td class="r">≤ 150 ms</td></tr>
+        <tr><td>Typing in search (worst key)</td><td class="r">{{ inp2['8093'].keymax }} ms</td><td class="r">{{ inp2['8090'].keymax }} ms</td><td class="r">≤ 150 ms</td></tr>
+      </tbody></table></div>
+    <ul class="ticks" style="margin-top:16px">
+      <li><b>Where the bytes went (+4.8 KB Persian, +4.6 KB English, same request counts):</b> the identity controller and the resilient workspace shell moved into the core script so loading, failure and Retry work even when the panel module fails (JS +2.9 KB); the stable shell markup, the match panel and the separated search keys (HTML +1.2 to +1.4 KB); state styles (CSS +0.5 KB). Opening a product now loads 0.9 KB less. Every page stays under 60% of the 120 KB budget.</li>
+      <li><b>Paint is unchanged:</b> FCP and LCP are measured separately and coincide in every run, because the LCP element is the hero headline (<span class="mono">H1</span>), which is part of the first contentful paint. The medians move by −20 to +8 ms, inside run-to-run noise. Layout shift stays at 0. These are lab numbers on one machine, not field percentiles.</li>
+      <li><b>Interaction is faster:</b> the panel now yields one frame before rendering, so the tap paints its feedback at once. Re-opening a product dropped from about 110 ms to about 36 ms under 4× CPU slowdown.</li>
+      <li><b>At about 68 products:</b> matching is a linear scan over pre-normalised keys, roughly 70 string checks per keystroke. The per-row search keys add about 2–3 KB gzip to the HTML. Both scale without a different architecture.</li>
+    </ul>
+  </section>
+
+  <section id="open">
+    <h2>Open the prototypes</h2>
+    <div class="cards">
+      <a class="card" href="fa.html"><img src="shots-v2/d1-fa-hero.webp" alt="Persian prototype, hero" width="1200" height="750"><b lang="fa">نسخه فارسی (RTL)</b><span>Persian page, as it would ship on the .ir domain</span></a>
+      <a class="card" href="en.html"><img src="shots-v2/d10-en-hero.webp" alt="English prototype, hero" width="1200" height="750"><b>English (LTR)</b><span>English page, as it would ship on the .com domain</span></a>
+      <a class="card" href="admin.html"><img src="shots-v2/d13-dashboard.webp" alt="Admin dashboard wireframe" width="1200" height="760"><b>Admin wireframes</b><span>Eight core Control Center screens plus mobile triage, with notes mapped to the data model</span></a>
+      <a class="card" href="system.html"><img src="shots-v2/sys.webp" alt="Design system v0.3" width="1200" height="750"><b>Design system v0.3</b><span>Tokens, palette roles, type and digit rules, components, motion stages and performance ledger</span></a>
+    </div>
+  </section>
+
+  <section id="changes">
+    <h2>15 · What changed from V1 to V2, and why</h2>
+    <p class="lead">Each change answers your brief: absorb the previous site's strengths without copying it, avoid its weaknesses, and evolve the Drawing Sheet instead of replacing it.</p>
+    <div class="tbl-wrap"><table class="tbl">
+      <thead><tr><th>Area</th><th>V1</th><th>V2</th><th>Why</th></tr></thead>
+      <tbody>
+        <tr><td><b>Colour</b></td><td>Paper and navy ink; one blueprint band</td><td>Navy fields for hero, Anatomy, contact and footer; icy blue for interaction; steel only on metal; one brass accent for "the part in focus"</td><td>Depth and a premium feel without glass or glow; every colour has one job</td></tr>
+        <tr><td><b>Hero</b></td><td>Concentric mark, search in a light sheet</td><td>Two columns: large Persian statement, dominant white search, example codes and a photo-by-WhatsApp link | half metallic, half line-drawn bearing whose rolling elements turn slightly with scroll and lean toward the pointer</td><td>Search dominates; the signature image says "bearing" while staying vector (≈1.2 KB)</td></tr>
+        <tr><td><b>Explorer</b></td><td>Card-like result rows; family chips</td><td>A real catalogue table (glyph, designation, family, d / D / B, provenance); family rail with counts; bore segments; verified toggle</td><td>Reads like a technical catalogue, not an e-commerce grid; d/D/B visible at once</td></tr>
+        <tr><td><b>Unknown code</b></td><td>No-result panel</td><td>"Ask about this code" keeps the typed code and offers WhatsApp or the form, both for zero matches and when there is no exact match</td><td>A miss becomes a conversation, never a dead end</td></tr>
+        <tr><td><b>Workspace</b></td><td>Docked panel / bottom sheet with 4 tabs</td><td>Designation first, a three-cell d / D / B readout, then 3 tabs (Overview · Specifications · Documents); the drawing outranks imagery; a direct search hit lands with the whole panel and its actions in view; the mobile sheet sizes to its content</td><td>Values read in a second; no nested scrolling; actions always reachable</td></tr>
+        <tr><td><b>Exploded Assembly</b></td><td>Explode, light the BOM, reassemble</td><td>Six named stages: assembled (metal) → separated (hatched sections) → dimensioned (Ød, ØD, B) → explained (balloons + parts list) → related families → resolved. Confined to Anatomy; desktop 320 vh, mobile 190 vh with a numbers-only stage strip</td><td>The signature interaction tells the engineering story, not just a visual effect</td></tr>
+        <tr><td><b>Typography</b></td><td>Persian digits for phones</td><td>Large Vazirmatn display sizes; JetBrains Mono for codes, dimensions, units, drawing references <em>and phone numbers</em> (Latin in both languages, per Q2); 13 px minimum label</td><td>Consistency and legibility; no tiny labels</td></tr>
+        <tr><td><b>Contact</b></td><td>Light sheet</td><td>Navy field with a large WhatsApp button and the number in Latin digits, a channels list, and a small closing bearing</td><td>The conversion moment gets the same weight as the hero</td></tr>
+        <tr><td><b>Performance</b></td><td>One render-blocking CSS file; full Persian font subsets</td><td>Critical CSS inline (4.5 KB) with the rest deferred (the approved D5 plan); Persian subsets without Latin letters (Latin islands set in mono); three more lower sections render lazily</td><td>Earlier first paint on both pages and fewer bytes on the Persian page (table below)</td></tr>
+      </tbody></table></div>
+    <h3>Before / after</h3>
+    {% for v1, v2, cap, mob in pairs %}
+    <div class="ba{% if mob %} ba--m{% endif %}"><figure><img src="shots-v1/{{ v1 }}.webp" alt="V1: {{ cap }}" loading="lazy" width="960" height="600"><figcaption><b>V1</b>{{ cap }}</figcaption></figure><figure><img src="shots-v2/{{ v2 }}.webp" alt="V2: {{ cap }}" loading="lazy" width="1200" height="750"><figcaption><b>V2</b>{{ cap }}</figcaption></figure></div>
+    {% endfor %}
+    <h3>What V2 deliberately does not copy from the previous site</h3>
+    <ul class="ticks">
+      <li><b>No glass, transparency or glow</b>: flat navy surfaces with borders; metal gradients only on the bearing itself.</li>
+      <li><b>No giant bearing behind unrelated sections</b>: the bearing appears in the hero, the Anatomy stage and as a small closing mark only.</li>
+      <li><b>No overloaded hero</b>: one search, four example codes, one secondary link.</li>
+      <li><b>No repeated cropped family photos</b>: drawn glyphs and generated section drawings instead.</li>
+      <li><b>No tiny labels or random mixed-language UI</b>: 13 px minimum; Latin appears only for codes, units, references and the other-language name.</li>
+      <li><b>No tall image-led mobile dialogs or double scrolling</b>: the sheet is content-sized with one scroll region, and controls never float over mobile content (the dock hides while the sheet is open).</li>
+    </ul>
+  </section>
+
+  <section id="deliverables">
+    <h2>Deliverables 1–13</h2>
+    <div class="deliv">
+      {% for no, title, text, imgs, n in deliverables %}
+      <div><span class="no">{{ '%02d'|format(no) }}</span><div><h3>{{ title }}</h3><p>{{ text }}</p>
+        <div class="gal" style="--n:{{ n }}">{% for f, cap in imgs %}<figure><a href="shots-v2/{{ f }}.webp"><img src="shots-v2/{{ f }}.webp" alt="{{ cap }}" loading="lazy"></a><figcaption>{{ cap }}</figcaption></figure>{% endfor %}</div>
+      </div></div>
+      {% endfor %}
+    </div>
+  </section>
+
+  <section id="perf">
+    <h2>14 · Performance, V1 → V2 (first V2 delivery)</h2>
+    <p class="lead">Same harness for both versions, measured in the same session: Chromium, 390 px phone, cache disabled, 4× CPU slowdown, gzip like shared hosting. "Slow 4G" is 1.6 Mbps at 150 ms; "3G-class" is 400 kbps at 400 ms.</p>
+    <div class="tbl-wrap"><table class="tbl">
+      <thead><tr><th>Metric</th><th>Gate 1 budget (superseded: D14/D17)</th>{% for k in perf_keys %}<th>{{ k[0] }} · {{ k[1] }}<br>V1 → V2</th>{% endfor %}</tr></thead>
+      <tbody>
+        {% for label, budget, fn, fmt, lower_better in perf_rows %}
+        <tr><td>{{ label }}</td><td class="r">{{ budget }}</td>{% for k in perf_keys %}{% set a = fn(perf_v1[k]) %}{% set b = fn(perf_v2[k]) %}<td class="chg">{{ fmt(a) }} → <span class="{{ 'better' if (b < a if lower_better else b > a) else ('worse' if b != a else '') }}">{{ fmt(b) }}</span></td>{% endfor %}</tr>
+        {% endfor %}
+      </tbody></table></div>
+    <h3>Interaction latency (tap a product, type a code)</h3>
+    <div class="tbl-wrap"><table class="tbl">
+      <thead><tr><th>Interaction, 4× CPU slowdown, phone</th><th>V1</th><th>V2</th><th>INP target</th></tr></thead>
+      <tbody>
+        <tr><td>First product open (module loads)</td><td class="r">{{ inp['8091'].first|min }}–{{ inp['8091'].first|max }} ms</td><td class="r">{{ inp['8090'].first|min }}–{{ inp['8090'].first|max }} ms</td><td class="r">≤ 150 ms</td></tr>
+        <tr><td>Re-opening a product (sheet + render)</td><td class="r">{{ inp['8091'].reopen|min }}–{{ inp['8091'].reopen|max }} ms</td><td class="r">{{ inp['8090'].reopen|min }}–{{ inp['8090'].reopen|max }} ms</td><td class="r">≤ 150 ms</td></tr>
+        <tr><td>Typing in search (worst key)</td><td class="r">{{ inp['8091'].keymax }} ms</td><td class="r">{{ inp['8090'].keymax }} ms</td><td class="r">≤ 150 ms</td></tr>
+      </tbody></table></div>
+    <ul class="ticks" style="margin-top:16px">
+      <li><b>Persian page: fewer bytes although the page is richer</b> (−4.8 KB). The Persian font subsets no longer carry Latin letters (−8.6 KB); Latin islands are set in JetBrains Mono, which is already loaded.</li>
+      <li><b>English page: 3.7 KB heavier</b>, from the richer hero drawing and new components in the HTML, with the same request count. It still paints about a third sooner, and it uses 55% of the 120 KB budget.</li>
+      <li><b>First paint moved earlier</b> because the render-blocking stylesheet was replaced by 4.5 KB of inline critical CSS, with the remaining 6.3 KB deferred. This is the split planned in D5, applied early, and as part of it CSS comments are stripped as the Publish Engine will do; the V1 CSS was measured with comments. The headline paints first in the system font and swaps to Vazirmatn when it arrives; layout shift stays at 0.</li>
+      <li><b>Where V2 is slightly slower:</b> re-opening a product is in the same band as V1, about 15 ms slower at the median under 4× CPU slowdown, because the page has more DOM (catalogue table, metal drawing). It stays well inside the 150 ms target. Phase 3 can pre-render the panel at publish time.</li>
+      <li><b>One methodology note:</b> V1's "≤ 48 ms" figure covered only the first product open. V2 reports first open and re-open separately, so the comparison above is like-for-like.</li>
+      <li><b>For production (Phase 3):</b> the inline critical CSS needs a CSP hash, which the Publish Engine computes. Brotli and minification will reduce bytes further.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Things to try</h2>
+    <ol class="try">
+      <li>In the hero, type <span class="mono">6305</span>: only 6305-2RS is listed, so the page says 6305 is not listed on its own and names 6305-2RS as a suffixed variant (a related match). <span class="mono">6305-2RS</span> itself is an exact match.</li>
+      <li>In the hero, type <span class="mono">6205-2RS</span>: the workspace keeps the variant, says it needs confirmation, and carries it into the copied link, WhatsApp and the form.</li>
+      <li>Turn on <em>verified only</em>, then type <span class="mono">UCP 208</span> in the explorer: it says the product is hidden by filters and offers to show it.</li>
+      <li>Open <span class="mono">6206</span> and its Specifications tab: each value shows its source and status; ratings stay pending.</li>
+      <li>In the hero, type <span class="mono">22220 E</span> and press Enter: the page lands on the result with the whole workspace and its actions in view.</li>
+      <li>Type <span class="mono">6208</span> in the explorer: "Ask about this code" keeps it and offers WhatsApp or the form.</li>
+      <li>Type <span lang="fa">۶۲۰۵</span> with Persian digits on the Persian page: it still matches 6205.</li>
+      <li>Click a family in the rail: the counts tell you how much is behind each family.</li>
+      <li>Open <span class="mono">UCP 208</span> or <span class="mono">TC 25×42×7</span> to see "technical data pending" in the readout and tabs.</li>
+      <li>On desktop, move the pointer across the hero: the bearing's rolling elements lean slightly; scrolling turns them.</li>
+      <li>Scroll slowly through "Inside a bearing": six stages, with the stage name and parts list in step.</li>
+      <li>Narrow the window below 900 px: the search stays inside the first screen, the dock appears, and products open as a bottom sheet.</li>
+      <li>Switch your OS to dark mode: sheets turn deep blue and navy fields go one step deeper.</li>
+      <li>Turn on reduced motion: Anatomy shows the complete dimensioned drawing, statically.</li>
+    </ol>
+  </section>
+
+  <section id="gate">
+    <h2>Gate 2 checklist (updated; for your review, nothing here is approved yet)</h2>
+    <div class="tbl-wrap"><table class="tbl">
+      <thead><tr><th>#</th><th>Item</th><th>V2 proposal</th><th>Where</th></tr></thead>
+      <tbody>
+        {% for g in gate %}<tr><td class="r">{{ g[0] }}</td><td><b>{{ g[1] }}</b></td><td>{{ g[2] }}</td><td>{{ g[3]|safe }}</td></tr>{% endfor %}
+      </tbody></table></div>
+    <h3>Your Phase 2 decisions, as applied</h3>
+    <div class="tbl-wrap"><table class="tbl">
+      <thead><tr><th>#</th><th>Decision</th><th>Applied in V2</th></tr></thead>
+      <tbody>
+        <tr><td class="r">Q1</td><td>Dark mode approved: automatic, no toggle, readable, not glow-heavy</td><td>Follows the device setting; navy fields go one step deeper; no glows (deliverable 11)</td></tr>
+        <tr><td class="r">Q2</td><td>Phone numbers in Latin digits in both languages</td><td>Header, hero facts, contact, footer and the admin; <code>tel:</code> and wa.me values in Latin</td></tr>
+        <tr><td class="r">Q3</td><td>The concentric mark stays a placeholder</td><td>Unchanged; the admin has a logo slot for the real SVG</td></tr>
+        <tr><td class="r">Q4</td><td>Admin wireframes before Gate 2, no implementation</td><td>A1–A9 at <a href="admin.html">admin.html</a> (deliverable 13)</td></tr>
+        <tr><td class="r">Q5</td><td>Copy remains draft</td><td>Not polished; final copy becomes CMS content</td></tr>
+      </tbody></table></div>
+    <h3>Gate 2 decisions applied in this round</h3>
+    <div class="tbl-wrap"><table class="tbl">
+      <thead><tr><th>#</th><th>Decision</th><th>Applied</th></tr></thead>
+      <tbody>
+        {% for d in decisions %}<tr><td class="r">{{ d[0] }}</td><td>{{ d[1] }}</td><td>{{ d[2]|safe }}</td></tr>{% endfor %}
+      </tbody></table></div>
+    <h3>Open inputs (they do not block Gate 2)</h3>
+    <ul class="ticks">
+      {% for q in questions %}<li>{{ q|safe }}</li>{% endfor %}
+    </ul>
+  </section>
+
+  <section class="two">
+    <div>
+      <h2>Not done (by design)</h2>
+      <p class="lead" style="font-size:var(--fs--1)">No production application, MariaDB schema, Admin implementation or Publish Engine; the form only validates. Engineering tools are previews (Phase 5). Product data is the 13-item sample with sourced boundary dimensions, plus one second-source value on 6206 to demonstrate per-value provenance; load ratings stay pending. No catalogue data was migrated. Chromium was the test engine; the Firefox path (no scroll timelines) was simulated and screenshotted (deliverable 4, last image). Real Firefox and Safari runs, a screen-reader session and field INP remain for Phase 3 QA.</p>
+    </div>
+    <div>
+      <h2>Files</h2>
+      <p class="lead" style="font-size:var(--fs--1)">The corrected V2 (source, built pages, QA scripts and results) is saved in your project folder under <span class="mono">design/phase2-v2-corrections/</span>. V2 as first delivered stays untouched under <span class="mono">design/phase2-v2/</span>, and V1 under <span class="mono">design/phase2/</span>.</p>
+    </div>
+  </section>
+</main>

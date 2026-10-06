@@ -1,0 +1,667 @@
+[
+ {
+  "id": "2a",
+  "lang": "fa",
+  "name": "Hero exact search ignores a conflicting family filter",
+  "ok": true,
+  "detail": "{\"code\":\"22220 E\",\"filtersCleared\":true}"
+ },
+ {
+  "id": "2a2",
+  "lang": "fa",
+  "name": "Filter reset is announced",
+  "ok": true,
+  "detail": "فیلترها برای نمایش «22220 E» برداشته شد."
+ },
+ {
+  "id": "2b",
+  "lang": "fa",
+  "name": "Explorer: exact code hidden by bore filter → \"hidden by filters\", not \"not in catalogue\"",
+  "ok": true,
+  "detail": "«22220 E» در فهرست هست، اما فیلترهای فعال آن را پنهان کرده‌اند."
+ },
+ {
+  "id": "2b2",
+  "lang": "fa",
+  "name": "Reveal action clears filters and shows the match",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "id": "2c",
+  "lang": "fa",
+  "name": "Verified-only hides UCP 208 (pending) → explained as hidden, with reveal",
+  "ok": true,
+  "detail": "«UCP 208» در فهرست هست، اما فیلترهای فعال آن را پنهان کرده‌اند."
+ },
+ {
+  "id": "2c2",
+  "lang": "fa",
+  "name": "Hero search for UCP 208 clears verified-only and opens it",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "id": "2d",
+  "lang": "fa",
+  "name": "Unknown code with a filter on → \"not in catalogue\" from the whole catalogue",
+  "ok": true,
+  "detail": "کد «6208» در فهرست نیست."
+ },
+ {
+  "id": "2e",
+  "lang": "fa",
+  "name": "Partial matches all hidden by filters → count + reveal",
+  "ok": true,
+  "detail": "۵ محصول با «620» مطابقت دارد، اما فیلترهای فعال همه را پنهان کرده‌اند."
+ },
+ {
+  "id": "1a",
+  "lang": "fa",
+  "name": "6205 open, then search 6208 → workspace, URL and highlight cleared",
+  "ok": true,
+  "detail": "{\"state\":\"empty\",\"hash\":\"\",\"cur\":[]}"
+ },
+ {
+  "id": "1a2",
+  "lang": "fa",
+  "name": "Focus stays in the search field while typing",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "id": "1b",
+  "lang": "fa",
+  "name": "Late 6205 response cannot overwrite the newer 22220 E selection",
+  "ok": true,
+  "detail": "{\"code\":\"22220 E\",\"hash\":\"#p-22220-e\",\"cur\":[\"22220-e\"],\"d\":\"100\"}"
+ },
+ {
+  "id": "1c",
+  "lang": "fa",
+  "name": "Loading state shows only the intended product; a query change during loading invalidates it for good",
+  "ok": true,
+  "detail": "{\"loadingCta\":true,\"state\":\"empty\"}"
+ },
+ {
+  "id": "3",
+  "lang": "fa",
+  "name": "“6205” → requested 6205 (exact) kept through workspace, copy, link, WhatsApp, inquiry",
+  "ok": true,
+  "detail": "{\"ws\":\"6205\",\"copied\":\"6205\",\"link\":\"p-6205\",\"form\":\"6205\",\"match\":\"exact\",\"product\":\"6205\"}"
+ },
+ {
+  "id": "3",
+  "lang": "fa",
+  "name": "“6205-2RS” → requested 6205-2RS (variant) kept through workspace, copy, link, WhatsApp, inquiry",
+  "ok": true,
+  "detail": "{\"ws\":\"6205-2RS\",\"copied\":\"6205-2RS\",\"link\":\"p-6205:6205-2RS\",\"form\":\"6205-2RS\",\"match\":\"variant\",\"product\":\"6205\"}"
+ },
+ {
+  "id": "3",
+  "lang": "fa",
+  "name": "“6205-ZZ” → requested 6205-ZZ (variant) kept through workspace, copy, link, WhatsApp, inquiry",
+  "ok": true,
+  "detail": "{\"ws\":\"6205-ZZ\",\"copied\":\"6205-ZZ\",\"link\":\"p-6205:6205-ZZ\",\"form\":\"6205-ZZ\",\"match\":\"variant\",\"product\":\"6205\"}"
+ },
+ {
+  "id": "3",
+  "lang": "fa",
+  "name": "“6205 2rs” → requested 6205-2RS (variant) kept through workspace, copy, link, WhatsApp, inquiry",
+  "ok": true,
+  "detail": "{\"ws\":\"6205-2RS\",\"copied\":\"6205-2RS\",\"link\":\"p-6205:6205-2RS\",\"form\":\"6205-2RS\",\"match\":\"variant\",\"product\":\"6205\"}"
+ },
+ {
+  "id": "3",
+  "lang": "fa",
+  "name": "“6205-2RSH” → requested 6205-2RSH (series) kept through workspace, copy, link, WhatsApp, inquiry",
+  "ok": true,
+  "detail": "{\"ws\":\"6205-2RSH\",\"copied\":\"6205-2RSH\",\"link\":\"p-6205:6205-2RSH\",\"form\":\"6205-2RSH\",\"match\":\"series\",\"product\":\"6205\"}"
+ },
+ {
+  "id": "3",
+  "lang": "fa",
+  "name": "“6305” → requested 6305 (series) kept through workspace, copy, link, WhatsApp, inquiry",
+  "ok": true,
+  "detail": "{\"ws\":\"6305\",\"copied\":\"6305\",\"link\":\"p-6305-2rs:6305\",\"form\":\"6305\",\"match\":\"series\",\"product\":\"6305-2rs\"}"
+ },
+ {
+  "id": "3",
+  "lang": "fa",
+  "name": "“22220” → requested 22220 (series) kept through workspace, copy, link, WhatsApp, inquiry",
+  "ok": true,
+  "detail": "{\"ws\":\"22220\",\"copied\":\"22220\",\"link\":\"p-22220-e:22220\",\"form\":\"22220\",\"match\":\"series\",\"product\":\"22220-e\"}"
+ },
+ {
+  "id": "3",
+  "lang": "fa",
+  "name": "“22220e” → requested 22220 E (exact) kept through workspace, copy, link, WhatsApp, inquiry",
+  "ok": true,
+  "detail": "{\"ws\":\"22220 E\",\"copied\":\"22220 E\",\"link\":\"p-22220-e\",\"form\":\"22220 E\",\"match\":\"exact\",\"product\":\"22220-e\"}"
+ },
+ {
+  "id": "3b",
+  "lang": "fa",
+  "name": "Row click after typing 6206-ZZ opens 6206 with requested 6206-ZZ",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "id": "3c",
+  "lang": "fa",
+  "name": "Deep link #p-6205:6205-ZZ restores the requested variant",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "id": "5a",
+  "lang": "fa",
+  "name": "Cached reopen: one request, correct content, focus returned on close",
+  "ok": true,
+  "detail": "{\"requests\":1,\"focusAfterClose\":\"cat__code\"}"
+ },
+ {
+  "id": "5b",
+  "lang": "fa",
+  "name": "Failed product JSON → error with Retry, Close and the right product CTAs",
+  "ok": true,
+  "detail": "{\"retry\":true,\"close\":true,\"alert\":true}"
+ },
+ {
+  "id": "5b2",
+  "lang": "fa",
+  "name": "Retry loads 6206",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "id": "5c",
+  "lang": "fa",
+  "name": "Failed module import → error state with Retry (not a dead panel)",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "id": "5c2",
+  "lang": "fa",
+  "name": "Retry re-imports the module and renders 6205",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "id": "5d",
+  "lang": "fa",
+  "name": "Desktop: Enter on a row opens the panel and moves focus to its title",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "id": "5e",
+  "lang": "fa",
+  "name": "Desktop: Escape inside the panel closes it and returns focus to the row",
+  "ok": true,
+  "detail": "{\"firstTab\":\"copy\",\"back\":\"30208\"}"
+ },
+ {
+  "id": "5f",
+  "lang": "fa",
+  "name": "Desktop: Escape outside the panel leaves it open (documented contract)",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "id": "4a",
+  "lang": "fa",
+  "name": "320px: sheet is a dialog with three unclipped product CTAs",
+  "ok": true,
+  "detail": "[\"استعلام در واتس‌اپ\",\"تماس\",\"فرم استعلام\"]"
+ },
+ {
+  "id": "5g",
+  "lang": "fa",
+  "name": "320px: initial focus on the sheet title after it is visible",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "id": "5h",
+  "lang": "fa",
+  "name": "320px: Tab and Shift+Tab stay inside the sheet",
+  "ok": true,
+  "detail": "20/20"
+ },
+ {
+  "id": "5i",
+  "lang": "fa",
+  "name": "320px: Escape closes the sheet and focus returns to the search field that opened it",
+  "ok": true,
+  "detail": "q"
+ },
+ {
+  "id": "4b",
+  "lang": "fa",
+  "name": "320px: Inquiry closes the sheet, moves to the form, focuses the first empty field, keeps 6205-2RS",
+  "ok": true,
+  "detail": "{\"code\":\"6205-2RS\",\"ctx\":\"درباره: 6205-2RS — سری پایه 6205 (نوع درخواستی نیاز به تأیید دارد)\",\"focus\":\"f-name\",\"top\":66,\"open\":false,\"inert\":false}"
+ },
+ {
+  "id": "4a",
+  "lang": "fa",
+  "name": "390px: sheet is a dialog with three unclipped product CTAs",
+  "ok": true,
+  "detail": "[\"استعلام در واتس‌اپ\",\"تماس\",\"فرم استعلام\"]"
+ },
+ {
+  "id": "5g",
+  "lang": "fa",
+  "name": "390px: initial focus on the sheet title after it is visible",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "id": "5h",
+  "lang": "fa",
+  "name": "390px: Tab and Shift+Tab stay inside the sheet",
+  "ok": true,
+  "detail": "20/20"
+ },
+ {
+  "id": "5i",
+  "lang": "fa",
+  "name": "390px: Escape closes the sheet and focus returns to the search field that opened it",
+  "ok": true,
+  "detail": "q"
+ },
+ {
+  "id": "4b",
+  "lang": "fa",
+  "name": "390px: Inquiry closes the sheet, moves to the form, focuses the first empty field, keeps 6205-2RS",
+  "ok": true,
+  "detail": "{\"code\":\"6205-2RS\",\"ctx\":\"درباره: 6205-2RS — سری پایه 6205 (نوع درخواستی نیاز به تأیید دارد)\",\"focus\":\"f-name\",\"top\":66,\"open\":false,\"inert\":false}"
+ },
+ {
+  "id": "5j",
+  "lang": "fa",
+  "name": "390px: cached reopen ×5, focus on the sheet title every time",
+  "ok": true,
+  "detail": "ws-title,ws-title,ws-title,ws-title,ws-title"
+ },
+ {
+  "id": "5k",
+  "lang": "fa",
+  "name": "Breakpoint change keeps the product: panel → modal sheet (focus inside) → panel (focus kept), then Escape closes",
+  "ok": true,
+  "detail": "{\"phone\":[\"dialog\",\"ws-title\"],\"desktop\":[\"region\",\"ws-title\"],\"afterEsc\":\"empty\"}"
+ },
+ {
+  "id": "2a",
+  "lang": "en",
+  "name": "Hero exact search ignores a conflicting family filter",
+  "ok": true,
+  "detail": "{\"code\":\"22220 E\",\"filtersCleared\":true}"
+ },
+ {
+  "id": "2a2",
+  "lang": "en",
+  "name": "Filter reset is announced",
+  "ok": true,
+  "detail": "Filters were cleared to show “22220 E”."
+ },
+ {
+  "id": "2b",
+  "lang": "en",
+  "name": "Explorer: exact code hidden by bore filter → \"hidden by filters\", not \"not in catalogue\"",
+  "ok": true,
+  "detail": "“22220 E” is in the catalogue, but the active filters hide it."
+ },
+ {
+  "id": "2b2",
+  "lang": "en",
+  "name": "Reveal action clears filters and shows the match",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "id": "2c",
+  "lang": "en",
+  "name": "Verified-only hides UCP 208 (pending) → explained as hidden, with reveal",
+  "ok": true,
+  "detail": "“UCP 208” is in the catalogue, but the active filters hide it."
+ },
+ {
+  "id": "2c2",
+  "lang": "en",
+  "name": "Hero search for UCP 208 clears verified-only and opens it",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "id": "2d",
+  "lang": "en",
+  "name": "Unknown code with a filter on → \"not in catalogue\" from the whole catalogue",
+  "ok": true,
+  "detail": "“6208” isn't in the catalogue."
+ },
+ {
+  "id": "2e",
+  "lang": "en",
+  "name": "Partial matches all hidden by filters → count + reveal",
+  "ok": true,
+  "detail": "5 products match “620”, but the active filters hide them all."
+ },
+ {
+  "id": "1a",
+  "lang": "en",
+  "name": "6205 open, then search 6208 → workspace, URL and highlight cleared",
+  "ok": true,
+  "detail": "{\"state\":\"empty\",\"hash\":\"\",\"cur\":[]}"
+ },
+ {
+  "id": "1a2",
+  "lang": "en",
+  "name": "Focus stays in the search field while typing",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "id": "1b",
+  "lang": "en",
+  "name": "Late 6205 response cannot overwrite the newer 22220 E selection",
+  "ok": true,
+  "detail": "{\"code\":\"22220 E\",\"hash\":\"#p-22220-e\",\"cur\":[\"22220-e\"],\"d\":\"100\"}"
+ },
+ {
+  "id": "1c",
+  "lang": "en",
+  "name": "Loading state shows only the intended product; a query change during loading invalidates it for good",
+  "ok": true,
+  "detail": "{\"loadingCta\":true,\"state\":\"empty\"}"
+ },
+ {
+  "id": "3",
+  "lang": "en",
+  "name": "“6205” → requested 6205 (exact) kept through workspace, copy, link, WhatsApp, inquiry",
+  "ok": true,
+  "detail": "{\"ws\":\"6205\",\"copied\":\"6205\",\"link\":\"p-6205\",\"form\":\"6205\",\"match\":\"exact\",\"product\":\"6205\"}"
+ },
+ {
+  "id": "3",
+  "lang": "en",
+  "name": "“6205-2RS” → requested 6205-2RS (variant) kept through workspace, copy, link, WhatsApp, inquiry",
+  "ok": true,
+  "detail": "{\"ws\":\"6205-2RS\",\"copied\":\"6205-2RS\",\"link\":\"p-6205:6205-2RS\",\"form\":\"6205-2RS\",\"match\":\"variant\",\"product\":\"6205\"}"
+ },
+ {
+  "id": "3",
+  "lang": "en",
+  "name": "“6205-ZZ” → requested 6205-ZZ (variant) kept through workspace, copy, link, WhatsApp, inquiry",
+  "ok": true,
+  "detail": "{\"ws\":\"6205-ZZ\",\"copied\":\"6205-ZZ\",\"link\":\"p-6205:6205-ZZ\",\"form\":\"6205-ZZ\",\"match\":\"variant\",\"product\":\"6205\"}"
+ },
+ {
+  "id": "3",
+  "lang": "en",
+  "name": "“6205 2rs” → requested 6205-2RS (variant) kept through workspace, copy, link, WhatsApp, inquiry",
+  "ok": true,
+  "detail": "{\"ws\":\"6205-2RS\",\"copied\":\"6205-2RS\",\"link\":\"p-6205:6205-2RS\",\"form\":\"6205-2RS\",\"match\":\"variant\",\"product\":\"6205\"}"
+ },
+ {
+  "id": "3",
+  "lang": "en",
+  "name": "“6205-2RSH” → requested 6205-2RSH (series) kept through workspace, copy, link, WhatsApp, inquiry",
+  "ok": true,
+  "detail": "{\"ws\":\"6205-2RSH\",\"copied\":\"6205-2RSH\",\"link\":\"p-6205:6205-2RSH\",\"form\":\"6205-2RSH\",\"match\":\"series\",\"product\":\"6205\"}"
+ },
+ {
+  "id": "3",
+  "lang": "en",
+  "name": "“6305” → requested 6305 (series) kept through workspace, copy, link, WhatsApp, inquiry",
+  "ok": true,
+  "detail": "{\"ws\":\"6305\",\"copied\":\"6305\",\"link\":\"p-6305-2rs:6305\",\"form\":\"6305\",\"match\":\"series\",\"product\":\"6305-2rs\"}"
+ },
+ {
+  "id": "3",
+  "lang": "en",
+  "name": "“22220” → requested 22220 (series) kept through workspace, copy, link, WhatsApp, inquiry",
+  "ok": true,
+  "detail": "{\"ws\":\"22220\",\"copied\":\"22220\",\"link\":\"p-22220-e:22220\",\"form\":\"22220\",\"match\":\"series\",\"product\":\"22220-e\"}"
+ },
+ {
+  "id": "3",
+  "lang": "en",
+  "name": "“22220e” → requested 22220 E (exact) kept through workspace, copy, link, WhatsApp, inquiry",
+  "ok": true,
+  "detail": "{\"ws\":\"22220 E\",\"copied\":\"22220 E\",\"link\":\"p-22220-e\",\"form\":\"22220 E\",\"match\":\"exact\",\"product\":\"22220-e\"}"
+ },
+ {
+  "id": "3b",
+  "lang": "en",
+  "name": "Row click after typing 6206-ZZ opens 6206 with requested 6206-ZZ",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "id": "3c",
+  "lang": "en",
+  "name": "Deep link #p-6205:6205-ZZ restores the requested variant",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "id": "5a",
+  "lang": "en",
+  "name": "Cached reopen: one request, correct content, focus returned on close",
+  "ok": true,
+  "detail": "{\"requests\":1,\"focusAfterClose\":\"cat__code\"}"
+ },
+ {
+  "id": "5b",
+  "lang": "en",
+  "name": "Failed product JSON → error with Retry, Close and the right product CTAs",
+  "ok": true,
+  "detail": "{\"retry\":true,\"close\":true,\"alert\":true}"
+ },
+ {
+  "id": "5b2",
+  "lang": "en",
+  "name": "Retry loads 6206",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "id": "5c",
+  "lang": "en",
+  "name": "Failed module import → error state with Retry (not a dead panel)",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "id": "5c2",
+  "lang": "en",
+  "name": "Retry re-imports the module and renders 6205",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "id": "5d",
+  "lang": "en",
+  "name": "Desktop: Enter on a row opens the panel and moves focus to its title",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "id": "5e",
+  "lang": "en",
+  "name": "Desktop: Escape inside the panel closes it and returns focus to the row",
+  "ok": true,
+  "detail": "{\"firstTab\":\"copy\",\"back\":\"30208\"}"
+ },
+ {
+  "id": "5f",
+  "lang": "en",
+  "name": "Desktop: Escape outside the panel leaves it open (documented contract)",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "id": "4a",
+  "lang": "en",
+  "name": "320px: sheet is a dialog with three unclipped product CTAs",
+  "ok": true,
+  "detail": "[\"Check availability on WhatsApp\",\"Call\",\"Inquiry form\"]"
+ },
+ {
+  "id": "5g",
+  "lang": "en",
+  "name": "320px: initial focus on the sheet title after it is visible",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "id": "5h",
+  "lang": "en",
+  "name": "320px: Tab and Shift+Tab stay inside the sheet",
+  "ok": true,
+  "detail": "20/20"
+ },
+ {
+  "id": "5i",
+  "lang": "en",
+  "name": "320px: Escape closes the sheet and focus returns to the search field that opened it",
+  "ok": true,
+  "detail": "q"
+ },
+ {
+  "id": "4b",
+  "lang": "en",
+  "name": "320px: Inquiry closes the sheet, moves to the form, focuses the first empty field, keeps 6205-2RS",
+  "ok": true,
+  "detail": "{\"code\":\"6205-2RS\",\"ctx\":\"Regarding: 6205-2RS — base series 6205 (variant to be confirmed)\",\"focus\":\"f-name\",\"top\":66,\"open\":false,\"inert\":false}"
+ },
+ {
+  "id": "4a",
+  "lang": "en",
+  "name": "390px: sheet is a dialog with three unclipped product CTAs",
+  "ok": true,
+  "detail": "[\"Check availability on WhatsApp\",\"Call\",\"Inquiry form\"]"
+ },
+ {
+  "id": "5g",
+  "lang": "en",
+  "name": "390px: initial focus on the sheet title after it is visible",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "id": "5h",
+  "lang": "en",
+  "name": "390px: Tab and Shift+Tab stay inside the sheet",
+  "ok": true,
+  "detail": "20/20"
+ },
+ {
+  "id": "5i",
+  "lang": "en",
+  "name": "390px: Escape closes the sheet and focus returns to the search field that opened it",
+  "ok": true,
+  "detail": "q"
+ },
+ {
+  "id": "4b",
+  "lang": "en",
+  "name": "390px: Inquiry closes the sheet, moves to the form, focuses the first empty field, keeps 6205-2RS",
+  "ok": true,
+  "detail": "{\"code\":\"6205-2RS\",\"ctx\":\"Regarding: 6205-2RS — base series 6205 (variant to be confirmed)\",\"focus\":\"f-name\",\"top\":66,\"open\":false,\"inert\":false}"
+ },
+ {
+  "id": "5j",
+  "lang": "en",
+  "name": "390px: cached reopen ×5, focus on the sheet title every time",
+  "ok": true,
+  "detail": "ws-title,ws-title,ws-title,ws-title,ws-title"
+ },
+ {
+  "id": "5k",
+  "lang": "en",
+  "name": "Breakpoint change keeps the product: panel → modal sheet (focus inside) → panel (focus kept), then Escape closes",
+  "ok": true,
+  "detail": "{\"phone\":[\"dialog\",\"ws-title\"],\"desktop\":[\"region\",\"ws-title\"],\"afterEsc\":\"empty\"}"
+ },
+ {
+  "id": "8",
+  "lang": "fa",
+  "name": "320px: no horizontal page overflow",
+  "ok": true,
+  "detail": "320 / 320"
+ },
+ {
+  "id": "8",
+  "lang": "fa",
+  "name": "390px: no horizontal page overflow",
+  "ok": true,
+  "detail": "390 / 390"
+ },
+ {
+  "id": "8",
+  "lang": "en",
+  "name": "320px: no horizontal page overflow",
+  "ok": true,
+  "detail": "320 / 320"
+ },
+ {
+  "id": "8",
+  "lang": "en",
+  "name": "390px: no horizontal page overflow",
+  "ok": true,
+  "detail": "390 / 390"
+ },
+ {
+  "id": "8",
+  "lang": "system",
+  "name": "320px: no horizontal page overflow",
+  "ok": true,
+  "detail": "320 / 320"
+ },
+ {
+  "id": "8",
+  "lang": "system",
+  "name": "390px: no horizontal page overflow",
+  "ok": true,
+  "detail": "390 / 390"
+ },
+ {
+  "id": "8",
+  "lang": "admin",
+  "name": "320px: no horizontal page overflow",
+  "ok": true,
+  "detail": "320 / 320"
+ },
+ {
+  "id": "8",
+  "lang": "admin",
+  "name": "390px: no horizontal page overflow",
+  "ok": true,
+  "detail": "390 / 390"
+ },
+ {
+  "id": "8",
+  "lang": "index",
+  "name": "320px: no horizontal page overflow",
+  "ok": true,
+  "detail": "320 / 320"
+ },
+ {
+  "id": "8",
+  "lang": "index",
+  "name": "390px: no horizontal page overflow",
+  "ok": true,
+  "detail": "390 / 390"
+ },
+ {
+  "id": "6",
+  "lang": "admin",
+  "name": "A4 Media and A7 Publish state the same alt-text rule and severity; unused media never blocks",
+  "ok": true,
+  "detail": "{\"media\":[\"ALT-INF:block\",\"ALT-INF:block\",\"ALT-UNUSED:info\",\"ALT-INF:block\"],\"publish\":[\"ALT-INF:block\"],\"dash\":[\"ALT-INF:block\",\"ALT-UNUSED:info\"]}"
+ }
+]

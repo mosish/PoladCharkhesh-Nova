@@ -1,0 +1,160 @@
+[
+ {
+  "lang": "fa",
+  "profile": "Slow 4G (1.6 Mbps, 150 ms RTT)",
+  "requests": 7,
+  "total": 70492,
+  "html": 20151,
+  "css": 6467,
+  "js": 4090,
+  "fonts": 39784,
+  "fcp": 656,
+  "lcp": 656,
+  "cls": 0,
+  "load": 784,
+  "maxEvent": 136,
+  "inp": 64,
+  "events": [
+   [
+    "pointerover",
+    136
+   ],
+   [
+    "pointerenter",
+    136
+   ],
+   [
+    "pointerenter",
+    136
+   ],
+   [
+    "pointerenter",
+    136
+   ],
+   [
+    "pointerenter",
+    136
+   ],
+   [
+    "mouseover",
+    136
+   ],
+   [
+    "mouseout",
+    64
+   ],
+   [
+    "mouseover",
+    64
+   ],
+   [
+    "mousedown",
+    64
+   ],
+   [
+    "mouseup",
+    64
+   ],
+   [
+    "click",
+    64
+   ]
+  ],
+  "onDemandKB": 6.5,
+  "onDemand": [
+   "ws.js:5784",
+   "6205.json:864"
+  ]
+ },
+ {
+  "lang": "fa",
+  "profile": "3G-class (400 kbps, 400 ms RTT)",
+  "requests": 7,
+  "total": 70492,
+  "html": 20151,
+  "css": 6467,
+  "js": 4090,
+  "fonts": 39784,
+  "fcp": 832,
+  "lcp": 832,
+  "cls": 0,
+  "load": 2019,
+  "maxEvent": 56,
+  "inp": 56,
+  "events": [],
+  "onDemandKB": 6.5,
+  "onDemand": [
+   "ws.js:5784",
+   "6205.json:864"
+  ]
+ },
+ {
+  "lang": "en",
+  "profile": "Slow 4G (1.6 Mbps, 150 ms RTT)",
+  "requests": 8,
+  "total": 67555,
+  "html": 18952,
+  "css": 6467,
+  "js": 4090,
+  "fonts": 38046,
+  "fcp": 480,
+  "lcp": 480,
+  "cls": 0,
+  "load": 730,
+  "maxEvent": 184,
+  "inp": 56,
+  "events": [
+   [
+    "pointerover",
+    184
+   ],
+   [
+    "pointerenter",
+    184
+   ],
+   [
+    "pointerenter",
+    184
+   ],
+   [
+    "pointerenter",
+    184
+   ],
+   [
+    "pointerenter",
+    184
+   ],
+   [
+    "mouseover",
+    184
+   ]
+  ],
+  "onDemandKB": 6.5,
+  "onDemand": [
+   "ws.js:5784",
+   "6205.json:864"
+  ]
+ },
+ {
+  "lang": "en",
+  "profile": "3G-class (400 kbps, 400 ms RTT)",
+  "requests": 8,
+  "total": 67555,
+  "html": 18952,
+  "css": 6467,
+  "js": 4090,
+  "fonts": 38046,
+  "fcp": 740,
+  "lcp": 740,
+  "cls": 0,
+  "load": 1991,
+  "maxEvent": 56,
+  "inp": 56,
+  "events": [],
+  "onDemandKB": 6.5,
+  "onDemand": [
+   "ws.js:5784",
+   "6205.json:864"
+  ]
+ }
+]

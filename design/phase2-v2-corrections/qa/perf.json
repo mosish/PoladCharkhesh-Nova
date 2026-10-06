@@ -1,0 +1,214 @@
+[
+ {
+  "lang": "fa",
+  "profile": "Slow 4G (1.6 Mbps, 150 ms RTT)",
+  "requests": 7,
+  "total": 75268,
+  "html": 13645,
+  "css": 9308,
+  "js": 3711,
+  "fonts": 48604,
+  "fcp": 1016,
+  "lcp": 1016,
+  "cls": 0,
+  "load": 1003,
+  "maxEvent": 48,
+  "events": [
+   [
+    "pointerleave",
+    16
+   ],
+   [
+    "pointerleave",
+    16
+   ],
+   [
+    "touchend",
+    16
+   ],
+   [
+    "mouseout",
+    40
+   ],
+   [
+    "mouseover",
+    40
+   ],
+   [
+    "mousedown",
+    40
+   ],
+   [
+    "mouseup",
+    40
+   ],
+   [
+    "click",
+    40
+   ]
+  ],
+  "onDemand": [
+   "ws.js:5624",
+   "6205.json:864"
+  ]
+ },
+ {
+  "lang": "fa",
+  "profile": "3G-class (400 kbps, 400 ms RTT)",
+  "requests": 7,
+  "total": 75268,
+  "html": 13645,
+  "css": 9308,
+  "js": 3711,
+  "fonts": 48604,
+  "fcp": 1748,
+  "lcp": 1748,
+  "cls": 0.001,
+  "load": 2370,
+  "maxEvent": 160,
+  "events": [
+   [
+    "pointerenter",
+    16
+   ],
+   [
+    "mouseout",
+    16
+   ],
+   [
+    "mouseover",
+    16
+   ],
+   [
+    "mouseout",
+    32
+   ],
+   [
+    "mouseover",
+    32
+   ],
+   [
+    "mousedown",
+    32
+   ],
+   [
+    "mouseup",
+    32
+   ],
+   [
+    "click",
+    32
+   ]
+  ],
+  "onDemand": [
+   "ws.js:5624",
+   "6205.json:864"
+  ]
+ },
+ {
+  "lang": "en",
+  "profile": "Slow 4G (1.6 Mbps, 150 ms RTT)",
+  "requests": 8,
+  "total": 63721,
+  "html": 12656,
+  "css": 9308,
+  "js": 3711,
+  "fonts": 38046,
+  "fcp": 752,
+  "lcp": 752,
+  "cls": 0,
+  "load": 844,
+  "maxEvent": 104,
+  "events": [
+   [
+    "mousedown",
+    40
+   ],
+   [
+    "mouseup",
+    40
+   ],
+   [
+    "click",
+    40
+   ],
+   [
+    "mouseout",
+    32
+   ],
+   [
+    "mouseover",
+    32
+   ],
+   [
+    "mousedown",
+    32
+   ],
+   [
+    "mouseup",
+    32
+   ],
+   [
+    "click",
+    32
+   ]
+  ],
+  "onDemand": [
+   "ws.js:5624",
+   "6205.json:864"
+  ]
+ },
+ {
+  "lang": "en",
+  "profile": "3G-class (400 kbps, 400 ms RTT)",
+  "requests": 8,
+  "total": 63721,
+  "html": 12656,
+  "css": 9308,
+  "js": 3711,
+  "fonts": 38046,
+  "fcp": 1640,
+  "lcp": 1640,
+  "cls": 0,
+  "load": 2402,
+  "maxEvent": 48,
+  "events": [
+   [
+    "click",
+    40
+   ],
+   [
+    "mouseout",
+    48
+   ],
+   [
+    "mouseover",
+    48
+   ],
+   [
+    "mousedown",
+    48
+   ],
+   [
+    "mouseup",
+    48
+   ],
+   [
+    "click",
+    48
+   ],
+   [
+    "mouseout",
+    16
+   ],
+   [
+    "mouseover",
+    16
+   ]
+  ],
+  "onDemand": [
+   "ws.js:5624",
+   "6205.json:864"
+  ]
+ }
+]

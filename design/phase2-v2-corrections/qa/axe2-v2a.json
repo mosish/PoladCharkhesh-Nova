@@ -1,0 +1,148 @@
+[
+ {
+  "name": "fa · desktop · workspace 6206 (mixed provenance)",
+  "violations": []
+ },
+ {
+  "name": "fa · desktop · specifications tab",
+  "violations": []
+ },
+ {
+  "name": "en · desktop · variant request 6205-2RS",
+  "violations": []
+ },
+ {
+  "name": "fa · desktop · dark · workspace",
+  "violations": []
+ },
+ {
+  "name": "fa · desktop · filters hide exact match",
+  "violations": []
+ },
+ {
+  "name": "fa · desktop · product data failed (Retry)",
+  "violations": []
+ },
+ {
+  "name": "fa · 390 · mobile sheet open (dialog)",
+  "violations": [
+   {
+    "id": "aria-allowed-role",
+    "impact": "minor",
+    "n": 1,
+    "where": [
+     "#ws"
+    ]
+   }
+  ]
+ },
+ {
+  "name": "en · 320 · mobile sheet open (dialog)",
+  "violations": [
+   {
+    "id": "aria-allowed-role",
+    "impact": "minor",
+    "n": 1,
+    "where": [
+     "#ws"
+    ]
+   }
+  ]
+ },
+ {
+  "name": "en · 390 · dark · mobile sheet",
+  "violations": [
+   {
+    "id": "aria-allowed-role",
+    "impact": "minor",
+    "n": 1,
+    "where": [
+     "#ws"
+    ]
+   }
+  ]
+ },
+ {
+  "name": "design system",
+  "violations": [
+   {
+    "id": "page-has-heading-one",
+    "impact": "moderate",
+    "n": 1,
+    "where": [
+     "html"
+    ]
+   }
+  ]
+ },
+ {
+  "name": "admin wireframes",
+  "violations": [
+   {
+    "id": "aria-prohibited-attr",
+    "impact": "serious",
+    "n": 10,
+    "where": [
+     ".on > .tog.on[aria-label=\"نمایش\"]",
+     "li:nth-child(2) > .tog.on[aria-label=\"نمایش\"]"
+    ]
+   },
+   {
+    "id": "color-contrast",
+    "impact": "serious",
+    "n": 8,
+    "where": [
+     "div[aria-label=\"A2 Products wireframe\"] > .adm[dir=\"rtl\"][lang=\"fa\"] > .adm__body > .adm__main > .toolbar > .a-in--search.is-ph.a-in",
+     ".card:nth-child(3) > .card__b.grid > .field:nth-child(1) > .is-ph.a-in"
+    ]
+   },
+   {
+    "id": "empty-table-header",
+    "impact": "minor",
+    "n": 6,
+    "where": [
+     ".g-main.g-main--wide.grid > .grid:nth-child(1) > .card:nth-child(2) > .t > thead > tr > th:nth-child(4)",
+     ".adm__main > .t > thead > tr > th:nth-child(1)"
+    ]
+   },
+   {
+    "id": "heading-order",
+    "impact": "moderate",
+    "n": 8,
+    "where": [
+     "div[aria-label=\"A1 Dashboard wireframe\"] > .adm[dir=\"rtl\"][lang=\"fa\"] > .adm__body > nav > h4:nth-child(2)",
+     "div[aria-label=\"A2 Products wireframe\"] > .adm[dir=\"rtl\"][lang=\"fa\"] > .adm__body > nav > h4:nth-child(2)"
+    ]
+   },
+   {
+    "id": "landmark-unique",
+    "impact": "moderate",
+    "n": 1,
+    "where": [
+     "div[aria-label=\"A1 Dashboard wireframe\"] > .adm[dir=\"rtl\"][lang=\"fa\"] > .adm__body > nav"
+    ]
+   }
+  ]
+ },
+ {
+  "name": "review hub",
+  "violations": [
+   {
+    "id": "html-has-lang",
+    "impact": "serious",
+    "n": 1,
+    "where": [
+     "html"
+    ]
+   },
+   {
+    "id": "region",
+    "impact": "moderate",
+    "n": 1,
+    "where": [
+     "#top"
+    ]
+   }
+  ]
+ }
+]

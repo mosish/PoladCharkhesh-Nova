@@ -1,0 +1,338 @@
+[
+ {
+  "id": "3",
+  "lang": "fa",
+  "name": "“6205” → requested 6205 (exact) kept through workspace, copy, link, WhatsApp, inquiry",
+  "ok": true,
+  "detail": "{\"ws\":\"6205\",\"copied\":\"6205\",\"link\":\"p-6205\",\"form\":\"6205\",\"match\":\"exact\",\"product\":\"6205\"}"
+ },
+ {
+  "id": "3t",
+  "lang": "fa",
+  "name": "“6205” → exact: explorer, workspace, WhatsApp and inquiry name the right base / variant roles",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "id": "3",
+  "lang": "fa",
+  "name": "“6205-2RS” → requested 6205-2RS (variant) kept through workspace, copy, link, WhatsApp, inquiry",
+  "ok": true,
+  "detail": "{\"ws\":\"6205-2RS\",\"copied\":\"6205-2RS\",\"link\":\"p-6205:6205-2RS\",\"form\":\"6205-2RS\",\"match\":\"variant\",\"product\":\"6205\"}"
+ },
+ {
+  "id": "3t",
+  "lang": "fa",
+  "name": "“6205-2RS” → variant, listed 6205: explorer, workspace, WhatsApp and inquiry name the right base / variant roles",
+  "ok": false,
+  "detail": "{\"wrong\":[[\"askP\",\"«6205-2RS» در فهرست به‌صورت سری پایهٔ 6205 آمده است. ابعاد نمایش‌داده‌شده مربوط به 6205 است؛ جزئیات پسوند (آب‌بند، درپوش، لقی و…) را کارشناس تأیید می‌کند.\",\"[missing string]\"]],\"reversed\":false,\"errs\":[]}"
+ },
+ {
+  "id": "3",
+  "lang": "fa",
+  "name": "“6205-ZZ” → requested 6205-ZZ (variant) kept through workspace, copy, link, WhatsApp, inquiry",
+  "ok": true,
+  "detail": "{\"ws\":\"6205-ZZ\",\"copied\":\"6205-ZZ\",\"link\":\"p-6205:6205-ZZ\",\"form\":\"6205-ZZ\",\"match\":\"variant\",\"product\":\"6205\"}"
+ },
+ {
+  "id": "3t",
+  "lang": "fa",
+  "name": "“6205-ZZ” → variant, listed 6205: explorer, workspace, WhatsApp and inquiry name the right base / variant roles",
+  "ok": false,
+  "detail": "{\"wrong\":[[\"askP\",\"«6205-ZZ» در فهرست به‌صورت سری پایهٔ 6205 آمده است. ابعاد نمایش‌داده‌شده مربوط به 6205 است؛ جزئیات پسوند (آب‌بند، درپوش، لقی و…) را کارشناس تأیید می‌کند.\",\"[missing string]\"]],\"reversed\":false,\"errs\":[]}"
+ },
+ {
+  "id": "3",
+  "lang": "fa",
+  "name": "“6205 2rs” → requested 6205-2RS (variant) kept through workspace, copy, link, WhatsApp, inquiry",
+  "ok": true,
+  "detail": "{\"ws\":\"6205-2RS\",\"copied\":\"6205-2RS\",\"link\":\"p-6205:6205-2RS\",\"form\":\"6205-2RS\",\"match\":\"variant\",\"product\":\"6205\"}"
+ },
+ {
+  "id": "3t",
+  "lang": "fa",
+  "name": "“6205 2rs” → variant, listed 6205: explorer, workspace, WhatsApp and inquiry name the right base / variant roles",
+  "ok": false,
+  "detail": "{\"wrong\":[[\"askP\",\"«6205-2RS» در فهرست به‌صورت سری پایهٔ 6205 آمده است. ابعاد نمایش‌داده‌شده مربوط به 6205 است؛ جزئیات پسوند (آب‌بند، درپوش، لقی و…) را کارشناس تأیید می‌کند.\",\"[missing string]\"]],\"reversed\":false,\"errs\":[]}"
+ },
+ {
+  "id": "3",
+  "lang": "fa",
+  "name": "“6205-2RSH” → requested 6205-2RSH (series) kept through workspace, copy, link, WhatsApp, inquiry",
+  "ok": true,
+  "detail": "{\"ws\":\"6205-2RSH\",\"copied\":\"6205-2RSH\",\"link\":\"p-6205:6205-2RSH\",\"form\":\"6205-2RSH\",\"match\":\"series\",\"product\":\"6205\"}"
+ },
+ {
+  "id": "3t",
+  "lang": "fa",
+  "name": "“6205-2RSH” → series, listed 6205: explorer, workspace, WhatsApp and inquiry name the right base / variant roles",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "id": "3",
+  "lang": "fa",
+  "name": "“6305” → requested 6305 (related) kept through workspace, copy, link, WhatsApp, inquiry",
+  "ok": false,
+  "detail": "{\"ws\":\"6305\",\"copied\":\"6305\",\"link\":\"p-6305-2rs:6305\",\"form\":\"6305\",\"match\":\"series\",\"product\":\"6305-2rs\"}"
+ },
+ {
+  "id": "3t",
+  "lang": "fa",
+  "name": "“6305” → related, listed 6305-2RS: explorer, workspace, WhatsApp and inquiry name the right base / variant roles",
+  "ok": false,
+  "detail": "{\"wrong\":[[\"ask\",\"تطبیق با سری پایه — نوع درخواستی نیاز به تأیید دارد\",null],[\"askP\",\"«6305» در فهرست به‌صورت سری پایهٔ 6305-2RS آمده است. ابعاد نمایش‌داده‌شده مربوط به 6305-2RS است؛ جزئیات پسوند (آب‌بند، درپوش، لقی و…) را کارشناس تأیید می‌کند.\",\"[missing string]\"],[\"match\",\"درخواست: 6305 · سری پایه در فهرست: 6305-2RS — نوع درخواستی نیاز به تأیید دارد\",\"[missing string]\"],[\"wa\",\"سلام، استعلام موجودی و مشخصات: 6305 (سری پایه در فهرست: 6305-2RS؛ نوع درخواستی نیاز به تأیید دارد)\",\"[missing string]\"],[\"ctx\",\"درباره: 6305 — سری پایه 6305-2RS (نوع درخواستی نیاز به تأیید دارد)\",\"درباره: 6305[missing string]\"]],\"reversed\":true,\"errs\":[]}"
+ },
+ {
+  "id": "3",
+  "lang": "fa",
+  "name": "“6305-2RS” → requested 6305-2RS (exact) kept through workspace, copy, link, WhatsApp, inquiry",
+  "ok": true,
+  "detail": "{\"ws\":\"6305-2RS\",\"copied\":\"6305-2RS\",\"link\":\"p-6305-2rs\",\"form\":\"6305-2RS\",\"match\":\"exact\",\"product\":\"6305-2rs\"}"
+ },
+ {
+  "id": "3t",
+  "lang": "fa",
+  "name": "“6305-2RS” → exact: explorer, workspace, WhatsApp and inquiry name the right base / variant roles",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "id": "3",
+  "lang": "fa",
+  "name": "“22220” → requested 22220 (related) kept through workspace, copy, link, WhatsApp, inquiry",
+  "ok": false,
+  "detail": "{\"ws\":\"22220\",\"copied\":\"22220\",\"link\":\"p-22220-e:22220\",\"form\":\"22220\",\"match\":\"series\",\"product\":\"22220-e\"}"
+ },
+ {
+  "id": "3t",
+  "lang": "fa",
+  "name": "“22220” → related, listed 22220 E: explorer, workspace, WhatsApp and inquiry name the right base / variant roles",
+  "ok": false,
+  "detail": "{\"wrong\":[[\"ask\",\"تطبیق با سری پایه — نوع درخواستی نیاز به تأیید دارد\",null],[\"askP\",\"«22220» در فهرست به‌صورت سری پایهٔ 22220 E آمده است. ابعاد نمایش‌داده‌شده مربوط به 22220 E است؛ جزئیات پسوند (آب‌بند، درپوش، لقی و…) را کارشناس تأیید می‌کند.\",\"[missing string]\"],[\"match\",\"درخواست: 22220 · سری پایه در فهرست: 22220 E — نوع درخواستی نیاز به تأیید دارد\",\"[missing string]\"],[\"wa\",\"سلام، استعلام موجودی و مشخصات: 22220 (سری پایه در فهرست: 22220 E؛ نوع درخواستی نیاز به تأیید دارد)\",\"[missing string]\"],[\"ctx\",\"درباره: 22220 — سری پایه 22220 E (نوع درخواستی نیاز به تأیید دارد)\",\"درباره: 22220[missing string]\"]],\"reversed\":true,\"errs\":[]}"
+ },
+ {
+  "id": "3",
+  "lang": "fa",
+  "name": "“22220 E” → requested 22220 E (exact) kept through workspace, copy, link, WhatsApp, inquiry",
+  "ok": true,
+  "detail": "{\"ws\":\"22220 E\",\"copied\":\"22220 E\",\"link\":\"p-22220-e\",\"form\":\"22220 E\",\"match\":\"exact\",\"product\":\"22220-e\"}"
+ },
+ {
+  "id": "3t",
+  "lang": "fa",
+  "name": "“22220 E” → exact: explorer, workspace, WhatsApp and inquiry name the right base / variant roles",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "id": "3",
+  "lang": "fa",
+  "name": "“22220e” → requested 22220 E (exact) kept through workspace, copy, link, WhatsApp, inquiry",
+  "ok": true,
+  "detail": "{\"ws\":\"22220 E\",\"copied\":\"22220 E\",\"link\":\"p-22220-e\",\"form\":\"22220 E\",\"match\":\"exact\",\"product\":\"22220-e\"}"
+ },
+ {
+  "id": "3t",
+  "lang": "fa",
+  "name": "“22220e” → exact: explorer, workspace, WhatsApp and inquiry name the right base / variant roles",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "id": "3b",
+  "lang": "fa",
+  "name": "Row click after typing 6206-ZZ opens 6206 with requested 6206-ZZ",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "id": "3c",
+  "lang": "fa",
+  "name": "Deep link #p-6205:6205-ZZ restores the requested variant",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "id": "3d",
+  "lang": "fa",
+  "name": "Deep link #p-6305-2rs:6305 restores the related request (6305 asked, 6305-2RS listed)",
+  "ok": false,
+  "detail": "درخواست: 6305 · سری پایه در فهرست: 6305-2RS — نوع درخواستی نیاز به تأیید دارد"
+ },
+ {
+  "id": "3e",
+  "lang": "fa",
+  "name": "Half-typed 6305-2: no series or related claim; 6305-2RS stays listed as a partial match",
+  "ok": false,
+  "detail": "تطبیق با سری پایه — نوع درخواستی نیاز به تأیید دارد"
+ },
+ {
+  "id": "3",
+  "lang": "en",
+  "name": "“6205” → requested 6205 (exact) kept through workspace, copy, link, WhatsApp, inquiry",
+  "ok": true,
+  "detail": "{\"ws\":\"6205\",\"copied\":\"6205\",\"link\":\"p-6205\",\"form\":\"6205\",\"match\":\"exact\",\"product\":\"6205\"}"
+ },
+ {
+  "id": "3t",
+  "lang": "en",
+  "name": "“6205” → exact: explorer, workspace, WhatsApp and inquiry name the right base / variant roles",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "id": "3",
+  "lang": "en",
+  "name": "“6205-2RS” → requested 6205-2RS (variant) kept through workspace, copy, link, WhatsApp, inquiry",
+  "ok": true,
+  "detail": "{\"ws\":\"6205-2RS\",\"copied\":\"6205-2RS\",\"link\":\"p-6205:6205-2RS\",\"form\":\"6205-2RS\",\"match\":\"variant\",\"product\":\"6205\"}"
+ },
+ {
+  "id": "3t",
+  "lang": "en",
+  "name": "“6205-2RS” → variant, listed 6205: explorer, workspace, WhatsApp and inquiry name the right base / variant roles",
+  "ok": false,
+  "detail": "{\"wrong\":[[\"askP\",\"“6205-2RS” is listed as base series 6205. The dimensions shown are for 6205; suffix details (seals, shields, clearance…) are confirmed by a specialist.\",\"[missing string]\"]],\"reversed\":false,\"errs\":[]}"
+ },
+ {
+  "id": "3",
+  "lang": "en",
+  "name": "“6205-ZZ” → requested 6205-ZZ (variant) kept through workspace, copy, link, WhatsApp, inquiry",
+  "ok": true,
+  "detail": "{\"ws\":\"6205-ZZ\",\"copied\":\"6205-ZZ\",\"link\":\"p-6205:6205-ZZ\",\"form\":\"6205-ZZ\",\"match\":\"variant\",\"product\":\"6205\"}"
+ },
+ {
+  "id": "3t",
+  "lang": "en",
+  "name": "“6205-ZZ” → variant, listed 6205: explorer, workspace, WhatsApp and inquiry name the right base / variant roles",
+  "ok": false,
+  "detail": "{\"wrong\":[[\"askP\",\"“6205-ZZ” is listed as base series 6205. The dimensions shown are for 6205; suffix details (seals, shields, clearance…) are confirmed by a specialist.\",\"[missing string]\"]],\"reversed\":false,\"errs\":[]}"
+ },
+ {
+  "id": "3",
+  "lang": "en",
+  "name": "“6205 2rs” → requested 6205-2RS (variant) kept through workspace, copy, link, WhatsApp, inquiry",
+  "ok": true,
+  "detail": "{\"ws\":\"6205-2RS\",\"copied\":\"6205-2RS\",\"link\":\"p-6205:6205-2RS\",\"form\":\"6205-2RS\",\"match\":\"variant\",\"product\":\"6205\"}"
+ },
+ {
+  "id": "3t",
+  "lang": "en",
+  "name": "“6205 2rs” → variant, listed 6205: explorer, workspace, WhatsApp and inquiry name the right base / variant roles",
+  "ok": false,
+  "detail": "{\"wrong\":[[\"askP\",\"“6205-2RS” is listed as base series 6205. The dimensions shown are for 6205; suffix details (seals, shields, clearance…) are confirmed by a specialist.\",\"[missing string]\"]],\"reversed\":false,\"errs\":[]}"
+ },
+ {
+  "id": "3",
+  "lang": "en",
+  "name": "“6205-2RSH” → requested 6205-2RSH (series) kept through workspace, copy, link, WhatsApp, inquiry",
+  "ok": true,
+  "detail": "{\"ws\":\"6205-2RSH\",\"copied\":\"6205-2RSH\",\"link\":\"p-6205:6205-2RSH\",\"form\":\"6205-2RSH\",\"match\":\"series\",\"product\":\"6205\"}"
+ },
+ {
+  "id": "3t",
+  "lang": "en",
+  "name": "“6205-2RSH” → series, listed 6205: explorer, workspace, WhatsApp and inquiry name the right base / variant roles",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "id": "3",
+  "lang": "en",
+  "name": "“6305” → requested 6305 (related) kept through workspace, copy, link, WhatsApp, inquiry",
+  "ok": false,
+  "detail": "{\"ws\":\"6305\",\"copied\":\"6305\",\"link\":\"p-6305-2rs:6305\",\"form\":\"6305\",\"match\":\"series\",\"product\":\"6305-2rs\"}"
+ },
+ {
+  "id": "3t",
+  "lang": "en",
+  "name": "“6305” → related, listed 6305-2RS: explorer, workspace, WhatsApp and inquiry name the right base / variant roles",
+  "ok": false,
+  "detail": "{\"wrong\":[[\"ask\",\"Base series match — requested variant requires confirmation\",null],[\"askP\",\"“6305” is listed as base series 6305-2RS. The dimensions shown are for 6305-2RS; suffix details (seals, shields, clearance…) are confirmed by a specialist.\",\"[missing string]\"],[\"match\",\"Requested: 6305 · base series in catalogue: 6305-2RS — variant requires confirmation\",\"[missing string]\"],[\"wa\",\"Hello, availability and specifications for: 6305 (catalogue base series 6305-2RS; variant to be confirmed)\",\"[missing string]\"],[\"ctx\",\"Regarding: 6305 — base series 6305-2RS (variant to be confirmed)\",\"Regarding: 6305[missing string]\"]],\"reversed\":true,\"errs\":[]}"
+ },
+ {
+  "id": "3",
+  "lang": "en",
+  "name": "“6305-2RS” → requested 6305-2RS (exact) kept through workspace, copy, link, WhatsApp, inquiry",
+  "ok": true,
+  "detail": "{\"ws\":\"6305-2RS\",\"copied\":\"6305-2RS\",\"link\":\"p-6305-2rs\",\"form\":\"6305-2RS\",\"match\":\"exact\",\"product\":\"6305-2rs\"}"
+ },
+ {
+  "id": "3t",
+  "lang": "en",
+  "name": "“6305-2RS” → exact: explorer, workspace, WhatsApp and inquiry name the right base / variant roles",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "id": "3",
+  "lang": "en",
+  "name": "“22220” → requested 22220 (related) kept through workspace, copy, link, WhatsApp, inquiry",
+  "ok": false,
+  "detail": "{\"ws\":\"22220\",\"copied\":\"22220\",\"link\":\"p-22220-e:22220\",\"form\":\"22220\",\"match\":\"series\",\"product\":\"22220-e\"}"
+ },
+ {
+  "id": "3t",
+  "lang": "en",
+  "name": "“22220” → related, listed 22220 E: explorer, workspace, WhatsApp and inquiry name the right base / variant roles",
+  "ok": false,
+  "detail": "{\"wrong\":[[\"ask\",\"Base series match — requested variant requires confirmation\",null],[\"askP\",\"“22220” is listed as base series 22220 E. The dimensions shown are for 22220 E; suffix details (seals, shields, clearance…) are confirmed by a specialist.\",\"[missing string]\"],[\"match\",\"Requested: 22220 · base series in catalogue: 22220 E — variant requires confirmation\",\"[missing string]\"],[\"wa\",\"Hello, availability and specifications for: 22220 (catalogue base series 22220 E; variant to be confirmed)\",\"[missing string]\"],[\"ctx\",\"Regarding: 22220 — base series 22220 E (variant to be confirmed)\",\"Regarding: 22220[missing string]\"]],\"reversed\":true,\"errs\":[]}"
+ },
+ {
+  "id": "3",
+  "lang": "en",
+  "name": "“22220 E” → requested 22220 E (exact) kept through workspace, copy, link, WhatsApp, inquiry",
+  "ok": true,
+  "detail": "{\"ws\":\"22220 E\",\"copied\":\"22220 E\",\"link\":\"p-22220-e\",\"form\":\"22220 E\",\"match\":\"exact\",\"product\":\"22220-e\"}"
+ },
+ {
+  "id": "3t",
+  "lang": "en",
+  "name": "“22220 E” → exact: explorer, workspace, WhatsApp and inquiry name the right base / variant roles",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "id": "3",
+  "lang": "en",
+  "name": "“22220e” → requested 22220 E (exact) kept through workspace, copy, link, WhatsApp, inquiry",
+  "ok": true,
+  "detail": "{\"ws\":\"22220 E\",\"copied\":\"22220 E\",\"link\":\"p-22220-e\",\"form\":\"22220 E\",\"match\":\"exact\",\"product\":\"22220-e\"}"
+ },
+ {
+  "id": "3t",
+  "lang": "en",
+  "name": "“22220e” → exact: explorer, workspace, WhatsApp and inquiry name the right base / variant roles",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "id": "3b",
+  "lang": "en",
+  "name": "Row click after typing 6206-ZZ opens 6206 with requested 6206-ZZ",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "id": "3c",
+  "lang": "en",
+  "name": "Deep link #p-6205:6205-ZZ restores the requested variant",
+  "ok": true,
+  "detail": ""
+ },
+ {
+  "id": "3d",
+  "lang": "en",
+  "name": "Deep link #p-6305-2rs:6305 restores the related request (6305 asked, 6305-2RS listed)",
+  "ok": false,
+  "detail": "Requested: 6305 · base series in catalogue: 6305-2RS — variant requires confirmation"
+ },
+ {
+  "id": "3e",
+  "lang": "en",
+  "name": "Half-typed 6305-2: no series or related claim; 6305-2RS stays listed as a partial match",
+  "ok": false,
+  "detail": "Base series match — requested variant requires confirmation"
+ }
+]

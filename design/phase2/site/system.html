@@ -1,0 +1,354 @@
+<!doctype html>
+<html lang="en" dir="ltr" class="no-js">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Nova Design System</title>
+<meta name="robots" content="noindex">
+<style>
+@font-face{font-family:"Vazirmatn";src:url(assets/fonts/vazirmatn-Regular-fa.woff2) format("woff2");font-weight:400;font-display:swap}
+@font-face{font-family:"Vazirmatn";src:url(assets/fonts/vazirmatn-Bold-fa.woff2) format("woff2");font-weight:700;font-display:swap}
+@font-face{font-family:"JetBrains Mono";src:url(assets/fonts/jbmono-400.woff2) format("woff2");font-weight:400;font-display:swap}
+@font-face{font-family:"JetBrains Mono";src:url(assets/fonts/jbmono-600.woff2) format("woff2");font-weight:600;font-display:swap}
+</style>
+<link rel="stylesheet" href="assets/nova.css">
+<style>
+.ds { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 48px; align-items: start; padding-block: 32px 96px; }
+.ds-nav { position: sticky; top: calc(var(--bar-h) + 16px); display: grid; gap: 2px; font-size: .875rem; }
+.ds-nav a { color: var(--ink-2); text-decoration: none; padding: 4px 0; border-inline-start: 2px solid transparent; padding-inline-start: 10px; }
+.ds-nav a:hover { color: var(--ink); border-color: var(--line); }
+.ds-nav b { font-size: .6875rem; color: var(--ink-3); font-family: var(--mono); letter-spacing: .06em; text-transform: uppercase; margin: 12px 0 4px; }
+.ds main > section { padding-block: 40px; border-top: 1.5px solid var(--line); }
+.ds main > section:first-child { border-top: 0; padding-top: 0; }
+.ds h2 { font-size: var(--fs-3); margin-bottom: 8px; }
+.ds h3 { font-size: var(--fs-1); margin: 28px 0 10px; }
+.ds p.lead { color: var(--ink-2); max-width: 70ch; margin-bottom: 16px; }
+.ds-rules { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 0; border-top: 1px solid var(--line-3); border-inline-start: 1px solid var(--line-3); }
+.ds-rules > div { padding: 16px; border-inline-end: 1px solid var(--line-3); border-bottom: 1px solid var(--line-3); }
+.ds-rules b { display: block; margin-bottom: 4px; }
+.ds-rules span { color: var(--ink-2); font-size: .9375rem; }
+.sw { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
+.sw div { border: 1px solid var(--line-3); background: var(--sheet); font-size: .75rem; }
+.sw i { display: block; height: 52px; border-bottom: 1px solid var(--line-3); }
+.sw span { display: block; padding: 6px 8px; line-height: 1.4; }
+.sw code { color: var(--ink-3); }
+.tbl-wrap { overflow-x: auto; }
+.tbl { width: 100%; font-size: .875rem; border-top: 1.5px solid var(--line); }
+.tbl th, .tbl td { text-align: start; padding: 8px 10px 8px 0; border-bottom: 1px solid var(--line-3); vertical-align: top; }
+.tbl thead th { font-size: .75rem; color: var(--ink-3); font-weight: 400; }
+.tbl td.r { text-align: end; font-family: var(--mono); white-space: nowrap; }
+.ok { color: var(--ok); } .warn { color: var(--pending); }
+.spec-row { display: grid; grid-template-columns: 140px minmax(0, 1fr); gap: 16px; align-items: baseline; padding: 10px 0; border-bottom: 1px solid var(--line-3); }
+.spec-row small { font-family: var(--mono); color: var(--ink-3); font-size: .6875rem; }
+.pair { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.pair > * { min-width: 0; }
+.pane { border: 1px dashed var(--line-2); padding: 16px; background: var(--paper); }
+.pane > small { display: block; font-family: var(--mono); font-size: .6875rem; color: var(--ink-3); margin-bottom: 10px; }
+.stack { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.space { display: grid; gap: 6px; }
+.space div { display: grid; grid-template-columns: 70px 1fr; align-items: center; gap: 12px; font-family: var(--mono); font-size: .75rem; color: var(--ink-3); }
+.space i { display: block; height: 10px; background: var(--tint-2); }
+.gridshow { position: relative; height: 120px; display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--col-gap); }
+.gridshow i { background: color-mix(in srgb, var(--tint-2) 45%, transparent); border-inline: 1px solid var(--line-2); }
+.glyphs { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); border-top: 1px solid var(--line-3); border-inline-start: 1px solid var(--line-3); }
+.glyphs div { padding: 14px; border-inline-end: 1px solid var(--line-3); border-bottom: 1px solid var(--line-3); font-size: .75rem; color: var(--ink-2); display: grid; gap: 6px; justify-items: start; }
+.glyphs svg { width: 96px; height: 72px; color: var(--line); }
+.mini-ws { border: 1.5px solid var(--line); background: var(--sheet); }
+.icons { display: flex; flex-wrap: wrap; gap: 16px; }
+.icons span { display: grid; justify-items: center; gap: 4px; font-family: var(--mono); font-size: .625rem; color: var(--ink-3); width: 64px; }
+.icons svg { width: 24px; height: 24px; color: var(--ink); }
+@media (max-width: 899px) { .ds { grid-template-columns: minmax(0, 1fr); } .ds-nav { display: none; } .pair { grid-template-columns: 1fr; } .glyphs { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <pattern id="hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="6" height="6" style="fill:var(--sheet)"/><line x1="0" y1="0" x2="0" y2="6" class="hatch-ln"/></pattern>
+    <marker id="ar" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 1.5L10 5L0 8.5z" class="dim-a"/></marker>
+  </defs>
+  <symbol id="logo" viewBox="0 0 32 32"><g fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="16" cy="16" r="14.5"/><circle cx="16" cy="16" r="5"/></g><g fill="currentColor"><circle cx="16" cy="7.8" r="2"/><circle cx="23.1" cy="11.9" r="2"/><circle cx="23.1" cy="20.1" r="2"/><circle cx="16" cy="24.2" r="2"/><circle cx="8.9" cy="20.1" r="2"/><circle cx="8.9" cy="11.9" r="2"/></g></symbol>
+  <!-- icons: 24 grid, 1.5 stroke -->
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L20.5 20.5"/></symbol>
+  <symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+  <symbol id="i-phone" viewBox="0 0 24 24"><path d="M5 4h3.5l1.6 4-2 1.3a10 10 0 0 0 4.6 4.6l1.3-2 4 1.6V17a2 2 0 0 1-2 2A15 15 0 0 1 3 6a2 2 0 0 1 2-2z"/></symbol>
+  <symbol id="i-chat" viewBox="0 0 24 24"><path d="M4.5 19.5l1.2-3.6A8 8 0 1 1 8.3 18.4z"/><path d="M9 10.5h6M9 13.5h4"/></symbol>
+  <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+  <symbol id="i-chev" viewBox="0 0 24 24"><path d="M9.5 6l6 6-6 6"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8.5" y="8.5" width="11" height="11"/><path d="M5 15.5V4.5h10.5"/></symbol>
+  <symbol id="i-link" viewBox="0 0 24 24"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></symbol>
+  <symbol id="i-doc" viewBox="0 0 24 24"><path d="M6.5 3h7.5l4 4v14H6.5zM14 3v4h4M9 12h6M9 15.5h6"/></symbol>
+  <symbol id="i-ext" viewBox="0 0 24 24"><path d="M14 5h5v5M19 5l-8 8M17 14v5H5V7h5"/></symbol>
+  <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></symbol>
+  <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></symbol>
+  <symbol id="i-send" viewBox="0 0 24 24"><path d="M4 12l16-7-5 15-3-6z M12 14l3-4"/></symbol>
+  <!-- family glyphs: schematic half sections, 64x48, centre line at the bottom -->
+  <symbol id="g-ball" viewBox="0 0 64 48"><g fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 44.5h60" stroke-width=".8" stroke-dasharray="8 2 1.5 2"/><rect x="14" y="6" width="36" height="9"/><rect x="14" y="29" width="36" height="9"/><circle cx="32" cy="22" r="7.5" style="fill:var(--sheet)"/></g></symbol>
+  <symbol id="g-tapered" viewBox="0 0 64 48"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M2 44.5h60" stroke-width=".8" stroke-dasharray="8 2 1.5 2"/><path d="M14 6h36v8L14 20z"/><path d="M14 38h36V27l-36 6z"/><path d="M18 22l28-5.5v9L18 31z" style="fill:var(--sheet)"/></g></symbol>
+  <symbol id="g-spherical" viewBox="0 0 64 48"><g fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 44.5h60" stroke-width=".8" stroke-dasharray="8 2 1.5 2"/><path d="M14 6h36v8A35 35 0 0 0 14 14z"/><path d="M14 38h36v-9H35v-4h-6v4H14z"/><ellipse cx="23.5" cy="21" rx="7" ry="3.6" transform="rotate(-16 23.5 21)" style="fill:var(--sheet)"/><ellipse cx="40.5" cy="21" rx="7" ry="3.6" transform="rotate(16 40.5 21)" style="fill:var(--sheet)"/></g></symbol>
+  <symbol id="g-cylindrical" viewBox="0 0 64 48"><g fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 44.5h60" stroke-width=".8" stroke-dasharray="8 2 1.5 2"/><path d="M14 6h36v12h-4v-5H18v5h-4z"/><rect x="19" y="13" width="26" height="11" style="fill:var(--sheet)"/><rect x="14" y="24" width="36" height="14"/></g></symbol>
+  <symbol id="g-needle" viewBox="0 0 64 48"><g fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 44.5h60" stroke-width=".8" stroke-dasharray="8 2 1.5 2"/><path d="M12 9h40v3H12zM12 12v6M52 12v6"/><rect x="16" y="13" width="32" height="5" style="fill:var(--sheet)"/><path d="M6 19.5h52" stroke-width=".9"/></g></symbol>
+  <symbol id="g-thrust" viewBox="0 0 64 48"><g fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 44.5h60" stroke-width=".8" stroke-dasharray="8 2 1.5 2"/><path d="M17 38V12h8v8.5a6.5 6.5 0 0 0 0 9V38z"/><path d="M47 6v26h-8v-8.5a6.5 6.5 0 0 0 0-9V6z"/><circle cx="32" cy="22" r="6.5" style="fill:var(--sheet)"/></g></symbol>
+  <symbol id="g-unit" viewBox="0 0 64 48"><g fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 42.5h54v-5H5z"/><path d="M14 37.5V25a18 18 0 0 1 36 0v12.5"/><circle cx="32" cy="25" r="11"/><circle cx="32" cy="25" r="5"/><path d="M32 7V3.5"/><circle cx="10" cy="40" r="1.2"/><circle cx="54" cy="40" r="1.2"/></g></symbol>
+  <symbol id="g-housing" viewBox="0 0 64 48"><g fill="none" stroke="currentColor" stroke-width="1.5"><path d="M5 42.5h54v-5H5z"/><path d="M11 37.5V24c0-9 9.4-16 21-16s21 7 21 16v13.5"/><path d="M8 24h48" stroke-width=".9" stroke-dasharray="4 2"/><path d="M17 13v11M47 13v11"/><circle cx="32" cy="24" r="9.5"/></g></symbol>
+  <symbol id="g-seal" viewBox="0 0 64 48"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M6 6.5h52M6 38.5h52" stroke-width=".9"/><path d="M14 7h30v4.5H18.5V33H14z"/><path d="M44 11.5l5 22.5-5 1.5-6-20z" style="fill:var(--sheet)"/><circle cx="47.5" cy="26" r="2.6"/></g></symbol>
+  <symbol id="g-lubricant" viewBox="0 0 64 48"><g fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M32 5c-6 9-11 15-11 21.5a11 11 0 0 0 22 0C43 20 38 14 32 5z"/><path d="M26.5 28a5.5 5.5 0 0 0 5.5 5.5"/><path d="M8 43.5h48" stroke-width=".9"/></g></symbol>
+</svg><aside class="proto" aria-label="Prototype"><div class="wrap"><span>Phase 2 · Design system v0.2 · for Gate 2 review</span><a href="./">Review hub</a></div></aside>
+<header class="bar"><div class="wrap bar__in">
+  <a class="brand" href="./"><svg aria-hidden="true"><use href="#logo"/></svg><span><b>Nova design system</b><small>Polad Charkhesh · v0.2</small></span></a>
+  <nav class="bar__nav" aria-label="Prototypes"><a href="fa.html" lang="fa">نسخه فارسی</a><a href="en.html">English prototype</a></nav>
+</div></header>
+<div class="wrap ds">
+<nav class="ds-nav" aria-label="Design system sections">
+  <b>Foundations</b><a href="#principles">Principles</a><a href="#color">Colour and surfaces</a><a href="#type">Typography</a><a href="#space">Spacing and grid</a><a href="#shape">Lines, shape, elevation</a>
+  <b>Language</b><a href="#drawing">Technical drawing</a><a href="#bidi">Persian RTL / English LTR</a>
+  <b>Components</b><a href="#controls">Controls</a><a href="#data">Data display</a><a href="#explorer">Explorer and workspace</a><a href="#forms">Forms and contact</a>
+  <b>Behaviour</b><a href="#motion">Motion and reduced motion</a><a href="#perf">Performance ledger</a>
+</nav>
+<main>
+
+<section id="principles">
+  <h2>Principles</h2>
+  <p class="lead">The website is a numbered set of engineering drawings. Every visual rule below exists either because engineers already read it that way, or because it keeps the page fast on a weak connection.</p>
+  <div class="ds-rules">
+    <div><b>Drawing, not decoration</b><span>Graphics follow drafting conventions (line types, sections, dimensions, balloons) and are generated from product data wherever possible.</span></div>
+    <div><b>Two inks on paper</b><span>Navy ink on paper; bright blue only for interaction and focus; amber only for pending data. Colour always means something.</span></div>
+    <div><b>Codes are sacred</b><span>Part codes, dimensions and units use Latin digits in monospace, isolated left-to-right, and are never mirrored or translated.</span></div>
+    <div><b>Honest data</b><span>Verified and pending are always visible. Pending uses the dashed, hatched "not final" convention, never a hidden footnote.</span></div>
+    <div><b>One page, ten sheets</b><span>Sections are numbered sheets. Motion only draws, explodes and reassembles; it never hides content or hijacks scrolling outside one stage.</span></div>
+    <div><b>Weight is a design input</b><span>Every decision has a byte and CPU cost, listed in the performance ledger at the end of this page.</span></div>
+  </div>
+</section>
+
+<section id="color">
+  <h2>Colour and surfaces</h2>
+  <p class="lead">One token set, three contexts: Whiteprint (default light), Blueprint (dark, follows the device setting) and the Band (the Anatomy section, always blueprint). Values below are read from <code>nova.css</code>, so this page cannot drift from the code.</p>
+  <h3>Whiteprint (light, default)</h3>
+  <div class="sw"><div><i style="background:#f6f7fa"></i><span><b>--paper</b><br><code>#f6f7fa</code><br>Page ground</span></div><div><i style="background:#eceef5"></i><span><b>--paper-2</b><br><code>#eceef5</code><br>Recessed, hover</span></div><div><i style="background:#ffffff"></i><span><b>--sheet</b><br><code>#ffffff</code><br>Raised surfaces</span></div><div><i style="background:#15183d"></i><span><b>--ink</b><br><code>#15183d</code><br>Primary text</span></div><div><i style="background:#454a74"></i><span><b>--ink-2</b><br><code>#454a74</code><br>Secondary text</span></div><div><i style="background:#61668e"></i><span><b>--ink-3</b><br><code>#61668e</code><br>Tertiary text, labels</span></div><div><i style="background:#2f338a"></i><span><b>--line</b><br><code>#2f338a</code><br>Drawing ink, rules</span></div><div><i style="background:#b4b8d8"></i><span><b>--line-2</b><br><code>#b4b8d8</code><br>Secondary rules</span></div><div><i style="background:#dcdfeb"></i><span><b>--line-3</b><br><code>#dcdfeb</code><br>Dividers</span></div><div><i style="background:#2f338a"></i><span><b>--accent</b><br><code>#2f338a</code><br>Primary action</span></div><div><i style="background:#ffffff"></i><span><b>--accent-ink</b><br><code>#ffffff</code><br>Text on action</span></div><div><i style="background:#1e88e5"></i><span><b>--signal</b><br><code>#1e88e5</code><br>Focus, interaction</span></div><div><i style="background:#e8f2fd"></i><span><b>--tint</b><br><code>#e8f2fd</code><br>Selected row</span></div><div><i style="background:#90caf9"></i><span><b>--tint-2</b><br><code>#90caf9</code><br>Highlight</span></div><div><i style="background:#7f4c00"></i><span><b>--pending</b><br><code>#7f4c00</code><br>Pending text</span></div><div><i style="background:#fff4de"></i><span><b>--pending-bg</b><br><code>#fff4de</code><br>Pending fill</span></div><div><i style="background:#d4952a"></i><span><b>--pending-line</b><br><code>#d4952a</code><br>Pending border</span></div><div><i style="background:#1b6643"></i><span><b>--ok</b><br><code>#1b6643</code><br>Verified text</span></div><div><i style="background:#e4f2ea"></i><span><b>--ok-bg</b><br><code>#e4f2ea</code><br>Verified fill</span></div><div><i style="background:#b3261e"></i><span><b>--danger</b><br><code>#b3261e</code><br>Errors</span></div></div>
+  <h3>Blueprint (dark, from device setting)</h3>
+  <div class="sw"><div><i style="background:#0e1240"></i><span><b>--paper</b><br><code>#0e1240</code><br>Page ground</span></div><div><i style="background:#0a0d33"></i><span><b>--paper-2</b><br><code>#0a0d33</code><br>Recessed, hover</span></div><div><i style="background:#141a50"></i><span><b>--sheet</b><br><code>#141a50</code><br>Raised surfaces</span></div><div><i style="background:#eef1ff"></i><span><b>--ink</b><br><code>#eef1ff</code><br>Primary text</span></div><div><i style="background:#bec5ef"></i><span><b>--ink-2</b><br><code>#bec5ef</code><br>Secondary text</span></div><div><i style="background:#9aa2d6"></i><span><b>--ink-3</b><br><code>#9aa2d6</code><br>Tertiary text, labels</span></div><div><i style="background:#90caf9"></i><span><b>--line</b><br><code>#90caf9</code><br>Drawing ink, rules</span></div><div><i style="background:#3d4795"></i><span><b>--line-2</b><br><code>#3d4795</code><br>Secondary rules</span></div><div><i style="background:#29317a"></i><span><b>--line-3</b><br><code>#29317a</code><br>Dividers</span></div><div><i style="background:#90caf9"></i><span><b>--accent</b><br><code>#90caf9</code><br>Primary action</span></div><div><i style="background:#0e1240"></i><span><b>--accent-ink</b><br><code>#0e1240</code><br>Text on action</span></div><div><i style="background:#64b5f6"></i><span><b>--signal</b><br><code>#64b5f6</code><br>Focus, interaction</span></div><div><i style="background:#1c266d"></i><span><b>--tint</b><br><code>#1c266d</code><br>Selected row</span></div><div><i style="background:#2a3a8f"></i><span><b>--tint-2</b><br><code>#2a3a8f</code><br>Highlight</span></div><div><i style="background:#ffcf85"></i><span><b>--pending</b><br><code>#ffcf85</code><br>Pending text</span></div><div><i style="background:#33270f"></i><span><b>--pending-bg</b><br><code>#33270f</code><br>Pending fill</span></div><div><i style="background:#c98a2a"></i><span><b>--pending-line</b><br><code>#c98a2a</code><br>Pending border</span></div><div><i style="background:#8fd6b3"></i><span><b>--ok</b><br><code>#8fd6b3</code><br>Verified text</span></div><div><i style="background:#11352a"></i><span><b>--ok-bg</b><br><code>#11352a</code><br>Verified fill</span></div><div><i style="background:#ff8a80"></i><span><b>--danger</b><br><code>#ff8a80</code><br>Errors</span></div></div>
+  <h3>Band (Anatomy section, both themes)</h3>
+  <div class="sw"><div><i style="background:#10155a"></i><span><b>--paper</b><br><code>#10155a</code><br>Page ground</span></div><div><i style="background:#0c1048"></i><span><b>--paper-2</b><br><code>#0c1048</code><br>Recessed, hover</span></div><div><i style="background:#161d66"></i><span><b>--sheet</b><br><code>#161d66</code><br>Raised surfaces</span></div><div><i style="background:#eef1ff"></i><span><b>--ink</b><br><code>#eef1ff</code><br>Primary text</span></div><div><i style="background:#c3caf2"></i><span><b>--ink-2</b><br><code>#c3caf2</code><br>Secondary text</span></div><div><i style="background:#9ea6da"></i><span><b>--ink-3</b><br><code>#9ea6da</code><br>Tertiary text, labels</span></div><div><i style="background:#90caf9"></i><span><b>--line</b><br><code>#90caf9</code><br>Drawing ink, rules</span></div><div><i style="background:#4652a6"></i><span><b>--line-2</b><br><code>#4652a6</code><br>Secondary rules</span></div><div><i style="background:#2c3586"></i><span><b>--line-3</b><br><code>#2c3586</code><br>Dividers</span></div><div><i style="background:#90caf9"></i><span><b>--accent</b><br><code>#90caf9</code><br>Primary action</span></div><div><i style="background:#10155a"></i><span><b>--accent-ink</b><br><code>#10155a</code><br>Text on action</span></div><div><i style="background:#64b5f6"></i><span><b>--signal</b><br><code>#64b5f6</code><br>Focus, interaction</span></div><div><i style="background:#23308a"></i><span><b>--tint</b><br><code>#23308a</code><br>Selected row</span></div><div><i style="background:#34449e"></i><span><b>--tint-2</b><br><code>#34449e</code><br>Highlight</span></div><div><i style="background:#ffcf85"></i><span><b>--pending</b><br><code>#ffcf85</code><br>Pending text</span></div><div><i style="background:#33270f"></i><span><b>--pending-bg</b><br><code>#33270f</code><br>Pending fill</span></div><div><i style="background:#c98a2a"></i><span><b>--pending-line</b><br><code>#c98a2a</code><br>Pending border</span></div><div><i style="background:#8fd6b3"></i><span><b>--ok</b><br><code>#8fd6b3</code><br>Verified text</span></div><div><i style="background:#11352a"></i><span><b>--ok-bg</b><br><code>#11352a</code><br>Verified fill</span></div><div><i style="background:#ff8a80"></i><span><b>--danger</b><br><code>#ff8a80</code><br>Errors</span></div></div>
+  <h3>Contrast, measured (WCAG 2.1)</h3>
+  <div class="tbl-wrap"><table class="tbl"><thead><tr><th>Pair</th><th>Use</th><th class="r">Whiteprint</th><th class="r">Blueprint</th><th class="r">Band</th><th>Needs</th></tr></thead><tbody>
+<tr><td><code>ink / paper</code></td><td>Body text</td><td class="r ok">15.9:1</td><td class="r ok">15.8:1</td><td class="r ok">14.6:1</td><td>4.5:1</td></tr><tr><td><code>ink-2 / paper</code></td><td>Secondary text</td><td class="r ok">7.9:1</td><td class="r ok">10.5:1</td><td class="r ok">10.2:1</td><td>4.5:1</td></tr><tr><td><code>ink-3 / paper</code></td><td>Labels, captions</td><td class="r ok">5.2:1</td><td class="r ok">7.2:1</td><td class="r ok">7.0:1</td><td>4.5:1</td></tr><tr><td><code>ink-3 / sheet</code></td><td>Labels on raised surfaces</td><td class="r ok">5.5:1</td><td class="r ok">6.6:1</td><td class="r ok">6.4:1</td><td>4.5:1</td></tr><tr><td><code>line / paper</code></td><td>Links, drawing ink, sheet numbers</td><td class="r ok">10.0:1</td><td class="r ok">10.2:1</td><td class="r ok">9.4:1</td><td>4.5:1</td></tr><tr><td><code>accent-ink / accent</code></td><td>Button text</td><td class="r ok">10.7:1</td><td class="r ok">10.2:1</td><td class="r ok">9.4:1</td><td>4.5:1</td></tr><tr><td><code>pending / pending-bg</code></td><td>Pending badge text</td><td class="r ok">6.6:1</td><td class="r ok">10.1:1</td><td class="r ok">10.1:1</td><td>4.5:1</td></tr><tr><td><code>ok / ok-bg</code></td><td>Verified badge text</td><td class="r ok">6.0:1</td><td class="r ok">7.9:1</td><td class="r ok">7.9:1</td><td>4.5:1</td></tr><tr><td><code>signal / sheet</code></td><td>Focus ring (non-text)</td><td class="r ok">3.7:1</td><td class="r ok">7.3:1</td><td class="r ok">6.8:1</td><td>3.0:1</td></tr><tr><td><code>line-2 / sheet</code></td><td>Input borders (non-text)</td><td class="r warn">1.9:1</td><td class="r warn">2.0:1</td><td class="r warn">2.2:1</td><td>3.0:1</td></tr>  </tbody></table></div>
+  <h3>Surface hierarchy</h3>
+  <div class="spec-row"><small>--paper</small><span>The page. Sections sit directly on it, separated by rules, not by boxes.</span></div>
+  <div class="spec-row"><small>--paper-2</small><span>Recessed: hover rows, the drawing frame inside the band.</span></div>
+  <div class="spec-row"><small>--sheet</small><span>Raised: inputs, the product workspace, title blocks, drawing frames. Always with a border; never with a shadow.</span></div>
+  <div class="spec-row"><small>.band</small><span>A whole section re-tokened to blueprint. Used once (Anatomy) so it stays an event, not a pattern.</span></div>
+</section>
+
+<section id="type">
+  <h2>Typography</h2>
+  <p class="lead">Two families, two weights each, subset per language and self-hosted. Persian pages load 46.6 KB of fonts; English pages 36.0 KB.</p>
+  <div class="tbl-wrap"><table class="tbl"><thead><tr><th>File</th><th>Coverage</th><th>Used on</th><th class="r">Size</th></tr></thead><tbody>
+<tr><td><code>vazirmatn-Regular-fa.woff2</code></td><td>Persian + basic Latin</td><td>fa</td><td class="r">18.5 KB</td></tr><tr><td><code>vazirmatn-Bold-fa.woff2</code></td><td>Persian + basic Latin</td><td>fa</td><td class="r">18.6 KB</td></tr><tr><td><code>vazirmatn-Regular-latin.woff2</code></td><td>Latin</td><td>en</td><td class="r">7.6 KB</td></tr><tr><td><code>vazirmatn-Bold-latin.woff2</code></td><td>Latin</td><td>en</td><td class="r">7.6 KB</td></tr><tr><td><code>vazirmatn-Regular-arabic.woff2</code></td><td>Persian only (unicode-range)</td><td>en, when Persian text is present</td><td class="r">11.3 KB</td></tr><tr><td><code>jbmono-400.woff2</code></td><td>Latin, digits, × ± °, no ligatures</td><td>both</td><td class="r">4.7 KB</td></tr><tr><td><code>jbmono-600.woff2</code></td><td>Latin, digits, × ± °, no ligatures</td><td>both</td><td class="r">4.8 KB</td></tr>  <tr><td colspan="3" class="muted">For comparison: Vazirmatn full static Regular 50.7 KB; full variable font 111 KB; variable subset 47.7 KB; JetBrains Mono Latin with ligatures 21.2 KB.</td><td></td></tr>
+  </tbody></table></div>
+  <h3>Scale (ratio ≈ 1.25, display sizes fluid)</h3>
+  <div class="spec-row"><small>--fs-5 · 32→52 px</small><div class="pair"><span lang="fa" dir="rtl" style="font-size:var(--fs-5);font-weight:700;line-height:var(--lh-h)">قطعه را با کدش پیدا کنید</span><span lang="en" style="font-size:var(--fs-5);font-weight:700;line-height:var(--lh-h)">Find the part by its code</span></div></div>
+  <div class="spec-row"><small>--fs-4 · 28→40 px</small><div class="pair"><span lang="fa" dir="rtl" style="font-size:var(--fs-4);font-weight:700;line-height:var(--lh-h)">جستجوی محصول</span><span lang="en" style="font-size:var(--fs-4);font-weight:700;line-height:var(--lh-h)">Product explorer</span></div></div>
+  <div class="spec-row"><small>--fs-3 · 28 px</small><div class="pair"><span lang="fa" dir="rtl" style="font-size:var(--fs-3);font-weight:700;line-height:var(--lh-h)">درون یک بلبرینگ</span><span lang="en" style="font-size:var(--fs-3);font-weight:700;line-height:var(--lh-h)">Inside a bearing</span></div></div>
+  <div class="spec-row"><small>--fs-1 · 18 px</small><div class="pair"><span lang="fa" dir="rtl" style="font-size:var(--fs-1);font-weight:400;line-height:var(--lh-h)">متن مقدمه و عنوان کارت‌ها</span><span lang="en" style="font-size:var(--fs-1);font-weight:400;line-height:var(--lh-h)">Lead text and card titles</span></div></div>
+  <div class="spec-row"><small>--fs-0 · 16 px</small><div class="pair"><span lang="fa" dir="rtl" style="font-size:var(--fs-0);font-weight:400;line-height:var(--lh-h)">متن اصلی برای خواندن روی موبایل، با فاصله سطر کافی.</span><span lang="en" style="font-size:var(--fs-0);font-weight:400;line-height:var(--lh-h)">Body text for reading on a phone, with generous leading.</span></div></div>
+  <div class="spec-row"><small>--fs--1 · 14 px</small><div class="pair"><span lang="fa" dir="rtl" style="font-size:var(--fs--1);font-weight:400;line-height:var(--lh-h)">متن ثانویه، جدول‌ها و دکمه‌ها</span><span lang="en" style="font-size:var(--fs--1);font-weight:400;line-height:var(--lh-h)">Secondary text, tables and buttons</span></div></div>
+  <div class="spec-row"><small>--fs--2 · 12 px</small><div class="pair"><span lang="fa" dir="rtl" style="font-size:var(--fs--2);font-weight:400;line-height:var(--lh-h)">برچسب‌ها و توضیح نقشه</span><span lang="en" style="font-size:var(--fs--2);font-weight:400;line-height:var(--lh-h)">Labels and drawing captions</span></div></div>
+  <div class="spec-row"><small>mono · codes</small><div class="pair"><span class="mono" style="font-size:1.875rem;font-weight:600">22220 E</span><span class="mono" style="font-size:1rem">25 × 52 × 15 mm · Ø180 · n lim</span></div></div>
+  <h3>Rules</h3>
+  <div class="ds-rules">
+    <div><b>Line height</b><span>Persian body 1.85, headings 1.45 (tall ascenders and descenders). English body 1.6, headings 1.15.</span></div>
+    <div><b>No letter-spacing on Persian</b><span>Tracking breaks cursive joins. Uppercase and tracking are for Latin labels and mono captions only.</span></div>
+    <div><b>Digits</b><span>Persian prose, counts, sheet numbers and phone numbers use Persian digits (<span lang="fa">۰۹۱۲ ۷۱۹ ۵۳۱۳</span>); codes, dimensions and units always Latin (<span class="mono">6205-2RS · 25 mm</span>). <code>tel:</code> links always Latin.</span></div>
+    <div><b>Dates</b><span>Persian pages show the Solar Hijri calendar (<span lang="fa">۱۲ مهر ۱۴۰۵</span>) via <code>Intl</code> in the browser or PHP <code>intl</code> at publish; English pages show 4 Oct 2026.</span></div>
+    <div><b>Fallbacks</b><span>Segoe UI, Tahoma and system fonts behind Vazirmatn; <code>font-display: swap</code> with the Regular weight preloaded. Measured layout shift from the swap: 0.000–0.001.</span></div>
+    <div><b>Measure</b><span>Running text stays within 50–70 characters; headings use <code>text-wrap: balance</code>.</span></div>
+  </div>
+</section>
+
+<section id="space">
+  <h2>Spacing and grid</h2>
+  <p class="lead">A 4 px base. Layout spacing comes from grid gaps, never from margins on individual blocks.</p>
+  <div class="space"><div><span>--s1 4px</span><i style="width:4px"></i></div><div><span>--s2 8px</span><i style="width:8px"></i></div><div><span>--s3 12px</span><i style="width:12px"></i></div><div><span>--s4 16px</span><i style="width:16px"></i></div><div><span>--s5 24px</span><i style="width:24px"></i></div><div><span>--s6 32px</span><i style="width:32px"></i></div><div><span>--s7 48px</span><i style="width:48px"></i></div><div><span>--s8 64px</span><i style="width:64px"></i></div><div><span>--s9 96px</span><i style="width:96px"></i></div></div>
+  <h3>Grid</h3>
+  <p class="lead">12 columns, max width 1240 px, gutter clamp(16 px, 4vw, 40 px), column gap clamp(16 px, 2.4vw, 32 px). The overlay below is the live grid at this window size.</p>
+  <div class="gridshow" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+  <h3>Breakpoints (where layout actually changes)</h3>
+  <div class="tbl-wrap"><table class="tbl"><thead><tr><th>Width</th><th>Change</th></tr></thead><tbody>
+    <tr><td class="mono">≥ 1100</td><td>Explorer list + 420 px docked workspace; families in 5 columns.</td></tr>
+    <tr><td class="mono">900–1099</td><td>Workspace narrows to 360 px; families in 2 columns.</td></tr>
+    <tr><td class="mono">&lt; 900</td><td>Mobile mode: header menu, bottom action dock (Call · WhatsApp · Search), workspace becomes a bottom sheet, Anatomy stacks.</td></tr>
+    <tr><td class="mono">&lt; 700</td><td>Result rows stack (code / family / dimensions); facets scroll sideways.</td></tr>
+    <tr><td class="mono">&lt; 600</td><td>Sheet heads drop the tick ruler and reference; forms go single-column.</td></tr>
+  </tbody></table></div>
+</section>
+
+<section id="shape">
+  <h2>Lines, shape and elevation</h2>
+  <div class="ds-rules">
+    <div><b>Radius 2 px</b><span>Drawing sheets have square corners. The only round things are bearings, balloons and status dots.</span></div>
+    <div><b>1.5 px structural</b><span>Section rules, sheet heads, inputs, the workspace frame, the action dock.</span></div>
+    <div><b>1 px dividers</b><span>Rows, cells, title-block partitions.</span></div>
+    <div><b>Dashed means "not final"</b><span>Pending data, empty states, example chips. Never used for decoration.</span></div>
+    <div><b>No shadows, blur or gradients</b><span>Elevation comes from surface colour plus a border. This also keeps painting cheap on low-end phones.</span></div>
+    <div><b>Focus</b><span>2 px signal-blue outline, 2 px offset, on every interactive element.</span></div>
+  </div>
+</section>
+
+<section id="drawing">
+  <h2>Technical drawing language</h2>
+  <p class="lead">Simplified ISO 128-style conventions. Drawings are never mirrored on Persian pages and always read left to right.</p>
+  <figure class="dwg" style="margin:0">
+    <svg class="dwg-svg draw" viewBox="0 0 760 250" role="img" aria-label="Line conventions">
+      <g font-family="JetBrains Mono, monospace" font-size="11" style="fill:var(--ink-3)">
+        <text x="20" y="34">OBJECT 1.5</text><path class="ln-obj" data-d pathLength="1" d="M130 30H330"/>
+        <text x="20" y="64">THIN 0.9</text><path class="ln-thin" d="M130 60H330"/>
+        <text x="20" y="94">HIDDEN</text><path class="ln-hid" d="M130 90H330"/>
+        <text x="20" y="124">CENTRE</text><path class="ln-ctr" d="M130 120H330"/>
+        <text x="20" y="164">DIMENSION</text><path class="ln-dim" d="M150 140V178M310 140V178"/><path class="ln-dim" d="M150 170H310" marker-start="url(#ar)" marker-end="url(#ar)"/><text class="dim-t" x="230" y="164" text-anchor="middle">Ø52</text>
+        <text x="20" y="214">SECTION</text><rect class="fill-sec" x="150" y="196" width="160" height="30"/>
+        <text x="400" y="34">LEADER + BALLOON</text>
+      </g>
+      <g class="balloon"><path class="ln-thin" d="M470 120L520 70"/><circle cx="532" cy="58" r="13"/><text x="532" y="62.5">3</text></g>
+      <circle class="fill-paper" cx="470" cy="128" r="14"/>
+      <g font-family="JetBrains Mono, monospace" font-size="11" style="fill:var(--ink-3)"><text x="600" y="34">STATUS</text></g>
+      <rect x="600" y="50" width="130" height="26" style="fill:var(--ok-bg);stroke:var(--ok)"/><text x="614" y="67" font-size="12" style="fill:var(--ok)">■ Verified</text>
+      <rect x="600" y="88" width="130" height="26" style="fill:var(--pending-bg);stroke:var(--pending-line);stroke-dasharray:4 3"/><text x="614" y="105" font-size="12" style="fill:var(--pending)">◌ Pending</text>
+    </svg>
+    <figcaption><span>LINE TYPES · SECTION HATCH · BALLOONS</span><span>NTS</span></figcaption>
+  </figure>
+  <h3>Sheet head and title block</h3>
+  <div class="sheethead" aria-hidden="true"><span class="sheethead__no">03 <small>/ 10</small></span><span class="sheethead__name">Product explorer</span><span class="sheethead__ticks"></span><span class="sheethead__ref">PC-03</span></div>
+  <dl class="tblock" style="--cols:4"><div><dt>Company</dt><dd>Polad Charkhesh</dd></div><div><dt>Address</dt><dd>No. 433, Dardasht St, Narmak, Tehran</dd></div><div><dt>Working hours</dt><dd>08:00–16:00</dd></div><div><dt>Landline</dt><dd class="num">+98 21 7720 9117</dd></div></dl>
+  <h3>Family glyphs (schematic half-sections, one <code>&lt;symbol&gt;</code> each, reused by <code>&lt;use&gt;</code>)</h3>
+  <div class="glyphs"><div><svg aria-hidden="true"><use href="#g-ball"/></svg><b>Ball bearings</b><span lang="fa">بلبرینگ ساچمه‌ای</span></div><div><svg aria-hidden="true"><use href="#g-tapered"/></svg><b>Tapered roller bearings</b><span lang="fa">رولبرینگ مخروطی</span></div><div><svg aria-hidden="true"><use href="#g-spherical"/></svg><b>Spherical roller bearings</b><span lang="fa">رولبرینگ بشکه‌ای</span></div><div><svg aria-hidden="true"><use href="#g-cylindrical"/></svg><b>Cylindrical roller bearings</b><span lang="fa">رولبرینگ استوانه‌ای</span></div><div><svg aria-hidden="true"><use href="#g-needle"/></svg><b>Needle roller bearings</b><span lang="fa">رولبرینگ سوزنی</span></div><div><svg aria-hidden="true"><use href="#g-thrust"/></svg><b>Thrust bearings</b><span lang="fa">بلبرینگ کف‌گرد</span></div><div><svg aria-hidden="true"><use href="#g-unit"/></svg><b>Bearing units</b><span lang="fa">یاتاقان آماده نصب</span></div><div><svg aria-hidden="true"><use href="#g-housing"/></svg><b>Bearing housings</b><span lang="fa">پوسته یاتاقان</span></div><div><svg aria-hidden="true"><use href="#g-seal"/></svg><b>Oil seals</b><span lang="fa">کاسه‌نمد صنعتی</span></div><div><svg aria-hidden="true"><use href="#g-lubricant"/></svg><b>Industrial lubricants</b><span lang="fa">روانکار صنعتی</span></div></div>
+  <h3>Generated product drawings</h3>
+  <p class="lead">Each product's section drawing is built from its boundary dimensions (d, D, B/T/C/H) with the family's template, so a drawing exists even before any photo. Open any product in the prototypes to see one. In production the Publish Engine renders the SVG into the product's HTML.</p>
+</section>
+
+<section id="bidi">
+  <h2>Persian RTL / English LTR</h2>
+  <div class="tbl-wrap"><table class="tbl"><thead><tr><th>Mirror</th><th>Never mirror</th></tr></thead><tbody>
+    <tr><td>Page layout, grid order, navigation, the explorer (filters start, workspace end), the Exploded Assembly layout, sticky footers, directional icons (arrows, chevrons, send).</td><td>Technical drawings, dimension text, part codes, numbers inside codes, units, phone numbers (isolated LTR), the logo mark, the decoder breakdown order.</td></tr>
+  </tbody></table></div>
+  <h3>Mechanics</h3>
+  <div class="ds-rules">
+    <div><b>Logical properties only</b><span><code>margin-inline</code>, <code>inset-inline-start</code>, <code>border-inline-end</code>, <code>text-align: start</code>; no left/right in the stylesheet except inside drawings.</span></div>
+    <div><b>Isolate, don't flip blocks</b><span>Codes sit in <code>&lt;bdi dir="ltr"&gt;</code> inside an RTL block, so they keep their order but align to the start of the Persian line.</span></div>
+    <div><b>Inputs</b><span>Search uses <code>dir="auto"</code>: a typed code runs LTR, typed Persian runs RTL; the Persian placeholder is forced RTL and isolates its example code.</span></div>
+    <div><b>Search normalisation</b><span>Persian and Arabic digits, Arabic ي/ك, spaces, hyphens, slashes and × are normalised, so typing ۶۲۰۵ (Persian digits) finds 6205.</span></div>
+    <div><b>Keyboard</b><span>Arrow keys in the workspace tabs follow reading direction (Left = next in Persian).</span></div>
+    <div><b>Second script on each page</b><span>English pages load a Persian-only subset (11.6 KB) so the brand name and family names in Persian shape correctly.</span></div>
+  </div>
+  <h3>Same component, both directions</h3>
+  <div class="pair">
+    <div class="pane" lang="fa" dir="rtl"><small>FA · RTL</small>
+      <div class="results" style="border-top-width:1.5px"><ul>
+<li><a class="row" href="fa.html#p-6205" style="grid-template-columns:34px minmax(0,1fr) auto;column-gap:12px"><svg class="row__g" style="width:34px" aria-hidden="true"><use href="#g-ball"/></svg><span><span class="row__code"><bdi dir="ltr">6205</bdi></span><br><span class="row__fam">بلبرینگ ساچمه‌ای</span> · <span class="row__dims"><bdi dir="ltr">25 × 52 × 15</bdi></span></span><span class="row__st"><span class="badge badge--ok" style="background:var(--ok-bg);border-color:currentColor;padding-inline:8px"><span>تأییدشده</span></span></span></a></li><li><a class="row" href="fa.html#p-22220-e" style="grid-template-columns:34px minmax(0,1fr) auto;column-gap:12px"><svg class="row__g" style="width:34px" aria-hidden="true"><use href="#g-spherical"/></svg><span><span class="row__code"><bdi dir="ltr">22220 E</bdi></span><br><span class="row__fam">رولبرینگ بشکه‌ای</span> · <span class="row__dims"><bdi dir="ltr">100 × 180 × 46</bdi></span></span><span class="row__st"><span class="badge badge--ok" style="background:var(--ok-bg);border-color:currentColor;padding-inline:8px"><span>تأییدشده</span></span></span></a></li><li><a class="row" href="fa.html#p-ucp-208" style="grid-template-columns:34px minmax(0,1fr) auto;column-gap:12px"><svg class="row__g" style="width:34px" aria-hidden="true"><use href="#g-unit"/></svg><span><span class="row__code"><bdi dir="ltr">UCP 208</bdi></span><br><span class="row__fam">یاتاقان آماده نصب</span> · <span class="row__dims"><bdi dir="ltr">d 40</bdi></span></span><span class="row__st"><span class="badge badge--pending"><span>در انتظار تأیید</span></span></span></a></li>      </ul></div>
+    </div>
+    <div class="pane" lang="en" dir="ltr"><small>EN · LTR</small>
+      <div class="results" style="border-top-width:1.5px"><ul>
+<li><a class="row" href="en.html#p-6205" style="grid-template-columns:34px minmax(0,1fr) auto;column-gap:12px"><svg class="row__g" style="width:34px" aria-hidden="true"><use href="#g-ball"/></svg><span><span class="row__code"><bdi dir="ltr">6205</bdi></span><br><span class="row__fam">Ball bearings</span> · <span class="row__dims"><bdi dir="ltr">25 × 52 × 15</bdi></span></span><span class="row__st"><span class="badge badge--ok" style="background:var(--ok-bg);border-color:currentColor;padding-inline:8px"><span>Verified</span></span></span></a></li><li><a class="row" href="en.html#p-22220-e" style="grid-template-columns:34px minmax(0,1fr) auto;column-gap:12px"><svg class="row__g" style="width:34px" aria-hidden="true"><use href="#g-spherical"/></svg><span><span class="row__code"><bdi dir="ltr">22220 E</bdi></span><br><span class="row__fam">Spherical roller bearings</span> · <span class="row__dims"><bdi dir="ltr">100 × 180 × 46</bdi></span></span><span class="row__st"><span class="badge badge--ok" style="background:var(--ok-bg);border-color:currentColor;padding-inline:8px"><span>Verified</span></span></span></a></li><li><a class="row" href="en.html#p-ucp-208" style="grid-template-columns:34px minmax(0,1fr) auto;column-gap:12px"><svg class="row__g" style="width:34px" aria-hidden="true"><use href="#g-unit"/></svg><span><span class="row__code"><bdi dir="ltr">UCP 208</bdi></span><br><span class="row__fam">Bearing units</span> · <span class="row__dims"><bdi dir="ltr">d 40</bdi></span></span><span class="row__st"><span class="badge badge--pending"><span>Pending</span></span></span></a></li>      </ul></div>
+    </div>
+  </div>
+</section>
+
+<section id="controls">
+  <h2>Controls</h2>
+  <h3>Buttons</h3>
+  <div class="stack"><a class="btn" href="#controls"><svg class="ico"><use href="#i-chat"/></svg>Check availability on WhatsApp</a><a class="btn btn--line" href="#controls">Inquiry form</a><a class="btn btn--ghost" href="#controls">Ghost</a><a class="btn btn--line btn--icon" href="#controls" aria-label="Call"><svg class="ico"><use href="#i-phone"/></svg></a><a class="btn btn--sm" href="#controls">Small</a><a class="btn btn--lg" href="#controls">Large</a><button class="btn" type="button" disabled>Disabled</button></div>
+  <p class="lead" style="margin-top:12px">Primary is navy, never a brand green, even for WhatsApp: one action colour across the site. Minimum target 44 px (36 px for the small size in dense toolbars).</p>
+  <h3>Search</h3>
+  <div class="pair">
+    <form class="search" role="search" aria-label="Persian specimen" lang="fa" dir="rtl" onsubmit="return false"><span class="search__ico"><svg class="ico"><use href="#i-search"/></svg></span><input type="search" dir="auto" aria-label="Persian specimen" placeholder="کد قطعه، مثلاً &#x2066;6205-2RS&#x2069;"><button type="submit">جستجو</button></form>
+    <form class="search" role="search" aria-label="English specimen" onsubmit="return false"><span class="search__ico"><svg class="ico"><use href="#i-search"/></svg></span><input type="search" dir="auto" aria-label="English specimen" placeholder="Part code, e.g. 6205-2RS"><button type="submit">Search</button></form>
+  </div>
+  <h3>Chips, facets, badges, tags</h3>
+  <div class="stack"><button class="chip" type="button">6205</button><button class="chip" type="button">22220 E</button>
+    <button class="facet" type="button" aria-pressed="true">All</button><button class="facet" type="button" aria-pressed="false">Ball <i>6</i></button><button class="facet" type="button" aria-pressed="false">≤ 20</button>
+    <span class="badge badge--ok"><span>Dimensions verified</span></span><span class="badge badge--pending"><span>Technical data pending / Unverified</span></span><a class="tag" href="#controls">Spherical roller bearings</a></div>
+  <h3>Icons (1.5 px stroke, 24 grid, one sprite in the page)</h3>
+  <div class="icons"><span><svg aria-hidden="true" class="ico"><use href="#i-search"/></svg>search</span><span><svg aria-hidden="true" class="ico"><use href="#i-close"/></svg>close</span><span><svg aria-hidden="true" class="ico"><use href="#i-phone"/></svg>phone</span><span><svg aria-hidden="true" class="ico"><use href="#i-chat"/></svg>chat</span><span><svg aria-hidden="true" class="ico"><use href="#i-arrow"/></svg>arrow</span><span><svg aria-hidden="true" class="ico"><use href="#i-chev"/></svg>chev</span><span><svg aria-hidden="true" class="ico"><use href="#i-copy"/></svg>copy</span><span><svg aria-hidden="true" class="ico"><use href="#i-link"/></svg>link</span><span><svg aria-hidden="true" class="ico"><use href="#i-doc"/></svg>doc</span><span><svg aria-hidden="true" class="ico"><use href="#i-ext"/></svg>ext</span><span><svg aria-hidden="true" class="ico"><use href="#i-menu"/></svg>menu</span><span><svg aria-hidden="true" class="ico"><use href="#i-pin"/></svg>pin</span><span><svg aria-hidden="true" class="ico"><use href="#i-clock"/></svg>clock</span><span><svg aria-hidden="true" class="ico"><use href="#i-send"/></svg>send</span></div>
+</section>
+
+<section id="data">
+  <h2>Data display</h2>
+  <div class="pair">
+    <div class="pane"><small>SPEC TABLE + SOURCE</small>
+      <table class="spec"><caption>Boundary dimensions</caption><thead><tr><th scope="col">Property</th><th scope="col" class="sym">Symbol</th><th scope="col" class="val">mm</th></tr></thead>
+      <tbody><tr><th scope="row">Bore diameter</th><td class="sym">d</td><td class="val">25</td></tr><tr><th scope="row">Outside diameter</th><td class="sym">D</td><td class="val">52</td></tr><tr><th scope="row">Width</th><td class="sym">B</td><td class="val">15</td></tr></tbody></table>
+      <p class="src"><span>Source:</span><a href="https://www.123bearing.com/bearing-housing/deep-groove-bearing/single-row/6205-skf" target="_blank" rel="noopener">123bearing.com — 6205</a><span>checked 4 Oct 2026 · prototype</span></p>
+    </div>
+    <div class="pane"><small>PENDING DATA</small>
+      <div class="pendingbox"><b>Load ratings and speeds</b><span>These values are not yet recorded from a verified source, so none are shown.</span><ul><li>C · Basic dynamic load rating</li><li>C0 · Basic static load rating</li><li>n lim · Limiting speed</li></ul></div>
+      <div class="empty" style="margin-top:12px"><svg class="ico" aria-hidden="true"><use href="#i-doc"/></svg><b>No datasheet published yet</b><span>Empty states say what will appear here and when.</span></div>
+    </div>
+  </div>
+  <h3>Document row (sample, not real content)</h3>
+  <div class="channels" style="max-width:640px"><a href="#data"><svg class="ico"><use href="#i-doc"/></svg><span><small>PDF · English · 320 KB · 4 Oct 2026</small>Sample datasheet title</span><svg class="ico"><use href="#i-ext"/></svg></a></div>
+</section>
+
+<section id="explorer">
+  <h2>Explorer and workspace</h2>
+  <div class="ds-rules">
+    <div><b>List in HTML, filters in JS</b><span>Every published product is a real link in the page (crawlable, works without JS). JavaScript only hides rows; nothing is fetched to filter.</span></div>
+    <div><b>Exact match opens</b><span>Submitting an exact code (or a search with one result) opens the workspace directly.</span></div>
+    <div><b>No result is a conversion path</b><span>The typed code is carried into a WhatsApp message and the inquiry form.</span></div>
+    <div><b>Workspace, desktop</b><span>A sticky panel at the inline end (left in Persian, right in English) with Overview · Drawing · Data · Documents, and a sticky WhatsApp / Call / Inquiry footer.</span></div>
+    <div><b>Workspace, mobile</b><span>A 92%-height bottom sheet: the page behind becomes inert, Esc / scrim / drag-down / close all dismiss, focus returns to the row.</span></div>
+    <div><b>Deep links</b><span>Opening a product sets <code>#p-slug</code> (prototype) — <code>/p/slug</code> in production, server-rendered with the workspace open. The language switch keeps the product.</span></div>
+  </div>
+  <p class="lead" style="margin-top:16px">Try it: <a href="fa.html#p-22220-e" lang="fa">۲۲۲۲۰ E در نسخه فارسی</a> · <a href="en.html#p-ucp-208">UCP 208 (pending data) in English</a></p>
+</section>
+
+<section id="forms">
+  <h2>Forms and contact</h2>
+  <form class="form" style="max-width:720px" novalidate onsubmit="return false">
+    <div class="field"><label for="x1">Full name</label><input class="input" id="x1"></div>
+    <div class="field is-err"><label for="x2">Phone number</label><input class="input ltr" id="x2" aria-invalid="true" aria-describedby="x2e"><span class="err" id="x2e">This field is required.</span></div>
+    <div class="field field--full"><label for="x3">Part code</label><input class="input ltr" id="x3" placeholder="6205-2RS"><span class="hint">Don't know the code? Leave it empty and describe the application.</span></div>
+  </form>
+  <p class="lead" style="margin-top:12px">No price, quantity-based totals or "add to cart" anywhere. The only submit action is "Send inquiry", and WhatsApp sits beside it as an equal alternative.</p>
+</section>
+
+<section id="motion">
+  <h2>Motion and reduced motion</h2>
+  <div class="tbl-wrap"><table class="tbl"><thead><tr><th>Token</th><th>Value</th><th>Use</th></tr></thead><tbody>
+    <tr><td class="mono">--t-fast</td><td class="mono">120ms</td><td>Hover and pressed states</td></tr>
+    <tr><td class="mono">--t</td><td class="mono">240ms</td><td>Bottom sheet, scrim</td></tr>
+    <tr><td class="mono">--t-slow</td><td class="mono">520ms</td><td>Fallback draw-on</td></tr>
+    <tr><td class="mono">--ease</td><td class="mono">cubic-bezier(.2,.7,.2,1)</td><td>Everything time-based</td></tr>
+  </tbody></table></div>
+  <h3>Behaviours and their drivers</h3>
+  <div class="tbl-wrap"><table class="tbl"><thead><tr><th>Behaviour</th><th>Chrome / Edge, Safari 26+</th><th>Browsers without scroll timelines</th><th>Reduced motion</th></tr></thead><tbody>
+    <tr><td><b>Drawing Set</b>: each sheet's line work draws as it enters; the process raceway extends</td><td>CSS <code>view-timeline</code>, no JS</td><td>IntersectionObserver adds <code>.is-drawn</code> once</td><td>Drawn from the start</td></tr>
+    <tr><td><b>Exploded Assembly</b>: sticky stage, parts slide apart along the shaft, BOM rows and balloons light in turn, then reassemble</td><td>CSS scroll timeline animates one registered property <code>--e</code>; parts translate by <code>--e × --dx</code></td><td>One passive scroll listener, active only while the stage is on screen, sets <code>--e</code> per frame</td><td>No sticky track; static exploded drawing with all balloons and the full BOM</td></tr>
+    <tr><td><b>Workspace sheet</b> (mobile)</td><td colspan="2">240 ms transform, compositor-only</td><td>Instant</td></tr>
+    <tr><td><b>Scroll to explorer</b> after a search</td><td colspan="2">Smooth scroll</td><td>Jump</td></tr>
+  </tbody></table></div>
+  <h3>Live specimen</h3>
+  <figure class="dwg" style="margin:0;max-width:520px"><svg class="dwg-svg draw" viewBox="0 0 400 260" role="img" aria-label="Front view of the assembled, sealed bearing">
+  <path class="ln-ctr" d="M48 130H352M200 18V242"/>
+  <circle class="ln-obj" data-d pathLength="1" cx="200" cy="130" r="100"/>
+  <circle class="ln-obj" data-d pathLength="1" cx="200" cy="130" r="76"/>
+  <circle class="fill-tint" cx="200" cy="130" r="69" style="fill-opacity:.55;stroke-width:1"/>
+  <circle class="ln-obj" data-d pathLength="1" cx="200" cy="130" r="60"/>
+  <circle class="ln-obj" data-d pathLength="1" cx="200" cy="130" r="40"/>
+  <path class="ln-dim" d="M200 30H326M200 230H326" />
+  <path class="ln-dim" d="M320 30V230" marker-start="url(#ar)" marker-end="url(#ar)"/>
+  <text class="dim-t" x="328" y="134">D</text>
+  <path class="ln-dim" d="M160 130H240" marker-start="url(#ar)" marker-end="url(#ar)"/>
+  <text class="dim-t" x="200" y="124" text-anchor="middle">d</text>
+</svg><figcaption><span>DRAW-ON · SCROLL-DRIVEN</span><span>NTS</span></figcaption></figure>
+  <p class="lead" style="margin-top:12px">Rules: only <code>transform</code>, <code>opacity</code> and <code>stroke-dashoffset</code> animate; no parallax; no continuous rotation; nothing waits for animation to become readable; one sticky stage on the whole page.</p>
+</section>
+
+<section id="perf">
+  <h2>Performance ledger</h2>
+  <p class="lead">Measured on this prototype with Chromium, a 390 px phone viewport, 4× CPU slowdown and cache disabled. Numbers are compressed transfer sizes.</p>
+  <div class="tbl-wrap"><table class="tbl"><thead><tr><th>Decision</th><th>Cost</th><th>Measured / effect</th></tr></thead><tbody>
+<tr><td>Paper and ink palette; no raster image in the first screen</td><td>0 KB of images</td><td>LCP element is the headline text: 852 ms on Slow 4G, — ms on 3G-class (fa)</td></tr><tr><td>Vazirmatn, two static weights, subset per language</td><td>fa 18.5 + 18.6 KB; en 7.6 + 7.6 KB (+11.3 KB Persian-only subset)</td><td>vs 111 KB for the full variable font; layout shift from font swap 0.000–0.001</td></tr><tr><td>JetBrains Mono for codes, subset, ligatures removed</td><td>4.7 KB per weight</td><td>from 21.2 KB; codes stay unambiguous (0/O, 1/l)</td></tr><tr><td>Drafting grid as CSS gradients, only inside drawing frames</td><td>0 bytes</td><td>Smaller painted area than a page-wide grid</td></tr><tr><td>Inline SVG drawings + one symbol sprite (icons, 10 family glyphs)</td><td>inside the HTML: 13.4 KB compressed for the whole fa page</td><td>Glyphs defined once, reused in 10 cards and every result row</td></tr><tr><td>No shadows, blur, gradients (except the pending hatch)</td><td>0</td><td>Cheap paint and no backdrop-filter on low-end phones</td></tr><tr><td>Sticky header and workspace with position: sticky</td><td>0 JS</td><td>No scroll listeners for layout</td></tr><tr><td>Explorer list rendered in HTML; filtering toggles hidden rows</td><td>0 requests per search</td><td>Typing and filtering are local</td></tr><tr><td>Workspace code-split</td><td>ws.js:5625, 6205.json:864 bytes on first open</td><td>Nothing loads until a product is opened (pre-fetched on first hover)</td></tr><tr><td>Scroll narrative via CSS scroll timelines; JS fallback</td><td>≈1 KB JS fallback</td><td>Transforms on 8 SVG groups; the fallback listener is detached while off-screen</td></tr><tr><td>content-visibility on three lower sections</td><td>0</td><td>Skips rendering work below the fold</td></tr><tr><td>Blueprint dark theme from the same tokens</td><td>≈0.6 KB CSS</td><td>Follows the device setting</td></tr><tr><td>Total first view</td><td>fa 73.6 KB in 7 requests; en 62.3 KB in 8</td><td>Budget: ≤ 120 KB target, ≤ 150 KB ceiling, ≤ 8 requests</td></tr>  </tbody></table></div>
+</section>
+</main>
+</div>
+</body>
+</html>

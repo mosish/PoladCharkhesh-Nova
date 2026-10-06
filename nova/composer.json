@@ -1,0 +1,45 @@
+{
+    "name": "polad-charkhesh/nova",
+    "description": "Polad Charkhesh Nova: CMS, Publish Engine and inquiry endpoint.",
+    "type": "project",
+    "license": "proprietary",
+    "require": {
+        "php": "^8.4"
+    },
+    "require-dev": {
+        "friendsofphp/php-cs-fixer": "^3.95",
+        "phpstan/phpstan": "^2.3",
+        "phpunit/phpunit": "^13"
+    },
+    "autoload": {
+        "psr-4": {
+            "Nova\\": "app/src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Nova\\Tests\\Unit\\": "tests/unit/",
+            "Nova\\Tests\\Integration\\": "tests/integration/"
+        }
+    },
+    "config": {
+        "platform": {
+            "php": "8.4.26"
+        },
+        "sort-packages": true,
+        "allow-plugins": {}
+    },
+    "scripts": {
+        "test": "phpunit",
+        "test:unit": "phpunit --testsuite unit",
+        "test:integration": "phpunit --testsuite integration",
+        "stan": "phpstan analyse --memory-limit=1G --no-progress",
+        "cs": "php-cs-fixer check --diff",
+        "cs:fix": "php-cs-fixer fix",
+        "check": [
+            "@cs",
+            "@stan",
+            "@test"
+        ]
+    }
+}

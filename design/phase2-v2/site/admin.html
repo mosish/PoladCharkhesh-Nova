@@ -1,0 +1,918 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Admin Control Center — wireframes</title>
+<style>
+@font-face{font-family:"Vazirmatn";src:url(assets/fonts/vazirmatn-Regular-fa.woff2) format("woff2");font-weight:400;font-display:swap}
+@font-face{font-family:"Vazirmatn";src:url(assets/fonts/vazirmatn-Bold-fa.woff2) format("woff2");font-weight:700;font-display:swap}
+@font-face{font-family:"Vazirmatn";src:url(assets/fonts/vazirmatn-Regular-latin.woff2) format("woff2");font-weight:400;font-display:swap;unicode-range:U+0041-005A,U+0061-007A}
+@font-face{font-family:"Vazirmatn";src:url(assets/fonts/vazirmatn-Bold-latin.woff2) format("woff2");font-weight:700;font-display:swap;unicode-range:U+0041-005A,U+0061-007A}
+@font-face{font-family:"JetBrains Mono";src:url(assets/fonts/jbmono-400.woff2) format("woff2");font-weight:400;font-display:swap}
+@font-face{font-family:"JetBrains Mono";src:url(assets/fonts/jbmono-600.woff2) format("woff2");font-weight:600;font-display:swap}
+</style>
+<link rel="stylesheet" href="assets/admin-wf.css">
+</head>
+<body>
+<header class="doc-head">
+  <div class="wrap">
+    <p class="kicker">PC · ADMIN · WIREFRAMES · PHASE 2 V2 · NOT AN IMPLEMENTATION</p>
+    <h1>Website Control Center — core screens</h1>
+    <p>Low/medium-fidelity UX wireframes for review before Gate 2. The admin is a Persian (RTL) interface at <span class="mono">/admin</span> on the .ir host only (D11). It edits the structured content model in MariaDB; nothing the public sees changes until <b>Publish</b> compiles a new static release. Notes in English map each element to the data model and to rules approved at Gate 1. Nothing here is built yet: no application, schema or Publish Engine exists.</p>
+    <ul class="legend">
+      <li><i class="pin">1</i> Numbered pins in a frame match the notes under it</li>
+      <li><span>Products are the 13 prototype samples (real, sourced dimensions). Inquiries, people, phone numbers in inquiries, counts, times, file names and release IDs are <b>placeholders</b>.</span></li>
+      <li>Utilitarian by design: Nova tokens, dense tables, no decorative graphics</li>
+    </ul>
+    <ul class="toc">
+<li><a href="#dashboard"><b>A1</b> Dashboard</a></li><li><a href="#products"><b>A2</b> Products</a></li><li><a href="#editor"><b>A3</b> Product editor</a></li><li><a href="#media"><b>A4</b> Media library</a></li><li><a href="#sections"><b>A5</b> Sections / content</a></li><li><a href="#inquiries"><b>A6</b> Inquiries</a></li><li><a href="#publish"><b>A7</b> Publish</a></li><li><a href="#company"><b>A8</b> Company / settings</a></li><li><a href="#mobile"><b>A9</b> Mobile triage</a></li><li><a href="#model"><b>·</b> Entity map</a></li><li><a href="#standards"><b>·</b> Standards &amp; open questions</a></li>    </ul>
+  </div>
+</header>
+
+<main>
+<section class="screen" id="dashboard" aria-labelledby="h-dashboard">
+  <div class="wrap">
+    <div class="screen__head"><span class="screen__no">A1</span><h2 id="h-dashboard">Dashboard <span lang="fa" dir="rtl">پیشخوان</span></h2><p>What needs attention now: unpublished changes, new inquiries, demand for codes that are not in the catalogue, data quality, and backup health. No charts or analytics; every number is a link into a filtered list.</p></div>
+    <div class="frame-scroll" tabindex="0" role="region" aria-label="A1 Dashboard wireframe">
+<div class="adm" dir="rtl" lang="fa">
+  <div class="adm__top">
+    <span class="adm__brand"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="16" cy="16" r="14"/><circle cx="16" cy="16" r="6"/><circle cx="26.0" cy="16.0" r="2"/><circle cx="23.07" cy="23.07" r="2"/><circle cx="16.0" cy="26.0" r="2"/><circle cx="8.93" cy="23.07" r="2"/><circle cx="6.0" cy="16.0" r="2"/><circle cx="8.93" cy="8.93" r="2"/><circle cx="16.0" cy="6.0" r="2"/><circle cx="23.07" cy="8.93" r="2"/></svg> پولاد چرخش <small>مرکز کنترل وب‌سایت</small></span>
+    <span class="adm__state"><span class="dot"></span> <span><b>۷ تغییر</b> منتشرنشده</span></span>
+    <span class="a-btn a-btn--pri">بررسی و انتشار</span>
+    <span class="a-btn a-btn--q">مشاهده سایت ↗</span>
+    <span class="adm__user"><span class="avatar">م</span> مالک</span>
+  </div>
+  <div class="adm__body">
+    <nav class="adm__nav" aria-label="ناوبری مدیریت">
+<a aria-current="page"><i></i>پیشخوان</a><h4>کاتالوگ</h4><a ><i></i>محصولات</a><a ><i></i>خانواده‌ها</a><a ><i></i>منابع</a><a ><i></i>برندها</a><h4>محتوا</h4><a ><i></i>بخش‌های صفحه</a><a ><i></i>رسانه</a><a ><i></i>مستندات</a><a ><i></i>سئو</a><h4>ارتباط</h4><a ><i></i>استعلام‌ها<span class="n">۳</span></a><a ><i></i>شرکت و تماس</a><h4>انتشار</h4><a ><i></i>انتشار<span class="n n--q">۷</span></a><h4>سیستم</h4><a ><i></i>کاربران و نقش‌ها</a><a ><i></i>گزارش رویدادها</a><a ><i></i>پشتیبان‌گیری</a>    </nav>
+    <div class="adm__main">  <div class="adm__head"><div><p class="crumbs">امروز · ۱۲ مهر ۱۴۰۵</p><h3>پیشخوان</h3></div></div>
+  <div class="grid g4" style="margin-bottom:14px">
+    <div class="card tile tile--pri"><span class="k">تغییرات منتشرنشده <i class="pin" aria-label="note 1">1</i></span><span class="v">۷</span><span class="s">آخرین انتشار: دیروز ۱۵:۴۲ · نسخه <span class="code">R-0412</span></span><a>بررسی و انتشار ←</a></div>
+    <div class="card tile tile--pri"><span class="k">استعلام‌های جدید <i class="pin" aria-label="note 2">2</i></span><span class="v">۳</span><span class="s">قدیمی‌ترین پاسخ‌داده‌نشده: ۲ ساعت پیش</span><a>صندوق استعلام ←</a></div>
+    <div class="card tile tile--warn"><span class="k">داده فنی در انتظار تأیید</span><span class="v">۲</span><span class="s">از ۱۳ محصول منتشرشده · noindex تا تأیید</span><a>فهرست محصولات در انتظار ←</a></div>
+    <div class="card tile"><span class="k">پشتیبان <i class="pin" aria-label="note 5">5</i></span><span class="v" style="font-size:20px;padding-block:6px">امروز ۰۳:۰۰ <span class="badge b-ok">موفق</span></span><span class="s warn">دانلود هفتگی خارج از سرور: ۸ روز پیش — موعد گذشته</span><a>دانلود پشتیبان کامل ←</a></div>
+  </div>
+  <div class="grid g-main g-main--wide">
+    <div class="grid">
+      <div class="card"><h4>استعلام‌های اخیر <span class="actions"><span class="a-btn a-btn--sm">همه</span></span></h4>
+        <ul class="list">
+<li><span class="unread" title="خوانده‌نشده"></span><span class="grow"><b>مشتری نمونه ۱</b> <span class="muted">· شرکت نمونه</span><br><span class="code">6205-2RS</span> · <span class="code">6208</span> <span class="badge b-pend">در کاتالوگ نیست</span></span><span class="tag">FA</span><span class="badge b-new">جدید</span><span class="tm">۱۰:۰۵</span></li><li><span class="unread" title="خوانده‌نشده"></span><span class="grow"><b>مشتری نمونه ۲</b> <span class="muted">· کارگاه نمونه</span><br><span class="code">22220 E</span></span><span class="tag">FA</span><span class="badge b-new">جدید</span><span class="tm">۰۹:۲۰</span></li><li><span class="unread" title="خوانده‌نشده"></span><span class="grow"><b>Sample customer 3</b> <span class="muted">· Sample Ltd</span><br><span class="code">UCP 208</span> · <span class="code">UCFL 205</span> <span class="badge b-pend">در کاتالوگ نیست</span></span><span class="tag">EN</span><span class="badge b-new">جدید</span><span class="tm">دیروز</span></li><li><span class="grow"><b>مشتری نمونه ۴</b> <span class="muted">· —</span><br><span class="code">NU 2210</span> <span class="badge b-pend">در کاتالوگ نیست</span></span><span class="tag">FA</span><span class="badge b-pend">در حال پیگیری</span><span class="tm">دیروز</span></li>        </ul>
+      </div>
+      <div class="card"><h4>کدهای درخواستی که در کاتالوگ نیستند <i class="pin" aria-label="note 3">3</i> <span class="actions muted" style="font-size:12.5px">از متن استعلام‌ها، نه از رفتار بازدیدکنندگان</span></h4>
+        <table class="t"><thead><tr><th>کد</th><th>تعداد استعلام</th><th>آخرین درخواست</th><th class="w1"></th></tr></thead><tbody>
+          <tr><td><span class="code">6208</span></td><td>۲</td><td>۲ ساعت پیش</td><td class="w1"><span class="a-btn a-btn--sm">ساخت پیش‌نویس محصول</span></td></tr>
+          <tr><td><span class="code">NU 2210</span></td><td>۱</td><td>دیروز</td><td class="w1"><a class="a-btn a-btn--link">پیش‌نویس ساخته شد ←</a></td></tr>
+          <tr><td><span class="code">UCFL 205</span></td><td>۱</td><td>۳ روز پیش</td><td class="w1"><span class="a-btn a-btn--sm">ساخت پیش‌نویس محصول</span></td></tr>
+        </tbody></table>
+      </div>
+    </div>
+    <div class="grid">
+      <div class="card"><h4>کیفیت داده <i class="pin" aria-label="note 4">4</i></h4>
+        <ul class="list">
+          <li><span class="warn-i">!</span><span class="grow">۲ محصول با داده فنی در انتظار تأیید</span><a class="a-btn a-btn--link">رفع</a></li>
+          <li><span class="bad-i">!</span><span class="grow">۳ مقدار ابعادی بدون منبع <span class="muted">(<span class="code">TC 25×42×7</span>)</span></span><a class="a-btn a-btn--link">رفع</a></li>
+          <li><span class="warn-i">!</span><span class="grow">ترجمه انگلیسی ناقص: ۲ مورد</span><a class="a-btn a-btn--link">رفع</a></li>
+          <li><span class="warn-i">!</span><span class="grow">۴ تصویر بدون متن جایگزین</span><a class="a-btn a-btn--link">رفع</a></li>
+          <li><span class="ok-i">✓</span><span class="grow muted">عنوان و توضیح سئو: همه در محدوده</span></li>
+        </ul>
+      </div>
+      <div class="card"><h4>فعالیت اخیر <i class="pin" aria-label="note 6">6</i></h4>
+        <ul class="list">
+          <li><span class="grow">مالک ابعاد <span class="code">30208</span> را ویرایش کرد</span><span class="tm">۱۰:۱۲</span></li>
+          <li><span class="grow">ویرایشگر وضعیت استعلام <span class="code">IQ-1024</span> را «در حال پیگیری» کرد</span><span class="tm">۰۹:۴۰</span></li>
+          <li><span class="grow">ویرایشگر تصویر جدید بارگذاری کرد</span><span class="tm">۰۹:۱۵</span></li>
+          <li><span class="grow">سیستم: پشتیبان روزانه ساخته شد</span><span class="tm">۰۳:۰۰</span></li>
+          <li><span class="grow">مالک نسخه <span class="code">R-0412</span> را منتشر کرد</span><span class="tm">دیروز</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+  </div>
+</div>
+</div>
+<ol class="notes">
+  <li><span><b>Draft → Publish is always visible.</b> The top bar on every screen shows the count of unpublished changes and the Publish entry point; the live site never changes on Save.</span></li>
+  <li><span><b>Inquiries first.</b> They are the business outcome of the site, so they lead the dashboard. Each tile is a link into a pre-filtered list; counts are simple queries, with no analytics.</span></li>
+  <li><span><b>Demand signal without tracking (C4).</b> Codes named in inquiries that match no designation or alias, after the same normalisation as public search. "Create draft product" pre-fills the designation; the draft stays unpublished until data is entered and sourced.</span></li>
+  <li><span><b>Data quality is a to-do list:</b> pending verification, values without a Source, missing fa/en translations, images without alt text, SEO length warnings. Each "Fix" opens the exact field.</span></li>
+  <li><span><b>Backup health (D13):</b> last automatic backup and the last weekly off-site download, which turns amber when overdue. Only the Owner can download a full backup.</span></li>
+  <li><span><b>Recent activity</b> reads the append-only AuditEvent log (who, what, when).</span></li>
+</ol>
+
+  </div>
+</section>
+
+<section class="screen" id="products" aria-labelledby="h-products">
+  <div class="wrap">
+    <div class="screen__head"><span class="screen__no">A2</span><h2 id="h-products">Products <span lang="fa" dir="rtl">محصولات</span></h2><p>Find any product fast, see its data health at a glance, and act on several at once. The list doubles as the verification work queue.</p></div>
+    <div class="frame-scroll" tabindex="0" role="region" aria-label="A2 Products wireframe">
+<div class="adm" dir="rtl" lang="fa">
+  <div class="adm__top">
+    <span class="adm__brand"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="16" cy="16" r="14"/><circle cx="16" cy="16" r="6"/><circle cx="26.0" cy="16.0" r="2"/><circle cx="23.07" cy="23.07" r="2"/><circle cx="16.0" cy="26.0" r="2"/><circle cx="8.93" cy="23.07" r="2"/><circle cx="6.0" cy="16.0" r="2"/><circle cx="8.93" cy="8.93" r="2"/><circle cx="16.0" cy="6.0" r="2"/><circle cx="23.07" cy="8.93" r="2"/></svg> پولاد چرخش <small>مرکز کنترل وب‌سایت</small></span>
+    <span class="adm__state"><span class="dot"></span> <span><b>۷ تغییر</b> منتشرنشده</span></span>
+    <span class="a-btn a-btn--pri">بررسی و انتشار</span>
+    <span class="a-btn a-btn--q">مشاهده سایت ↗</span>
+    <span class="adm__user"><span class="avatar">م</span> مالک</span>
+  </div>
+  <div class="adm__body">
+    <nav class="adm__nav" aria-label="ناوبری مدیریت">
+<a ><i></i>پیشخوان</a><h4>کاتالوگ</h4><a aria-current="page"><i></i>محصولات</a><a ><i></i>خانواده‌ها</a><a ><i></i>منابع</a><a ><i></i>برندها</a><h4>محتوا</h4><a ><i></i>بخش‌های صفحه</a><a ><i></i>رسانه</a><a ><i></i>مستندات</a><a ><i></i>سئو</a><h4>ارتباط</h4><a ><i></i>استعلام‌ها<span class="n">۳</span></a><a ><i></i>شرکت و تماس</a><h4>انتشار</h4><a ><i></i>انتشار<span class="n n--q">۷</span></a><h4>سیستم</h4><a ><i></i>کاربران و نقش‌ها</a><a ><i></i>گزارش رویدادها</a><a ><i></i>پشتیبان‌گیری</a>    </nav>
+    <div class="adm__main">  <div class="adm__head"><div><p class="crumbs">کاتالوگ</p><h3>محصولات <span class="sub">۱۴ مورد · ۱۳ منتشرشده · ۱ پیش‌نویس</span></h3></div>
+    <div class="actions"><span class="a-btn">ورود از فایل CSV <i class="pin" aria-label="note 8">8</i></span><span class="a-btn a-btn--pri">+ محصول جدید</span></div></div>
+  <div class="toolbar">
+    <span class="a-in a-in--search is-ph">جستجوی کد یا نام مستعار… <i class="pin" aria-label="note 1">1</i></span>
+    <span class="a-sel">خانواده: همه</span><span class="a-sel">وضعیت: همه</span><span class="a-sel">داده فنی: همه</span><span class="a-sel">کاوشگر: همه</span>
+    <span class="sp"></span><span class="tog">فقط موارد دارای مشکل</span>
+  </div>
+  <div class="bulk"><span class="chk on"></span><b>۲ مورد انتخاب شد</b><span class="a-btn">انتشار</span><span class="a-btn">بازگشت به پیش‌نویس</span><span class="a-btn">نمایش/پنهان در کاوشگر</span><span class="a-btn">بایگانی…</span> <i class="pin" aria-label="note 7">7</i></div>
+  <table class="t">
+    <thead><tr><th class="w1"><span class="chk"></span></th><th>کد</th><th>خانواده</th><th>ابعاد اصلی (mm) <i class="pin" aria-label="note 2">2</i></th><th>منبع <i class="pin" aria-label="note 3">3</i></th><th>داده فنی <i class="pin" aria-label="note 4">4</i></th><th>وضعیت</th><th>کاوشگر <i class="pin" aria-label="note 5">5</i></th><th>ترجمه <i class="pin" aria-label="note 6">6</i></th><th>آخرین ویرایش</th><th class="w1"></th></tr></thead>
+    <tbody>
+      <tr >
+        <td class="w1"><span class="chk "></span></td>
+        <td><a class="code">6200</a></td>
+        <td class="nw">ساچمه‌ای</td>
+        <td class="n"><span class="muted">d×D×B</span>&nbsp; 10 × 30 × 9</td>
+        <td class="n ">3/3</td>
+        <td><span class="badge b-ok">تأییدشده</span></td>
+        <td>منتشرشده</td>
+        <td><span class="good">✓</span></td>
+        <td class="nw"><span class="tag">fa</span> <span class="tag ">en</span></td>
+        <td class="muted">۱۰:۱۲</td>
+        <td class="w1 muted">⋯</td>
+      </tr>
+      <tr >
+        <td class="w1"><span class="chk "></span></td>
+        <td><a class="code">6201</a></td>
+        <td class="nw">ساچمه‌ای</td>
+        <td class="n"><span class="muted">d×D×B</span>&nbsp; 12 × 32 × 10</td>
+        <td class="n ">3/3</td>
+        <td><span class="badge b-ok">تأییدشده</span></td>
+        <td>منتشرشده</td>
+        <td><span class="good">✓</span></td>
+        <td class="nw"><span class="tag">fa</span> <span class="tag ">en</span></td>
+        <td class="muted">دیروز</td>
+        <td class="w1 muted">⋯</td>
+      </tr>
+      <tr >
+        <td class="w1"><span class="chk "></span></td>
+        <td><a class="code">6205</a></td>
+        <td class="nw">ساچمه‌ای</td>
+        <td class="n"><span class="muted">d×D×B</span>&nbsp; 25 × 52 × 15</td>
+        <td class="n ">3/3</td>
+        <td><span class="badge b-ok">تأییدشده</span></td>
+        <td>منتشرشده</td>
+        <td><span class="good">✓</span></td>
+        <td class="nw"><span class="tag">fa</span> <span class="tag ">en</span></td>
+        <td class="muted">دیروز</td>
+        <td class="w1 muted">⋯</td>
+      </tr>
+      <tr >
+        <td class="w1"><span class="chk "></span></td>
+        <td><a class="code">6206</a></td>
+        <td class="nw">ساچمه‌ای</td>
+        <td class="n"><span class="muted">d×D×B</span>&nbsp; 30 × 62 × 16</td>
+        <td class="n ">3/3</td>
+        <td><span class="badge b-ok">تأییدشده</span></td>
+        <td>منتشرشده</td>
+        <td><span class="good">✓</span></td>
+        <td class="nw"><span class="tag">fa</span> <span class="tag ">en</span></td>
+        <td class="muted">۳ روز پیش</td>
+        <td class="w1 muted">⋯</td>
+      </tr>
+      <tr >
+        <td class="w1"><span class="chk "></span></td>
+        <td><a class="code">6207</a></td>
+        <td class="nw">ساچمه‌ای</td>
+        <td class="n"><span class="muted">d×D×B</span>&nbsp; 35 × 72 × 17</td>
+        <td class="n ">3/3</td>
+        <td><span class="badge b-ok">تأییدشده</span></td>
+        <td>منتشرشده</td>
+        <td><span class="good">✓</span></td>
+        <td class="nw"><span class="tag">fa</span> <span class="tag ">en</span></td>
+        <td class="muted">۳ روز پیش</td>
+        <td class="w1 muted">⋯</td>
+      </tr>
+      <tr >
+        <td class="w1"><span class="chk "></span></td>
+        <td><a class="code">6305-2RS</a></td>
+        <td class="nw">ساچمه‌ای</td>
+        <td class="n"><span class="muted">d×D×B</span>&nbsp; 25 × 62 × 17</td>
+        <td class="n ">3/3</td>
+        <td><span class="badge b-ok">تأییدشده</span></td>
+        <td>منتشرشده</td>
+        <td><span class="good">✓</span></td>
+        <td class="nw"><span class="tag">fa</span> <span class="tag ">en</span></td>
+        <td class="muted">هفته پیش</td>
+        <td class="w1 muted">⋯</td>
+      </tr>
+      <tr >
+        <td class="w1"><span class="chk "></span></td>
+        <td><a class="code">30208</a></td>
+        <td class="nw">مخروطی</td>
+        <td class="n"><span class="muted">d×D×T</span>&nbsp; 40 × 80 × 19.75</td>
+        <td class="n ">3/3</td>
+        <td><span class="badge b-ok">تأییدشده</span></td>
+        <td>منتشرشده</td>
+        <td><span class="good">✓</span></td>
+        <td class="nw"><span class="tag">fa</span> <span class="tag ">en</span></td>
+        <td class="muted">۱۰:۱۲</td>
+        <td class="w1 muted">⋯</td>
+      </tr>
+      <tr >
+        <td class="w1"><span class="chk "></span></td>
+        <td><a class="code">22220 E</a></td>
+        <td class="nw">بشکه‌ای</td>
+        <td class="n"><span class="muted">d×D×B</span>&nbsp; 100 × 180 × 46</td>
+        <td class="n ">3/3</td>
+        <td><span class="badge b-ok">تأییدشده</span></td>
+        <td>منتشرشده</td>
+        <td><span class="good">✓</span></td>
+        <td class="nw"><span class="tag">fa</span> <span class="tag ">en</span></td>
+        <td class="muted">هفته پیش</td>
+        <td class="w1 muted">⋯</td>
+      </tr>
+      <tr >
+        <td class="w1"><span class="chk "></span></td>
+        <td><a class="code">NU 205</a></td>
+        <td class="nw">استوانه‌ای</td>
+        <td class="n"><span class="muted">d×D×B</span>&nbsp; 25 × 52 × 15</td>
+        <td class="n ">3/3</td>
+        <td><span class="badge b-ok">تأییدشده</span></td>
+        <td>منتشرشده</td>
+        <td><span class="good">✓</span></td>
+        <td class="nw"><span class="tag">fa</span> <span class="tag ">en</span></td>
+        <td class="muted">هفته پیش</td>
+        <td class="w1 muted">⋯</td>
+      </tr>
+      <tr >
+        <td class="w1"><span class="chk "></span></td>
+        <td><a class="code">HK 2520</a></td>
+        <td class="nw">سوزنی</td>
+        <td class="n"><span class="muted">Fw×D×C</span>&nbsp; 25 × 32 × 20</td>
+        <td class="n ">3/3</td>
+        <td><span class="badge b-ok">تأییدشده</span></td>
+        <td>منتشرشده</td>
+        <td><span class="good">✓</span></td>
+        <td class="nw"><span class="tag">fa</span> <span class="tag ">en</span></td>
+        <td class="muted">هفته پیش</td>
+        <td class="w1 muted">⋯</td>
+      </tr>
+      <tr >
+        <td class="w1"><span class="chk "></span></td>
+        <td><a class="code">51105</a></td>
+        <td class="nw">کف‌گرد</td>
+        <td class="n"><span class="muted">d×D×H</span>&nbsp; 25 × 42 × 11</td>
+        <td class="n ">3/3</td>
+        <td><span class="badge b-ok">تأییدشده</span></td>
+        <td>منتشرشده</td>
+        <td><span class="good">✓</span></td>
+        <td class="nw"><span class="tag">fa</span> <span class="tag ">en</span></td>
+        <td class="muted">هفته پیش</td>
+        <td class="w1 muted">⋯</td>
+      </tr>
+      <tr class="sel">
+        <td class="w1"><span class="chk on"></span></td>
+        <td><a class="code">UCP 208</a></td>
+        <td class="nw">یاتاقان</td>
+        <td class="n"><span class="muted">d</span>&nbsp; 40</td>
+        <td class="n warn">1/?</td>
+        <td><span class="badge b-pend">در انتظار</span></td>
+        <td>منتشرشده</td>
+        <td><span class="good">✓</span></td>
+        <td class="nw"><span class="tag">fa</span> <span class="tag ">en</span></td>
+        <td class="muted">۲ روز پیش</td>
+        <td class="w1 muted">⋯</td>
+      </tr>
+      <tr class="sel">
+        <td class="w1"><span class="chk on"></span></td>
+        <td><a class="code">TC 25×42×7</a></td>
+        <td class="nw">کاسه‌نمد</td>
+        <td class="n"><span class="muted">d×D×b</span>&nbsp; 25 × 42 × 7</td>
+        <td class="n bad">0/3</td>
+        <td><span class="badge b-pend">در انتظار</span></td>
+        <td>منتشرشده</td>
+        <td><span class="good">✓</span></td>
+        <td class="nw"><span class="tag">fa</span> <span class="tag ">en</span></td>
+        <td class="muted">۲ روز پیش</td>
+        <td class="w1 muted">⋯</td>
+      </tr>
+      <tr >
+        <td class="w1"><span class="chk "></span></td>
+        <td><a class="code">NU 2210</a></td>
+        <td class="nw">استوانه‌ای</td>
+        <td class="n"><span class="muted">—</span></td>
+        <td class="n bad">0/3</td>
+        <td><span class="muted">—</span></td>
+        <td><span class="badge b-draft">پیش‌نویس</span></td>
+        <td><span class="muted">—</span></td>
+        <td class="nw"><span class="tag">fa</span> <span class="tag bad">en ✕</span></td>
+        <td class="muted">امروز</td>
+        <td class="w1 muted">⋯</td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="pager"><span>۱–۱۴ از ۱۴</span><span>۵۰ مورد در هر صفحه</span></div>
+</div>
+  </div>
+</div>
+</div>
+<ol class="notes">
+  <li><span><b>Search</b> uses the same normaliser as the public explorer and the Publish Engine (Persian/Arabic digits, separators, × and aliases), so <span class="mono">۶۲۰۵ ۲rs</span> finds 6205.</span></li>
+  <li><span><b>Dimensions use each family's own symbols</b> (d×D×B, Fw×D×C, d×D×H, d×D×T), read from SpecValue rows and never typed as a string.</span></li>
+  <li><span><b>Sources:</b> core values with a cited Source out of core values required. Red means a core value has none. For housings and units, the core list is set in Phase 3 (shown as <span class="mono">?</span>).</span></li>
+  <li><span><b>Two independent states.</b> Status (draft / published / archived) and Verification (pending / verified). Together they decide explorer visibility, robots, sitemap and structured data, using the section K table.</span></li>
+  <li><span><b>"Show in Product Explorer"</b> is its own flag (D9/C1). Pending products can be discoverable and still be noindex.</span></li>
+  <li><span><b>Translation completeness</b> is shown per language. Persian and English are separate fields and are never auto-translated.</span></li>
+  <li><span><b>Bulk actions are deliberately few.</b> Archive asks for confirmation and shows the URL consequence (410 or 301, decided in Phase 3). Bulk-verify does not exist: verification is per product, by the Owner.</span></li>
+  <li><span><b>CSV import</b> is a migration helper for the existing catalogue (IMPORTANT, not CORE). Imported rows land as drafts with "pending" values until sources are attached.</span></li>
+</ol>
+
+  </div>
+</section>
+
+<section class="screen" id="editor" aria-labelledby="h-editor">
+  <div class="wrap">
+    <div class="screen__head"><span class="screen__no">A3</span><h2 id="h-editor">Product editor <span lang="fa" dir="rtl">ویرایش محصول</span></h2><p>Tabs mirror the public workspace. The Dimensions &amp; data tab is the heart of the CMS: one row per value, each with its own source, so provenance is per value and not per product.</p></div>
+    <div class="frame-scroll" tabindex="0" role="region" aria-label="A3 Product editor wireframe">
+<div class="adm" dir="rtl" lang="fa">
+  <div class="adm__top">
+    <span class="adm__brand"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="16" cy="16" r="14"/><circle cx="16" cy="16" r="6"/><circle cx="26.0" cy="16.0" r="2"/><circle cx="23.07" cy="23.07" r="2"/><circle cx="16.0" cy="26.0" r="2"/><circle cx="8.93" cy="23.07" r="2"/><circle cx="6.0" cy="16.0" r="2"/><circle cx="8.93" cy="8.93" r="2"/><circle cx="16.0" cy="6.0" r="2"/><circle cx="23.07" cy="8.93" r="2"/></svg> پولاد چرخش <small>مرکز کنترل وب‌سایت</small></span>
+    <span class="adm__state"><span class="dot"></span> <span><b>۸ تغییر</b> منتشرنشده</span></span>
+    <span class="a-btn a-btn--pri">بررسی و انتشار</span>
+    <span class="a-btn a-btn--q">مشاهده سایت ↗</span>
+    <span class="adm__user"><span class="avatar">م</span> مالک</span>
+  </div>
+  <div class="adm__body">
+    <nav class="adm__nav" aria-label="ناوبری مدیریت">
+<a ><i></i>پیشخوان</a><h4>کاتالوگ</h4><a aria-current="page"><i></i>محصولات</a><a ><i></i>خانواده‌ها</a><a ><i></i>منابع</a><a ><i></i>برندها</a><h4>محتوا</h4><a ><i></i>بخش‌های صفحه</a><a ><i></i>رسانه</a><a ><i></i>مستندات</a><a ><i></i>سئو</a><h4>ارتباط</h4><a ><i></i>استعلام‌ها<span class="n">۳</span></a><a ><i></i>شرکت و تماس</a><h4>انتشار</h4><a ><i></i>انتشار<span class="n n--q">۷</span></a><h4>سیستم</h4><a ><i></i>کاربران و نقش‌ها</a><a ><i></i>گزارش رویدادها</a><a ><i></i>پشتیبان‌گیری</a>    </nav>
+    <div class="adm__main">  <div class="adm__head"><div><p class="crumbs">محصولات / <span class="code">6205</span></p><h3><span class="num">6205</span> <span class="badge b-ok">تأییدشده</span> <span class="badge b-draft">منتشرشده</span></h3></div>
+    <div class="actions"><span class="badge b-pend">تغییرات ذخیره‌نشده <i class="pin" aria-label="note 9">9</i></span><span class="a-btn">پیش‌نمایش پیش‌نویس ↗</span><span class="a-btn a-btn--pri">ذخیره</span></div></div>
+  <div class="tabs"><span>نمای کلی</span><span class="on">ابعاد و داده‌ها</span><span>رسانه</span><span>مستندات</span><span>سئو</span> <i class="pin" aria-label="note 1">1</i></div>
+  <div class="grid g-ed">
+    <div class="grid">
+      <div class="card">
+        <div class="ident">
+          <div class="field"><label>کد (Designation)</label><span class="a-in code" dir="ltr">6205</span></div>
+          <div class="field"><label>خانواده</label><span class="a-sel">بلبرینگ ساچمه‌ای</span></div>
+          <div class="field span2"><label>نام‌های مستعار <i class="pin" aria-label="note 2">2</i></label><div class="chips" dir="ltr"><span class="chip">6205-2RS <span class="x">×</span></span><span class="chip">6205-ZZ <span class="x">×</span></span><span class="chip">6205 2RS <span class="x">×</span></span><span class="muted" style="font-size:12.5px">+ افزودن</span></div></div>
+          <div class="field"><label>برند</label><span class="a-sel is-ph muted">— فقط برندهای تأییدشده</span></div>
+        </div>
+      </div>
+      <div class="card"><div class="card__h">ابعاد مرزی (هسته) <i class="pin" aria-label="note 3">3</i> <span class="actions muted" style="font-size:12.5px">فهرست کنترل‌شده خانواده «ساچمه‌ای» <i class="pin" aria-label="note 4">4</i></span></div>
+        <table class="t spec">
+          <thead><tr><th class="w1">نماد</th><th>مقدار</th><th>واحد</th><th>منبع</th><th>تاریخ بررسی</th><th>وضعیت</th></tr></thead>
+          <tbody>
+            <tr class="core"><td class="sym">d<small>قطر داخلی</small></td><td><span class="a-in val">25</span></td><td class="mono">mm</td><td><span class="a-sel" dir="ltr"><span>123bearing.com — 6205</span></span></td><td>۱۲ مهر ۱۴۰۵</td><td><span class="prov good">● با منبع</span></td></tr>
+            <tr class="core"><td class="sym">D<small>قطر خارجی</small></td><td><span class="a-in val">52</span></td><td class="mono">mm</td><td><span class="a-sel" dir="ltr"><span>123bearing.com — 6205</span></span></td><td>۱۲ مهر ۱۴۰۵</td><td><span class="prov good">● با منبع</span></td></tr>
+            <tr class="core"><td class="sym">B<small>عرض</small></td><td><span class="a-in val is-focus">15</span></td><td class="mono">mm</td><td><span class="a-sel" dir="ltr"><span>123bearing.com — 6205</span></span></td><td>۱۲ مهر ۱۴۰۵</td><td><span class="prov good">● با منبع</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card"><div class="card__h">سایر مشخصات (اختیاری) <i class="pin" aria-label="note 5">5</i> <span class="actions"><span class="a-btn a-btn--sm">+ افزودن مشخصه از فهرست</span></span></div>
+        <table class="t spec">
+          <thead><tr><th class="w1">نماد</th><th>مقدار</th><th>واحد</th><th>منبع</th><th>تاریخ بررسی</th><th>وضعیت</th></tr></thead>
+          <tbody>
+            <tr><td class="sym">C<sub>r</sub><small>بار دینامیکی پایه</small></td><td><span class="a-in val is-ph"></span></td><td class="mono">kN</td><td><span class="a-sel is-ph muted">انتخاب منبع…</span></td><td class="muted">—</td><td><span class="badge b-pend">در انتظار</span></td></tr>
+            <tr><td class="sym">C<sub>0r</sub><small>بار استاتیکی پایه</small></td><td><span class="a-in val is-ph"></span></td><td class="mono">kN</td><td><span class="a-sel is-ph muted">انتخاب منبع…</span></td><td class="muted">—</td><td><span class="badge b-pend">در انتظار</span></td></tr>
+            <tr><td class="sym">m<small>جرم</small></td><td class="wrap"><span class="a-in val is-err">x.xx kg</span><span class="err" style="display:block">فقط عدد؛ واحد جداگانه است</span></td><td class="mono">kg</td><td><span class="a-sel is-ph muted">انتخاب منبع…</span></td><td class="muted">—</td><td><span class="badge b-err">نامعتبر</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="savebar"><span>آخرین ذخیره: ۱۰:۱۲ · مالک</span><span class="sp"></span><span>ذخیره فقط پیش‌نویس را تغییر می‌دهد؛ سایت زنده با «انتشار» به‌روز می‌شود.</span></div>
+    </div>
+    <div class="grid">
+      <div class="card"><div class="card__h">پیش‌نمایش نقشه <i class="pin" aria-label="note 6">6</i></div>
+        <div class="card__b" style="padding:10px">
+          <div class="dwgp"><svg viewBox="0 0 300 200" aria-hidden="true"><defs><pattern id="wf-h" width="5" height="5" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="5" stroke="#2f338a" stroke-width="1"/></pattern><marker id="wf-a" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 1L8 4L0 7Z" fill="#2f338a"/></marker></defs>
+<path d="M50 100H250" stroke="#2f338a" stroke-width=".8" stroke-dasharray="10 3 2 3"/>
+<g stroke="#2f338a" stroke-width="1.2" fill="url(#wf-h)"><rect x="130" y="30" width="40" height="12"/><rect x="130" y="54" width="40" height="12.5"/><rect x="130" y="133.5" width="40" height="12.5"/><rect x="130" y="158" width="40" height="12"/></g>
+<g stroke="#2f338a" stroke-width="1.2" fill="#fff"><circle cx="150" cy="48" r="6.5"/><circle cx="150" cy="152" r="6.5"/></g>
+<g stroke="#2f338a" stroke-width=".8" fill="none"><path d="M172 30H206M172 170H206M128 66.5H94M128 133.5H94M130 172V192M170 172V192"/><path d="M200 31V169M100 67.5V132.5M131 187H169" marker-start="url(#wf-a)" marker-end="url(#wf-a)"/></g>
+<g font-family="JetBrains Mono, monospace" font-size="11" font-weight="600" fill="#2f338a"><text x="206" y="104">Ø52</text><text x="94" y="104" text-anchor="end">Ø25</text><text x="150" y="182" text-anchor="middle">15</text></g></svg></div>
+          <div class="readout"><div><small>d · قطر داخلی</small><b>25 <small>mm</small></b></div><div><small>D · قطر خارجی</small><b>52 <small>mm</small></b></div><div><small>B · عرض</small><b>15 <small>mm</small></b></div></div>
+          <p class="muted" style="font-size:12.5px;margin-top:8px">ساخته‌شده از همین ابعاد هنگام انتشار؛ نیازی به تصویر نیست.</p>
+        </div>
+      </div>
+      <div class="card"><div class="card__h">انتشار و نمایه‌سازی <i class="pin" aria-label="note 7">7</i></div>
+        <div class="card__b grid" style="gap:10px">
+          <div class="field"><span class="lbl">وضعیت</span><div style="display:flex;gap:14px"><span class="radio">پیش‌نویس</span><span class="radio on">منتشرشده</span><span class="radio">بایگانی</span></div></div>
+          <span class="tog on">نمایش در کاوشگر محصول</span>
+          <div><span class="chk on">تأییدشده برای نمایه‌سازی <span class="muted">(فقط مالک)</span></span>
+            <div class="gate"><span class="muted">شرط: همه ابعاد هسته منبع داشته باشند</span><div class="row"><span class="good code">d ✓</span><span class="good code">D ✓</span><span class="good code">B ✓</span></div></div></div>
+          <div class="field"><span class="lbl">نتیجه در سایت</span><div style="display:flex;gap:6px;flex-wrap:wrap"><span class="outcome">index, follow</span><span class="outcome">sitemap ✓</span><span class="outcome">Product schema (no Offer)</span></div></div>
+        </div>
+      </div>
+      <div class="card"><div class="card__h">منبع سریع <i class="pin" aria-label="note 8">8</i></div>
+        <div class="card__b grid" style="gap:8px">
+          <div class="field"><label>عنوان</label><span class="a-in is-ph">مثلاً کاتالوگ عمومی سازنده</span></div>
+          <div class="grid g2" style="gap:8px"><div class="field"><label>ناشر</label><span class="a-in is-ph">—</span></div><div class="field"><label>ویرایش / سال</label><span class="a-in is-ph">—</span></div></div>
+          <div class="field"><label>نشانی یا فایل PDF</label><span class="a-in is-ph" dir="ltr">https://…</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+  </div>
+</div>
+</div>
+<ol class="notes">
+  <li><span><b>Same structure as the public workspace</b> (Overview · Dimensions &amp; data · Media · Documents · SEO). Overview holds summary, applications and notes, with fa and en fields side by side.</span></li>
+  <li><span><b>Designation and aliases drive search.</b> Aliases are entered explicitly, never guessed, and must be unique across the catalogue (validated on save).</span></li>
+  <li><span><b>One SpecValue row per value</b>, each with value, unit, Source, check date and an is_placeholder flag. Provenance is per value, as in Gate 1.</span></li>
+  <li><span><b>Spec keys come from a controlled list per family</b>, which also tells the drawing template which values are core. There are no free-text keys, so tables, drawings and search stay consistent.</span></li>
+  <li><span><b>Optional values</b> left empty never render. Values with no source show publicly as "pending". Inline validation: numbers only, units separate, sanity checks such as D &gt; d.</span></li>
+  <li><span><b>The drawing preview</b> comes from the same dimensions the Publish Engine will use, so no image is needed. The readout matches the public workspace exactly.</span></li>
+  <li><span><b>Status, explorer visibility and "Verified for indexing" are separate controls.</b> The verified checkbox is Owner-only and stays disabled until every core dimension cites a Source. The panel shows the resulting robots, sitemap and schema outcome.</span></li>
+  <li><span><b>Sources are reusable entities</b> (title, publisher, edition or year, URL or file). They can be created inline here and picked for any value.</span></li>
+  <li><span><b>Unsaved-change guard:</b> leaving the page with edits asks first. Save never touches the live site. The model has no price, stock or purchase fields at all.</span></li>
+</ol>
+
+  </div>
+</section>
+
+<section class="screen" id="media" aria-labelledby="h-media">
+  <div class="wrap">
+    <div class="screen__head"><span class="screen__no">A4</span><h2 id="h-media">Media library <span lang="fa" dir="rtl">رسانه</span></h2><p>Every uploaded file is validated, converted once and reference-counted. Visitors only ever receive pre-sized files from the local disk.</p></div>
+    <div class="frame-scroll" tabindex="0" role="region" aria-label="A4 Media library wireframe">
+<div class="adm" dir="rtl" lang="fa">
+  <div class="adm__top">
+    <span class="adm__brand"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="16" cy="16" r="14"/><circle cx="16" cy="16" r="6"/><circle cx="26.0" cy="16.0" r="2"/><circle cx="23.07" cy="23.07" r="2"/><circle cx="16.0" cy="26.0" r="2"/><circle cx="8.93" cy="23.07" r="2"/><circle cx="6.0" cy="16.0" r="2"/><circle cx="8.93" cy="8.93" r="2"/><circle cx="16.0" cy="6.0" r="2"/><circle cx="23.07" cy="8.93" r="2"/></svg> پولاد چرخش <small>مرکز کنترل وب‌سایت</small></span>
+    <span class="adm__state"><span class="dot"></span> <span><b>۷ تغییر</b> منتشرنشده</span></span>
+    <span class="a-btn a-btn--pri">بررسی و انتشار</span>
+    <span class="a-btn a-btn--q">مشاهده سایت ↗</span>
+    <span class="adm__user"><span class="avatar">م</span> مالک</span>
+  </div>
+  <div class="adm__body">
+    <nav class="adm__nav" aria-label="ناوبری مدیریت">
+<a ><i></i>پیشخوان</a><h4>کاتالوگ</h4><a ><i></i>محصولات</a><a ><i></i>خانواده‌ها</a><a ><i></i>منابع</a><a ><i></i>برندها</a><h4>محتوا</h4><a ><i></i>بخش‌های صفحه</a><a aria-current="page"><i></i>رسانه</a><a ><i></i>مستندات</a><a ><i></i>سئو</a><h4>ارتباط</h4><a ><i></i>استعلام‌ها<span class="n">۳</span></a><a ><i></i>شرکت و تماس</a><h4>انتشار</h4><a ><i></i>انتشار<span class="n n--q">۷</span></a><h4>سیستم</h4><a ><i></i>کاربران و نقش‌ها</a><a ><i></i>گزارش رویدادها</a><a ><i></i>پشتیبان‌گیری</a>    </nav>
+    <div class="adm__main">  <div class="adm__head"><div><p class="crumbs">محتوا</p><h3>رسانه <span class="sub">۲۳ فایل</span></h3></div><div class="actions"><span class="a-btn">سطل بازیافت (۳۰ روز)</span><span class="a-btn a-btn--pri">بارگذاری</span></div></div>
+  <div class="drop"><div class="ph" style="width:64px;height:48px"><span>↑</span></div><div><b>فایل‌ها را اینجا رها کنید یا انتخاب کنید <i class="pin" aria-label="note 1">1</i></b><p class="muted">JPEG، PNG، WebP، SVG، PDF · تصویر تا ۱۰ مگابایت · PDF تا ۲۰ مگابایت · تصاویر به WebP در چهار عرض تبدیل و فراداده حذف می‌شود</p></div></div>
+  <div class="toolbar"><span class="a-in a-in--search is-ph">جستجوی نام یا متن جایگزین…</span><span class="chip on">همه</span><span class="chip">تصویر</span><span class="chip">PDF</span><span class="chip">SVG</span><span class="chip">بدون متن جایگزین ۴ <i class="pin" aria-label="note 2">2</i></span><span class="chip">بدون استفاده ۱</span></div>
+  <div class="grid g-main g-main--wide">
+    <div class="grid" style="grid-template-columns:repeat(4,minmax(0,1fr));gap:10px">
+      <div class="mtile sel">
+        <div class="ph "><span class="num">1600×1200</span></div>
+        <span class="fn">6205-section-a1b2c3d4.webp</span>
+        <span class="meta"><span class="num">38 KB</span> · ۲ ارجاع</span>
+      </div>
+      <div class="mtile ">
+        <div class="ph "><span class="num">1600×1200</span></div>
+        <span class="fn">ucp-208-photo-9f8e7d6c.webp</span>
+        <span class="meta"><span class="num">41 KB</span> · ۱ ارجاع</span>
+<span class="meta"><span class="badge b-pend">بدون متن جایگزین</span></span>      </div>
+      <div class="mtile ">
+        <div class="ph "><span class="num">1024×768</span></div>
+        <span class="fn">family-tapered-5a4b3c2d.webp</span>
+        <span class="meta"><span class="num">22 KB</span> · ۱ ارجاع</span>
+      </div>
+      <div class="mtile ">
+        <div class="ph ph--pdf"><b>PDF</b></div>
+        <span class="fn">datasheet-placeholder-0a1b2c3d.pdf</span>
+        <span class="meta"><span class="num">1.2 MB</span> · ۴ صفحه · ۱ ارجاع</span>
+      </div>
+      <div class="mtile ">
+        <div class="ph "><span class="num">1600×1067</span></div>
+        <span class="fn">workshop-placeholder-7e6d5c4b.webp</span>
+        <span class="meta"><span class="num">64 KB</span></span>
+<span class="meta"><span class="badge b-pend">بدون متن جایگزین</span><span class="badge b-draft">بی‌استفاده</span></span>      </div>
+      <div class="mtile ">
+        <div class="ph "><span class="num">1024×768</span></div>
+        <span class="fn">seal-tc-3c2b1a0f.webp</span>
+        <span class="meta"><span class="num">18 KB</span> · ۱ ارجاع</span>
+<span class="meta"><span class="badge b-pend">بدون متن جایگزین</span></span>      </div>
+      <div class="mtile ">
+        <div class="ph "><span class="num">1024×768</span></div>
+        <span class="fn">housing-ucp-8d7c6b5a.webp</span>
+        <span class="meta"><span class="num">27 KB</span> · ۱ ارجاع</span>
+<span class="meta"><span class="badge b-pend">بدون متن جایگزین</span></span>      </div>
+      <div class="mtile ">
+        <div class="ph "><span class="num">1024×768</span></div>
+        <span class="fn">lubricant-placeholder-2f1e0d9c.webp</span>
+        <span class="meta"><span class="num">19 KB</span> · ۱ ارجاع</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card__h">جزئیات فایل</div>
+      <div class="card__b grid" style="gap:12px">
+        <div class="ph" style="aspect-ratio:4/3"><span>پیش‌نمایش</span></div>
+        <dl class="kv">
+          <dt>نام فایل</dt><dd class="mono" dir="ltr" style="text-align:end;font-size:12px">6205-section-a1b2c3d4.webp</dd>
+          <dt>نوع · ابعاد</dt><dd><span class="num">WebP · 1600 × 1200</span></dd>
+          <dt>نسخه‌ها <i class="pin" aria-label="note 3">3</i></dt><dd><span class="num">320 · 640 · 1024 · 1600 + JPEG 640</span></dd>
+          <dt>حجم (۶۴۰)</dt><dd><span class="num">38 KB</span></dd>
+        </dl>
+        <div class="field"><label>متن جایگزین · فارسی <span class="bad">*</span></label><span class="a-in">مقطع بلبرینگ ساچمه‌ای 6205</span></div>
+        <div class="field"><label>Alt text · English <span class="bad">*</span></label><span class="a-in is-err" dir="ltr"></span><span class="err">برای استفاده عمومی لازم است</span></div>
+        <div class="field"><label>کپشن (اختیاری) fa / en</label><span class="a-in is-ph">—</span></div>
+        <div class="field"><span class="lbl">استفاده‌شده در <i class="pin" aria-label="note 4">4</i></span>
+          <ul class="list" style="border:1px solid var(--rule-2)"><li><span class="grow">محصول <span class="code">6205</span> · نمای کلی</span><a class="a-btn a-btn--link">باز کردن</a></li><li><span class="grow">بخش «خانواده‌ها» · کارت ساچمه‌ای</span><a class="a-btn a-btn--link">باز کردن</a></li></ul></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap"><span class="a-btn">جایگزینی در همان محل <i class="pin" aria-label="note 5">5</i></span><span class="a-btn a-btn--danger" aria-disabled="true">حذف</span></div>
+        <p class="muted" style="font-size:12.5px">حذف ممکن نیست: این فایل ۲ ارجاع دارد. ابتدا ارجاع‌ها را بردارید.</p>
+      </div>
+    </div>
+  </div>
+</div>
+  </div>
+</div>
+</div>
+<ol class="notes">
+  <li><span><b>Upload pipeline (section J):</b> MIME sniffing plus magic bytes, re-decoding, strict SVG sanitising, content-hash rename, EXIF strip and auto-orient, then 320/640/1024/1600 widths. Limits are configurable and capped by the host's upload_max_filesize, which the probe will confirm.</span></li>
+  <li><span><b>Alt text in fa and en is required</b> before an image can appear publicly. Publish validation lists any image that is missing it.</span></li>
+  <li><span><b>Variants and dimensions are recorded</b>, so public pages always get width/height (zero CLS) and srcset. If the host lacks WebP or AVIF support, optimised JPEG/PNG is used instead.</span></li>
+  <li><span><b>Reference counting:</b> "Used by" lists every entity that points at the file. Delete is blocked while any reference exists. Unreferenced files go to a 30-day trash before physical deletion.</span></li>
+  <li><span><b>Replace in place</b> keeps every reference and changes the hash, so caches refresh without editing any product.</span></li>
+  <li><span><b>PDF datasheets</b> appear as Document entities, with title, language, version, product and family links, and show their size and page count publicly. There is no in-page viewer.</span></li>
+</ol>
+
+  </div>
+</section>
+
+<section class="screen" id="sections" aria-labelledby="h-sections">
+  <div class="wrap">
+    <div class="screen__head"><span class="screen__no">A5</span><h2 id="h-sections">Sections / content <span lang="fa" dir="rtl">بخش‌های صفحه</span></h2><p>A fixed set of one-page sections, each with fixed fields. Persian and English sit side by side. There is no page builder, so the design and the performance budget cannot be broken from the admin.</p></div>
+    <div class="frame-scroll" tabindex="0" role="region" aria-label="A5 Sections wireframe">
+<div class="adm" dir="rtl" lang="fa">
+  <div class="adm__top">
+    <span class="adm__brand"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="16" cy="16" r="14"/><circle cx="16" cy="16" r="6"/><circle cx="26.0" cy="16.0" r="2"/><circle cx="23.07" cy="23.07" r="2"/><circle cx="16.0" cy="26.0" r="2"/><circle cx="8.93" cy="23.07" r="2"/><circle cx="6.0" cy="16.0" r="2"/><circle cx="8.93" cy="8.93" r="2"/><circle cx="16.0" cy="6.0" r="2"/><circle cx="23.07" cy="8.93" r="2"/></svg> پولاد چرخش <small>مرکز کنترل وب‌سایت</small></span>
+    <span class="adm__state"><span class="dot"></span> <span><b>۷ تغییر</b> منتشرنشده</span></span>
+    <span class="a-btn a-btn--pri">بررسی و انتشار</span>
+    <span class="a-btn a-btn--q">مشاهده سایت ↗</span>
+    <span class="adm__user"><span class="avatar">م</span> مالک</span>
+  </div>
+  <div class="adm__body">
+    <nav class="adm__nav" aria-label="ناوبری مدیریت">
+<a ><i></i>پیشخوان</a><h4>کاتالوگ</h4><a ><i></i>محصولات</a><a ><i></i>خانواده‌ها</a><a ><i></i>منابع</a><a ><i></i>برندها</a><h4>محتوا</h4><a aria-current="page"><i></i>بخش‌های صفحه</a><a ><i></i>رسانه</a><a ><i></i>مستندات</a><a ><i></i>سئو</a><h4>ارتباط</h4><a ><i></i>استعلام‌ها<span class="n">۳</span></a><a ><i></i>شرکت و تماس</a><h4>انتشار</h4><a ><i></i>انتشار<span class="n n--q">۷</span></a><h4>سیستم</h4><a ><i></i>کاربران و نقش‌ها</a><a ><i></i>گزارش رویدادها</a><a ><i></i>پشتیبان‌گیری</a>    </nav>
+    <div class="adm__main">  <div class="adm__head"><div><p class="crumbs">محتوا / بخش‌های صفحه</p><h3>یافتن قطعه <span class="sub">بخش <span class="code">01</span> · Hero</span></h3></div>
+    <div class="actions"><span class="a-btn">پیش‌نمایش پیش‌نویس fa ↗</span><span class="a-btn">Preview en ↗</span><span class="a-btn a-btn--pri">ذخیره</span></div></div>
+  <div class="grid" style="grid-template-columns:250px minmax(0,1fr);align-items:start">
+    <div>
+      <ul class="seclist">
+<li class="on"><span class="h" title="ثابت">—</span><span class="code" style="font-weight:400">01</span> یافتن قطعه <span class="warn" title="ترجمه ناقص">●</span><span class="tog on" aria-label="نمایش"></span></li><li class=""><span class="h" >⋮⋮</span><span class="code" style="font-weight:400">02</span> خانواده‌های محصول<span class="tog on" aria-label="نمایش"></span></li><li class=""><span class="h" >⋮⋮</span><span class="code" style="font-weight:400">03</span> جستجوی محصول<span class="tog on" aria-label="نمایش"></span></li><li class=""><span class="h" >⋮⋮</span><span class="code" style="font-weight:400">04</span> ساختار بلبرینگ<span class="tog on" aria-label="نمایش"></span></li><li class=""><span class="h" >⋮⋮</span><span class="code" style="font-weight:400">05</span> میز مهندسی<span class="tog on" aria-label="نمایش"></span></li><li class=""><span class="h" >⋮⋮</span><span class="code" style="font-weight:400">06</span> کاربردها<span class="tog on" aria-label="نمایش"></span></li><li class=""><span class="h" >⋮⋮</span><span class="code" style="font-weight:400">07</span> مستندات<span class="tog on" aria-label="نمایش"></span></li><li class=""><span class="h" >⋮⋮</span><span class="code" style="font-weight:400">08</span> روند همکاری<span class="tog " aria-label="نمایش"></span></li><li class=""><span class="h" >⋮⋮</span><span class="code" style="font-weight:400">09</span> مشخصات شرکت<span class="tog on" aria-label="نمایش"></span></li><li class=""><span class="h" >⋮⋮</span><span class="code" style="font-weight:400">10</span> تماس و استعلام<span class="tog on" aria-label="نمایش"></span></li>      </ul>
+      <p class="muted" style="font-size:12.5px;margin-top:8px">ترتیب با کشیدن · <i class="pin" aria-label="note 4">4</i> «یافتن قطعه» همیشه اول است.</p>
+    </div>
+    <div class="bi">
+      <div>
+        <div class="bi__h"><b>فارسی</b> · <span class="code">fa</span> · دامنه <span class="code">.ir</span> <i class="pin" aria-label="note 2">2</i></div>
+        <div class="field"><label>برچسب برگه</label><span class="a-in code" dir="ltr">PC-01 / 10 · FIND A PART</span></div>
+        <div class="field"><label>تیتر <i class="pin" aria-label="note 3">3</i></label><span class="a-in">بلبرینگ را با کدش پیدا کنید</span><div class="meter" style="--v:62%"><span></span>26 / 42</div></div>
+        <div class="field"><label>متن کوتاه</label><span class="a-ta">کد روی قطعه را وارد کنید: ابعاد با ذکر منبع، نقشه فنی و مشاوره تأمین، در همین صفحه.</span><div class="meter" style="--v:70%"><span></span>78 / 110</div></div>
+        <div class="field"><label>راهنمای کادر جستجو</label><span class="a-in">کد قطعه، مثلاً&nbsp;<span class="code" style="font-weight:400">6205-2RS</span></span></div>
+        <div class="field"><label>پیوند «کد را نمی‌دانید؟»</label><span class="a-in">عکس قطعه را در واتس‌اپ بفرستید</span></div>
+      </div>
+      <div dir="ltr" lang="en">
+        <div class="bi__h"><b>English</b> · <span class="code">en</span> · <span class="code">.com</span> domain</div>
+        <div class="field"><label>Sheet label</label><span class="a-in code">PC-01 / 10 · FIND A PART</span></div>
+        <div class="field"><label>Heading</label><span class="a-in">Find any bearing by its code</span><div class="meter" style="--v:66%"><span></span>28 / 42</div></div>
+        <div class="field"><label>Lead</label><span class="a-ta is-ph">Missing translation — the .com page will show nothing here until it is filled</span><div class="meter is-warn" style="--v:0%"><span></span>0 / 110</div></div>
+        <div class="field"><label>Search placeholder</label><span class="a-in">Part code, e.g. 6205-2RS</span></div>
+        <div class="field"><label>"Don't know the code?" link</label><span class="a-in">Send a photo on WhatsApp</span></div>
+      </div>
+      <div class="bi__shared"><span class="lbl muted" style="font-size:13px">کدهای نمونه (مشترک، لاتین) <i class="pin" aria-label="note 5">5</i></span>
+        <span class="chip code">6205 <span class="x">×</span></span><span class="chip code">22220 E <span class="x">×</span></span><span class="chip code">UCP 208 <span class="x">×</span></span><span class="chip code">30208 <span class="x">×</span></span><span class="muted" style="font-size:12.5px">+ افزودن (حداکثر ۶)</span>
+        <span class="muted" style="font-size:12.5px;margin-inline-start:auto">هر کد باید در کاتالوگ منتشرشده باشد ✓</span></div>
+    </div>
+  </div>
+</div>
+  </div>
+</div>
+</div>
+<ol class="notes">
+  <li><span><b>Section</b> = key, heading, intro, CTA texts, visibility and order, with fa and en columns. The fields differ per section (the hero has search texts; contact has none, because contact data comes from Company settings).</span></li>
+  <li><span><b>Side-by-side bilingual editing.</b> Each language is a separate field. A missing translation is flagged here and on the dashboard; the public page omits it, and only the admin preview shows a visible fallback.</span></li>
+  <li><span><b>Character meters</b> reflect the design's limits (for example, the hero heading should stay within two lines on desktop). Exact limits are derived from the design system in Phase 3, and exceeding one is a warning, not a block.</span></li>
+  <li><span><b>The hero is pinned first</b> (search-first IA, D4). Other sections can be hidden or reordered. A hidden section is left out of the build entirely, including its nav link.</span></li>
+  <li><span><b>Example codes are shared by both languages</b>, always Latin, and validated against published products, so a chip can never lead to an empty result.</span></li>
+  <li><span><b>Preview</b> renders the draft through the same templates as Publish at an admin-only URL that is never cached or indexed.</span></li>
+</ol>
+
+  </div>
+</section>
+
+<section class="screen" id="inquiries" aria-labelledby="h-inquiries">
+  <div class="wrap">
+    <div class="screen__head"><span class="screen__no">A6</span><h2 id="h-inquiries">Inquiries <span lang="fa" dir="rtl">استعلام‌ها</span></h2><p>An inbox with a simple status workflow. Product references are matched to the catalogue automatically, and codes that match nothing become the demand signal on the dashboard.</p></div>
+    <div class="frame-scroll" tabindex="0" role="region" aria-label="A6 Inquiries wireframe">
+<div class="adm" dir="rtl" lang="fa">
+  <div class="adm__top">
+    <span class="adm__brand"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="16" cy="16" r="14"/><circle cx="16" cy="16" r="6"/><circle cx="26.0" cy="16.0" r="2"/><circle cx="23.07" cy="23.07" r="2"/><circle cx="16.0" cy="26.0" r="2"/><circle cx="8.93" cy="23.07" r="2"/><circle cx="6.0" cy="16.0" r="2"/><circle cx="8.93" cy="8.93" r="2"/><circle cx="16.0" cy="6.0" r="2"/><circle cx="23.07" cy="8.93" r="2"/></svg> پولاد چرخش <small>مرکز کنترل وب‌سایت</small></span>
+    <span class="adm__state"><span class="dot"></span> <span><b>۷ تغییر</b> منتشرنشده</span></span>
+    <span class="a-btn a-btn--pri">بررسی و انتشار</span>
+    <span class="a-btn a-btn--q">مشاهده سایت ↗</span>
+    <span class="adm__user"><span class="avatar">م</span> مالک</span>
+  </div>
+  <div class="adm__body">
+    <nav class="adm__nav" aria-label="ناوبری مدیریت">
+<a ><i></i>پیشخوان</a><h4>کاتالوگ</h4><a ><i></i>محصولات</a><a ><i></i>خانواده‌ها</a><a ><i></i>منابع</a><a ><i></i>برندها</a><h4>محتوا</h4><a ><i></i>بخش‌های صفحه</a><a ><i></i>رسانه</a><a ><i></i>مستندات</a><a ><i></i>سئو</a><h4>ارتباط</h4><a aria-current="page"><i></i>استعلام‌ها<span class="n">۳</span></a><a ><i></i>شرکت و تماس</a><h4>انتشار</h4><a ><i></i>انتشار<span class="n n--q">۷</span></a><h4>سیستم</h4><a ><i></i>کاربران و نقش‌ها</a><a ><i></i>گزارش رویدادها</a><a ><i></i>پشتیبان‌گیری</a>    </nav>
+    <div class="adm__main">  <div class="adm__head"><div><p class="crumbs">ارتباط</p><h3>استعلام‌ها</h3></div><div class="actions"><span class="a-in a-in--search is-ph">نام، تلفن، کد…</span><span class="a-sel">زبان: همه</span><span class="tog">فقط با کد خارج از کاتالوگ</span></div></div>
+  <div class="tabs"><span class="on">جدید <span class="cnt">۳</span></span><span>در حال پیگیری <span class="cnt">۵</span></span><span>پاسخ داده شد <span class="cnt">۱۲</span></span><span>بسته</span><span>همه</span> <i class="pin" aria-label="note 2">2</i></div>
+  <div class="inq">
+    <div class="inq__list">
+      <div class="inq__item sel">
+        <div class="r1"><span class="unread"></span><b>مشتری نمونه ۱</b><span class="tag">FA</span><span class="tm muted" style="font-size:12.5px">۱۰:۰۵</span></div>
+        <div class="r2"><span class="muted">شرکت نمونه</span> · <span class="code">6205-2RS</span> · <span class="code">6208</span> <span class="badge b-pend">خارج از کاتالوگ</span></div>
+      </div>
+      <div class="inq__item ">
+        <div class="r1"><span class="unread"></span><b>مشتری نمونه ۲</b><span class="tag">FA</span><span class="tm muted" style="font-size:12.5px">۰۹:۲۰</span></div>
+        <div class="r2"><span class="muted">کارگاه نمونه</span> · <span class="code">22220 E</span></div>
+      </div>
+      <div class="inq__item ">
+        <div class="r1"><span class="unread"></span><b>Sample customer 3</b><span class="tag">EN</span><span class="tm muted" style="font-size:12.5px">دیروز</span></div>
+        <div class="r2"><span class="muted">Sample Ltd</span> · <span class="code">UCP 208</span> · <span class="code">UCFL 205</span> <span class="badge b-pend">خارج از کاتالوگ</span></div>
+      </div>
+      <div class="inq__item ">
+        <div class="r1"><b>مشتری نمونه ۴</b><span class="tag">FA</span><span class="tm muted" style="font-size:12.5px">دیروز</span></div>
+        <div class="r2"><span class="muted">—</span> · <span class="code">NU 2210</span> <span class="badge b-pend">خارج از کاتالوگ</span></div>
+      </div>
+      <div class="inq__item ">
+        <div class="r1"><b>مشتری نمونه ۵</b><span class="tag">FA</span><span class="tm muted" style="font-size:12.5px">۲ روز پیش</span></div>
+        <div class="r2"><span class="muted">شرکت نمونه</span> · <span class="code">30208</span></div>
+      </div>
+    </div>
+    <div class="inq__detail">
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap"><span class="code" style="font-size:18px">IQ-1027</span><span class="badge b-new">جدید</span><span class="muted" style="font-size:13px">دریافت: امروز ۱۰:۰۵ · فرم سایت · صفحه مبدأ <span class="code" style="font-weight:400">/#p-6205</span> · فارسی</span></div>
+      <div class="grid g2" style="gap:10px">
+        <dl class="kv"><dt>نام</dt><dd>مشتری نمونه ۱</dd><dt>شرکت</dt><dd>شرکت نمونه</dd><dt>تلفن</dt><dd><span class="num">0912 XXX XXXX</span></dd><dt>ایمیل</dt><dd class="muted">—</dd></dl>
+        <div style="display:flex;gap:8px;align-items:flex-start;justify-content:flex-end;flex-wrap:wrap"><span class="a-btn a-btn--ok">واتس‌اپ <i class="pin" aria-label="note 4">4</i></span><span class="a-btn">تماس</span><span class="a-btn" aria-disabled="true">ایمیل</span></div>
+      </div>
+      <div class="msg">سلام. برای یک خط تولید به ۴۰ عدد <span class="code">6205-2RS</span> و ۱۰ عدد <span class="code">6208</span> نیاز داریم. موجودی و زمان تأمین را اعلام کنید. <span class="muted">(متن نمونه)</span></div>
+      <div class="card"><div class="card__h">کدهای ذکرشده <i class="pin" aria-label="note 3">3</i></div>
+        <table class="t"><thead><tr><th>در متن</th><th>تطبیق با کاتالوگ</th><th class="w1"></th></tr></thead><tbody>
+          <tr><td><span class="code">6205-2RS</span></td><td><span class="good">✓</span> نام مستعار <span class="code">6205</span> · <span class="badge b-ok">تأییدشده</span></td><td class="w1"><a class="a-btn a-btn--link">باز کردن محصول</a></td></tr>
+          <tr><td><span class="code">6208</span></td><td><span class="badge b-pend">در کاتالوگ نیست</span></td><td class="w1"><span class="a-btn a-btn--sm">ساخت پیش‌نویس محصول</span></td></tr>
+        </tbody></table>
+      </div>
+      <div class="field"><span class="lbl">وضعیت <i class="pin" aria-label="note 2">2</i></span><div class="flow"><span class="on">جدید</span><span>در حال پیگیری</span><span>پاسخ داده شد</span><span>بسته</span></div></div>
+      <div class="field"><span class="lbl">یادداشت داخلی (فقط مدیران)</span><span class="a-ta is-ph">مثلاً: با انبار هماهنگ شد…</span></div>
+      <div style="display:flex;gap:12px;align-items:center;font-size:12.5px" class="muted"><span>اعلان ایمیل به مدیر: <span class="good">ارسال شد ✓</span> <i class="pin" aria-label="note 1">1</i></span><span>·</span><span>تاریخچه: ۱ رویداد</span></div>
+    </div>
+  </div>
+</div>
+  </div>
+</div>
+</div>
+<ol class="notes">
+  <li><span><b>Stored first, notified second.</b> The inquiry endpoint, the only public PHP, writes to MariaDB before anything else. Email is only a notification; a failed send shows "Retry", and the dashboard badge never depends on email.</span></li>
+  <li><span><b>Workflow:</b> new → in progress → answered → closed. Each change is an AuditEvent, and the tab counts are the work queue.</span></li>
+  <li><span><b>Automatic code matching</b> with the shared normaliser: aliases resolve to their product. Unmatched codes are flagged and feed the dashboard's "not in catalogue" list (C4). Nothing is logged about visitors who did not write to you.</span></li>
+  <li><span><b>One-tap reply channels:</b> WhatsApp (wa.me) and phone (tel:) are built from the stored number, which is displayed in Latin digits (Q2). There are no price fields or quote documents; pricing stays an offline conversation.</span></li>
+  <li><span><b>Never published:</b> inquiries exist only in the database and its backups, never in a release. Retention and deletion-on-request rules are set in Phase 3.</span></li>
+  <li><span><b>The mobile view (A9)</b> covers triage on the phone: read, call or WhatsApp, change status.</span></li>
+</ol>
+
+  </div>
+</section>
+
+<section class="screen" id="publish" aria-labelledby="h-publish">
+  <div class="wrap">
+    <div class="screen__head"><span class="screen__no">A7</span><h2 id="h-publish">Publish <span lang="fa" dir="rtl">انتشار</span></h2><p>See exactly what will change, pass validation, publish in seconds, and roll back with one click. The live site is untouched until a single atomic switch.</p></div>
+    <div class="frame-scroll" tabindex="0" role="region" aria-label="A7 Publish wireframe">
+<div class="adm" dir="rtl" lang="fa">
+  <div class="adm__top">
+    <span class="adm__brand"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="16" cy="16" r="14"/><circle cx="16" cy="16" r="6"/><circle cx="26.0" cy="16.0" r="2"/><circle cx="23.07" cy="23.07" r="2"/><circle cx="16.0" cy="26.0" r="2"/><circle cx="8.93" cy="23.07" r="2"/><circle cx="6.0" cy="16.0" r="2"/><circle cx="8.93" cy="8.93" r="2"/><circle cx="16.0" cy="6.0" r="2"/><circle cx="23.07" cy="8.93" r="2"/></svg> پولاد چرخش <small>مرکز کنترل وب‌سایت</small></span>
+    <span class="adm__state"><span class="dot"></span> <span><b>۷ تغییر</b> منتشرنشده</span></span>
+    <span class="a-btn a-btn--pri">بررسی و انتشار</span>
+    <span class="a-btn a-btn--q">مشاهده سایت ↗</span>
+    <span class="adm__user"><span class="avatar">م</span> مالک</span>
+  </div>
+  <div class="adm__body">
+    <nav class="adm__nav" aria-label="ناوبری مدیریت">
+<a ><i></i>پیشخوان</a><h4>کاتالوگ</h4><a ><i></i>محصولات</a><a ><i></i>خانواده‌ها</a><a ><i></i>منابع</a><a ><i></i>برندها</a><h4>محتوا</h4><a ><i></i>بخش‌های صفحه</a><a ><i></i>رسانه</a><a ><i></i>مستندات</a><a ><i></i>سئو</a><h4>ارتباط</h4><a ><i></i>استعلام‌ها<span class="n">۳</span></a><a ><i></i>شرکت و تماس</a><h4>انتشار</h4><a aria-current="page"><i></i>انتشار<span class="n n--q">۷</span></a><h4>سیستم</h4><a ><i></i>کاربران و نقش‌ها</a><a ><i></i>گزارش رویدادها</a><a ><i></i>پشتیبان‌گیری</a>    </nav>
+    <div class="adm__main">  <div class="adm__head"><div><p class="crumbs">انتشار</p><h3>انتشار <span class="sub">نسخه زنده: <span class="code" style="font-weight:400">R-0412</span> · دیروز ۱۵:۴۲ · مالک</span></h3></div><div class="actions"><span class="muted" style="font-size:12.5px">راهبرد جابه‌جایی: <span class="code" style="font-weight:400">slot-b</span> (دو-اسلات) <i class="pin" aria-label="note 3">3</i></span></div></div>
+  <div class="grid g-main g-main--wide">
+    <div class="grid">
+      <div class="card"><div class="card__h">تغییرات آماده انتشار · ۷ <i class="pin" aria-label="note 1">1</i> <span class="actions"><span class="a-btn a-btn--sm">فقط محصولات</span><span class="a-btn a-btn--sm">همه</span></span></div>
+        <ul class="diff">
+          <li><span class="grp">محصولات · ۴</span></li>
+          <li><span class="op op--m">M</span><span class="code">30208</span><span>منبع ابعاد <span class="code" style="font-weight:400">T</span>: <del>—</del> <ins dir="ltr">123bearing.com — 30208</ins></span><span class="muted">مالک</span></li>
+          <li><span class="op op--m">M</span><span class="code">6205</span><span>نام مستعار افزوده شد: <ins class="code">6205 2RS</ins></span><span class="muted">مالک</span></li>
+          <li><span class="op op--m">M</span><span class="code">UCP 208</span><span>متن نمای کلی (fa) ویرایش شد · <a class="a-btn a-btn--link">قبل/بعد</a></span><span class="muted">ویرایشگر</span></li>
+          <li><span class="op op--a">+</span><span class="code">NU 2210</span><span>پیش‌نویس جدید — <span class="muted">منتشر نمی‌شود تا وضعیت «منتشرشده» شود</span></span><span class="muted">ویرایشگر</span></li>
+          <li><span class="grp">بخش‌ها · ۱</span></li>
+          <li><span class="op op--m">M</span><span>Hero (en)</span><span dir="ltr" style="text-align:end">Heading: <del>Find a part by its code</del> <ins>Find any bearing by its code</ins></span><span class="muted">مالک</span></li>
+          <li><span class="grp">شرکت و تماس · ۱ · رسانه · ۱</span></li>
+          <li><span class="op op--m">M</span><span>تلفن‌ها</span><span>ترتیب نمایش: <del class="code">021 3393 9482 · 021 7720 9117</del> <ins class="code">021 7720 9117 · 021 3393 9482</ins></span><span class="muted">مالک</span></li>
+          <li><span class="op op--a">+</span><span>رسانه</span><span class="mono" dir="ltr" style="text-align:end;font-size:12px">6205-section-a1b2c3d4.webp</span><span class="muted">ویرایشگر</span></li>
+        </ul>
+      </div>
+      <div class="pubbar"><span class="a-btn a-btn--lg a-btn--pri">انتشار ۷ تغییر</span><p>چند ثانیه طول می‌کشد. سایت فعلی تا لحظه جابه‌جایی دست‌نخورده می‌ماند و بازدیدکنندگان هرگز صفحه نیمه‌کاره نمی‌بینند. <i class="pin" aria-label="note 4">4</i></p></div>
+      <div class="card"><div class="card__h">مراحل موتور انتشار <i class="pin" aria-label="note 3">3</i> <span class="actions muted" style="font-size:12.5px">آخرین اجرا: <span class="num">4.8 s</span></span></div>
+        <ol class="steps">
+          <li>قفل<small>0.0 s</small></li><li>عکس‌برداری از داده<small>0.2 s</small></li><li>اعتبارسنجی<small>0.6 s</small></li><li>ساخت فایل‌ها<small>3.1 s</small></li><li>بررسی فهرست<small>0.4 s</small></li><li class="sw">جابه‌جایی اتمی<small>0.0 s</small></li><li>ثبت<small>0.1 s</small></li>
+        </ol>
+      </div>
+    </div>
+    <div class="grid">
+      <div class="card"><div class="card__h">بررسی پیش از انتشار <i class="pin" aria-label="note 2">2</i></div>
+        <ul class="checks">
+          <li><span class="ok-i">✓</span><span>همه پیوندهای داخلی و لنگرهای محصول معتبرند</span><span></span></li>
+          <li><span class="ok-i">✓</span><span>نقشه سایت فقط شامل صفحات index است</span><span></span></li>
+          <li><span class="ok-i">✓</span><span>هر محصول تأییدشده، ابعاد هسته با منبع دارد</span><span></span></li>
+          <li><span class="ok-i">✓</span><span>کدهای نمونه بخش Hero همگی منتشرشده‌اند</span><span></span></li>
+          <li><span class="warn-i">!</span><span>۱ تصویر بدون متن جایگزین انگلیسی <span class="muted">— هشدار، مانع نیست</span></span><a class="a-btn a-btn--link">رفع</a></li>
+          <li><span class="warn-i">!</span><span>Hero (en): متن کوتاه خالی است</span><a class="a-btn a-btn--link">رفع</a></li>
+          <li><span class="ok-i">✓</span><span>بودجه صفحه نخست: <span class="num">fa 76 KB · en 64 KB ≤ 120 KB</span></span><span></span></li>
+        </ul>
+      </div>
+      <div class="card"><div class="card__h">تاریخچه · ۵ نسخه نگه‌داری می‌شود <i class="pin" aria-label="note 5">5</i></div>
+        <table class="t"><thead><tr><th>نسخه</th><th>زمان</th><th>تغییرات</th><th class="w1"></th></tr></thead><tbody>
+<tr><td><span class="code">R-0412</span> <span class="badge b-live">زنده</span></td><td class="muted">دیروز ۱۵:۴۲</td><td>۳ تغییر</td><td class="w1"></td></tr><tr><td><span class="code">R-0411</span></td><td class="muted">۳ روز پیش</td><td>۱۲ تغییر</td><td class="w1"><span class="a-btn a-btn--sm">بازگشت…</span></td></tr><tr><td><span class="code">R-0410</span></td><td class="muted">هفته پیش</td><td>۱ تغییر</td><td class="w1"><span class="a-btn a-btn--sm">بازگشت…</span></td></tr><tr><td><span class="code">R-0409</span></td><td class="muted">هفته پیش</td><td>۵ تغییر</td><td class="w1"><span class="a-btn a-btn--sm">بازگشت…</span></td></tr><tr><td><span class="code">R-0408</span></td><td class="muted">۲ هفته پیش</td><td>۲۰ تغییر</td><td class="w1"><span class="a-btn a-btn--sm">بازگشت…</span></td></tr>        </tbody></table>
+      </div>
+    </div>
+  </div>
+</div>
+  </div>
+</div>
+</div>
+<ol class="notes">
+  <li><span><b>Diff before publish,</b> grouped by entity, with before/after and the person who made each change. Drafts are listed but never built.</span></li>
+  <li><span><b>Validation is the gate.</b> Red blockers stop Publish; amber warnings do not. This is where the single-source-of-truth rule runs: Publish fails if any sitemap URL would be noindex (section K). The performance budget check runs here too.</span></li>
+  <li><span><b>Engine steps:</b> lock → consistent snapshot → validate → build → verify manifest → atomic switch → record. The switch is Strategy S (symlink) or Strategy D (two-slot with the ACTIVE_B marker), chosen after the host probe (C2).</span></li>
+  <li><span><b>The live site is untouched until the switch.</b> A journal lets the next admin request finish or undo a publish that was interrupted. Only one publish runs at a time; a second user sees "publishing by …".</span></li>
+  <li><span><b>Five releases are kept (D13).</b> Rollback is the same atomic switch to an archived release, asks for confirmation, and is recorded in the audit log. Owner and Editor can both publish.</span></li>
+</ol>
+
+  </div>
+</section>
+
+<section class="screen" id="company" aria-labelledby="h-company">
+  <div class="wrap">
+    <div class="screen__head"><span class="screen__no">A8</span><h2 id="h-company">Company / settings <span lang="fa" dir="rtl">شرکت و تنظیمات</span></h2><p>One validated form feeds the header, contact section, footer, structured data and every WhatsApp and phone link. Unknown values stay empty and never render.</p></div>
+    <div class="frame-scroll" tabindex="0" role="region" aria-label="A8 Company and settings wireframe">
+<div class="adm" dir="rtl" lang="fa">
+  <div class="adm__top">
+    <span class="adm__brand"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="16" cy="16" r="14"/><circle cx="16" cy="16" r="6"/><circle cx="26.0" cy="16.0" r="2"/><circle cx="23.07" cy="23.07" r="2"/><circle cx="16.0" cy="26.0" r="2"/><circle cx="8.93" cy="23.07" r="2"/><circle cx="6.0" cy="16.0" r="2"/><circle cx="8.93" cy="8.93" r="2"/><circle cx="16.0" cy="6.0" r="2"/><circle cx="23.07" cy="8.93" r="2"/></svg> پولاد چرخش <small>مرکز کنترل وب‌سایت</small></span>
+    <span class="adm__state"><span class="dot"></span> <span><b>۷ تغییر</b> منتشرنشده</span></span>
+    <span class="a-btn a-btn--pri">بررسی و انتشار</span>
+    <span class="a-btn a-btn--q">مشاهده سایت ↗</span>
+    <span class="adm__user"><span class="avatar">م</span> مالک</span>
+  </div>
+  <div class="adm__body">
+    <nav class="adm__nav" aria-label="ناوبری مدیریت">
+<a ><i></i>پیشخوان</a><h4>کاتالوگ</h4><a ><i></i>محصولات</a><a ><i></i>خانواده‌ها</a><a ><i></i>منابع</a><a ><i></i>برندها</a><h4>محتوا</h4><a ><i></i>بخش‌های صفحه</a><a ><i></i>رسانه</a><a ><i></i>مستندات</a><a ><i></i>سئو</a><h4>ارتباط</h4><a ><i></i>استعلام‌ها<span class="n">۳</span></a><a aria-current="page"><i></i>شرکت و تماس</a><h4>انتشار</h4><a ><i></i>انتشار<span class="n n--q">۷</span></a><h4>سیستم</h4><a ><i></i>کاربران و نقش‌ها</a><a ><i></i>گزارش رویدادها</a><a ><i></i>پشتیبان‌گیری</a>    </nav>
+    <div class="adm__main">  <div class="adm__head"><div><p class="crumbs">تنظیمات</p><h3>شرکت و تماس</h3></div><div class="actions"><span class="a-btn a-btn--pri">ذخیره</span></div></div>
+  <div class="tabs"><span class="on">شرکت و تماس</span><span>کاربران و نقش‌ها</span><span>پشتیبان‌گیری</span><span>گزارش رویدادها</span><span>دامنه‌ها و سئوی پیش‌فرض</span></div>
+  <div class="grid g-main g-main--wide">
+    <div class="grid">
+      <div class="card"><div class="card__h">هویت</div>
+        <div class="card__b grid g2">
+          <div class="field"><label>نام شرکت · فارسی</label><span class="a-in">پولاد چرخش</span></div>
+          <div class="field"><label>Company name · English</label><span class="a-in" dir="ltr">Polad Charkhesh</span></div>
+          <div class="field" style="grid-column:1/-1"><label>لوگو <i class="pin" aria-label="note 6">6</i></label><div style="display:flex;gap:10px;align-items:center"><span style="width:34px;height:34px;color:var(--brand)"><svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="16" cy="16" r="14"/><circle cx="16" cy="16" r="6"/><circle cx="26.0" cy="16.0" r="2"/><circle cx="23.07" cy="23.07" r="2"/><circle cx="16.0" cy="26.0" r="2"/><circle cx="8.93" cy="23.07" r="2"/><circle cx="6.0" cy="16.0" r="2"/><circle cx="8.93" cy="8.93" r="2"/><circle cx="16.0" cy="6.0" r="2"/><circle cx="23.07" cy="8.93" r="2"/></svg></span><span class="badge b-draft">نشانه موقت</span><span class="a-btn a-btn--sm">بارگذاری SVG لوگو</span><span class="muted" style="font-size:12.5px">SVG پس از پاک‌سازی امنیتی پذیرفته می‌شود</span></div></div>
+        </div>
+      </div>
+      <div class="card"><div class="card__h">نشانی</div>
+        <div class="card__b grid g2">
+          <div class="field"><label>نشانی · فارسی</label><span class="a-in">تهران، نارمک، خیابان دردشت، پلاک ۴۳۳</span></div>
+          <div class="field"><label>Address · English</label><span class="a-in" dir="ltr">No. 433, Dardasht St, Narmak, Tehran, Iran</span></div>
+          <div class="field"><label>مختصات نقشه <i class="pin" aria-label="note 4">4</i></label><span class="a-in is-ph" dir="ltr">—</span><span class="hint">خالی = بدون نقشه. فقط مختصات تأییدشده؛ تصویر ثابت و پیوند، بدون نقشه شخص ثالث.</span></div>
+        </div>
+      </div>
+      <div class="card"><div class="card__h">تلفن‌ها <i class="pin" aria-label="note 2">2</i> <span class="actions"><span class="a-btn a-btn--sm">+ افزودن شماره</span></span></div>
+        <table class="t"><thead><tr><th class="w1"></th><th>نوع</th><th>نمایش (ارقام لاتین)</th><th>ذخیره‌شده</th><th>واتس‌اپ</th><th>پیوندها</th></tr></thead><tbody>
+<tr><td class="w1 muted">⋮⋮</td><td>همراه</td><td><span class="a-in code" style="height:30px;font-weight:400" dir="ltr">0912 719 5313</span></td><td class="n">+989127195313</td><td><span class="tog on"></span></td><td class="n muted" style="font-size:12px">tel:+989127195313<br>wa.me/989127195313</td></tr><tr><td class="w1 muted">⋮⋮</td><td>همراه</td><td><span class="a-in code" style="height:30px;font-weight:400" dir="ltr">0912 617 2282</span></td><td class="n">+989126172282</td><td><span class="tog"></span></td><td class="n muted" style="font-size:12px">tel:+989126172282</td></tr><tr><td class="w1 muted">⋮⋮</td><td>ثابت</td><td><span class="a-in code" style="height:30px;font-weight:400" dir="ltr">021 7720 9117</span></td><td class="n">+982177209117</td><td><span class="tog"></span></td><td class="n muted" style="font-size:12px">tel:+982177209117</td></tr><tr><td class="w1 muted">⋮⋮</td><td>ثابت</td><td><span class="a-in code" style="height:30px;font-weight:400" dir="ltr">021 3393 9482</span></td><td class="n">+982133939482</td><td><span class="tog"></span></td><td class="n muted" style="font-size:12px">tel:+982133939482</td></tr>        </tbody></table>
+      </div>
+      <div class="card"><div class="card__h">ساعات کاری <i class="pin" aria-label="note 3">3</i></div>
+        <table class="t"><thead><tr><th>روز</th><th>وضعیت</th><th>از</th><th>تا</th></tr></thead><tbody>
+<tr><td>شنبه</td><td><span style="display:flex;gap:12px"><span class="radio on">باز</span><span class="radio ">تعطیل</span><span class="radio ">نامشخص</span></span></td><td class="n">08:00</td><td class="n">16:00</td></tr><tr><td>یکشنبه</td><td><span style="display:flex;gap:12px"><span class="radio on">باز</span><span class="radio ">تعطیل</span><span class="radio ">نامشخص</span></span></td><td class="n">08:00</td><td class="n">16:00</td></tr><tr><td>دوشنبه</td><td><span style="display:flex;gap:12px"><span class="radio on">باز</span><span class="radio ">تعطیل</span><span class="radio ">نامشخص</span></span></td><td class="n">08:00</td><td class="n">16:00</td></tr><tr><td>سه‌شنبه</td><td><span style="display:flex;gap:12px"><span class="radio on">باز</span><span class="radio ">تعطیل</span><span class="radio ">نامشخص</span></span></td><td class="n">08:00</td><td class="n">16:00</td></tr><tr><td>چهارشنبه</td><td><span style="display:flex;gap:12px"><span class="radio on">باز</span><span class="radio ">تعطیل</span><span class="radio ">نامشخص</span></span></td><td class="n">08:00</td><td class="n">16:00</td></tr><tr><td>پنج‌شنبه</td><td><span style="display:flex;gap:12px"><span class="radio ">باز</span><span class="radio ">تعطیل</span><span class="radio on">نامشخص</span></span></td><td class="n">—</td><td class="n">—</td></tr><tr><td>جمعه</td><td><span style="display:flex;gap:12px"><span class="radio ">باز</span><span class="radio ">تعطیل</span><span class="radio on">نامشخص</span></span></td><td class="n">—</td><td class="n">—</td></tr>        </tbody></table>
+        <p class="muted" style="font-size:12.5px;padding:8px 14px">روزهای «نامشخص» در سایت نمایش داده نمی‌شوند و در داده ساختاریافته هم نمی‌آیند.</p>
+      </div>
+      <div class="card"><div class="card__h">کانال‌های اختیاری <i class="pin" aria-label="note 4">4</i></div>
+        <div class="card__b grid g2">
+          <div class="field"><label>ایمیل عمومی</label><span class="a-in is-ph" dir="ltr">—</span></div>
+          <div class="field"><label>اینستاگرام</label><span class="a-in is-ph" dir="ltr">—</span></div>
+          <div class="field"><label>تلگرام</label><span class="a-in is-ph" dir="ltr">—</span></div>
+          <div class="field"><label>ایمیل دریافت اعلان استعلام <span class="bad">*</span></label><span class="a-in is-err" dir="ltr"></span><span class="err">پیش از راه‌اندازی لازم است</span></div>
+        </div>
+        <p class="muted" style="font-size:12.5px;padding:0 14px 12px">مقدار خالی هرگز در سایت نمایش داده نمی‌شود.</p>
+      </div>
+    </div>
+    <div class="grid">
+      <div class="card"><div class="card__h">پیش‌نمایش کارت تماس <i class="pin" aria-label="note 1">1</i></div>
+        <div class="card__b" style="background:var(--navy);color:#f2f5ff;display:grid;gap:8px;border-radius:0 0 3px 3px">
+          <span style="font-size:13px;color:#aeb8de">همراه و واتس‌اپ</span><span class="code" style="font-size:22px;color:#fff">0912 719 5313</span>
+          <span style="font-size:13px;color:#aeb8de">تلفن ثابت</span><span class="code" style="color:#fff;font-weight:400">021 7720 9117 · 021 3393 9482</span>
+          <span style="font-size:13px;color:#aeb8de">ساعت کاری</span><span>۸:۰۰ تا ۱۶:۰۰</span>
+        </div>
+      </div>
+      <div class="card"><div class="card__h">کاربران و نقش‌ها <i class="pin" aria-label="note 5">5</i></div>
+        <ul class="list">
+          <li><span class="avatar">م</span><span class="grow"><b>مالک</b><br><span class="muted" style="font-size:12.5px">همه‌چیز، از جمله کاربران، پشتیبان و بازیابی، تأیید برای نمایه‌سازی</span></span></li>
+          <li><span class="avatar" style="background:#6b7397">و</span><span class="grow"><b>ویرایشگر</b><br><span class="muted" style="font-size:12.5px">محتوا، رسانه، استعلام‌ها، انتشار</span></span></li>
+        </ul>
+      </div>
+      <div class="card"><div class="card__h">پشتیبان‌گیری <i class="pin" aria-label="note 7">7</i></div>
+        <div class="card__b grid" style="gap:8px">
+          <dl class="kv"><dt>آخرین</dt><dd>امروز ۰۳:۰۰ <span class="badge b-ok">موفق</span></dd><dt>نگه‌داری</dt><dd>۷ روزانه · ۴ هفتگی · ۳ ماهانه</dd><dt>خارج از سرور</dt><dd class="warn">۸ روز پیش — موعد گذشته</dd></dl>
+          <div style="display:flex;gap:8px;flex-wrap:wrap"><span class="a-btn">دانلود پشتیبان کامل</span><span class="a-btn a-btn--danger">بازیابی…</span></div>
+          <p class="muted" style="font-size:12.5px">بازیابی فقط توسط مالک؛ پیش از آن خودکار یک پشتیبان ایمنی گرفته می‌شود و سایت عمومی در تمام مدت سرویس می‌دهد.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+  </div>
+</div>
+</div>
+<ol class="notes">
+  <li><span><b>Single source:</b> CompanySetting feeds the header call button, contact section, footer, Organization/LocalBusiness structured data and every wa.me/tel: link. Change it once, then Publish.</span></li>
+  <li><span><b>Phone normalisation:</b> stored as E.164, displayed in grouped Latin digits in both languages (Q2), with links built automatically. Typing Persian digits or spaces is accepted and normalised.</span></li>
+  <li><span><b>Unknown stays unknown:</b> each day is open, closed or unknown. 08:00–16:00 is verified; the frame shows it on Saturday–Wednesday, which still needs your confirmation. Thursday and Friday are "unknown" because they are unverified, so they render nothing.</span></li>
+  <li><span><b>Optional channels and map coordinates are empty</b> until verified and never render while empty. A map is a static image plus links, never a third-party embed (zero third-party requests).</span></li>
+  <li><span><b>Two roles only</b> (Owner, Editor), as approved. Login security follows the Stage 0 doc: Argon2id or bcrypt, throttling, Secure/HttpOnly/SameSite=Strict cookies, admin on the .ir host only.</span></li>
+  <li><span><b>The logo slot</b> holds the temporary concentric mark (Q3) until the real SVG arrives. Uploaded SVGs are sanitised with an allow-list.</span></li>
+  <li><span><b>Backups (D13):</b> daily database dump plus media manifest, rotated 7/4/3, with a weekly off-site download reminder. Restore is Owner-only, takes a safety backup first, and runs while the static site keeps serving.</span></li>
+</ol>
+
+  </div>
+</section>
+
+<section class="screen" id="mobile" aria-labelledby="h-mobile">
+  <div class="wrap">
+    <div class="screen__head"><span class="screen__no">A9</span><h2 id="h-mobile">Mobile triage <span lang="fa" dir="rtl">استعلام‌ها روی موبایل</span></h2><p>The admin is responsive, but only triage is designed mobile-first: read an inquiry, call or WhatsApp, change its status. Heavy editing such as spec tables and publishing stays desktop-first.</p></div>
+    <div class="phones" dir="rtl" lang="fa">
+  <div class="phone">
+    <div class="phone__top"><span class="burger"></span><b>استعلام‌ها</b><span class="dot"></span><span style="font-size:12px">۷ تغییر</span></div>
+    <div class="tabs"><span class="on">جدید ۳</span><span>در حال پیگیری ۵</span><span>پاسخ داده شد</span></div>
+    <div class="inq__item">
+      <div class="r1"><span class="unread"></span><b>مشتری نمونه ۱</b><span class="muted" style="font-size:12.5px">۱۰:۰۵</span></div>
+      <div class="r2"><span class="code">6205-2RS</span> · <span class="code">6208</span> <span class="badge b-pend">خارج از کاتالوگ</span></div>
+    </div>
+    <div class="inq__item">
+      <div class="r1"><span class="unread"></span><b>مشتری نمونه ۲</b><span class="muted" style="font-size:12.5px">۰۹:۲۰</span></div>
+      <div class="r2"><span class="code">22220 E</span></div>
+    </div>
+    <div class="inq__item">
+      <div class="r1"><span class="unread"></span><b>Sample customer 3</b><span class="muted" style="font-size:12.5px">دیروز</span></div>
+      <div class="r2"><span class="code">UCP 208</span> · <span class="code">UCFL 205</span> <span class="badge b-pend">خارج از کاتالوگ</span></div>
+    </div>
+    <div class="inq__item">
+      <div class="r1"><b>مشتری نمونه ۴</b><span class="muted" style="font-size:12.5px">دیروز</span></div>
+      <div class="r2"><span class="code">NU 2210</span> <span class="badge b-pend">خارج از کاتالوگ</span></div>
+    </div>
+  </div>
+  <div class="phone">
+    <div class="phone__top"><span>→</span><b class="code" style="font-weight:600">IQ-1027</b><span class="badge b-new">جدید</span></div>
+    <div class="inq__detail">
+      <dl class="kv"><dt>نام</dt><dd>مشتری نمونه ۱ · شرکت نمونه</dd><dt>تلفن</dt><dd><span class="num">0912 XXX XXXX</span></dd><dt>دریافت</dt><dd>امروز ۱۰:۰۵ · فارسی</dd></dl>
+      <div class="msg" style="font-size:14px">سلام. برای یک خط تولید به ۴۰ عدد <span class="code">6205-2RS</span> و ۱۰ عدد <span class="code">6208</span> نیاز داریم…</div>
+      <div style="display:grid;gap:6px;font-size:13.5px"><span><span class="code">6205-2RS</span> ← <span class="good">6205 ✓</span></span><span><span class="code">6208</span> ← <span class="badge b-pend">در کاتالوگ نیست</span></span></div>
+      <div class="field"><span class="lbl">وضعیت</span><span class="a-sel">جدید</span></div>
+      <span class="a-ta is-ph">یادداشت داخلی…</span>
+    </div>
+    <div class="phone__bar"><span class="a-btn a-btn--ok">واتس‌اپ</span><span class="a-btn">تماس</span></div>
+  </div>
+</div>
+<ol class="notes">
+  <li><span><b>Thumb-reachable actions:</b> WhatsApp and Call sit in a fixed bottom bar with 46 px targets, and status is a single select.</span></li>
+  <li><span><b>Same data, same rules</b> as A6: code matching, audit events, and no price fields.</span></li>
+  <li><span><b>Product, Sections and Publish screens</b> stay usable on a phone (single-column reflow) but are not optimised for it. This keeps the admin small and fast.</span></li>
+</ol>
+
+  </div>
+</section>
+
+<section class="doc-sec" id="model" aria-labelledby="h-model">
+  <div class="wrap">
+    <h2 id="h-model">Entity → screen map</h2>
+    <p>Every entity of the Stage 0 content model (section H) has a home. Screens not drawn here (Families, Sources, Brands, Documents, SEO overview, Users, Audit log, Backups) reuse the same two patterns: the dense list (A2) and the form with a side panel (A3/A8).</p>
+    <div class="map-scroll"><table class="map">
+      <thead><tr><th>Entity</th><th>Edited in</th><th>Also surfaces in</th><th>Key rule</th></tr></thead>
+      <tbody>
+<tr><td>Product</td><td>A2 list · A3 editor</td><td>A1 data quality · A6 code matching · A7 diff</td><td>Status and Verification are independent; Verified needs every core dimension sourced (Owner only)</td></tr><tr><td>SpecValue</td><td>A3 Dimensions &amp; data</td><td>Public readout, tables, drawings</td><td>One row per value: value, unit, source, check date, is_placeholder; empty never renders</td></tr><tr><td>Family</td><td>Families (list + form)</td><td>A2 filter · A3 · public rail</td><td>10 fixed rows; controlled spec-key list and drawing template per family</td></tr><tr><td>Brand</td><td>Brands (list + form)</td><td>A3 brand select</td><td>Only brands marked verified render publicly; no distributor claims</td></tr><tr><td>Source</td><td>A3 quick source · Sources list</td><td>A3 per-value picker · public provenance line</td><td>Reusable; title, publisher, edition/year, URL or file</td></tr><tr><td>Media</td><td>A4 library</td><td>A3 Media tab · Sections</td><td>Validated and converted at upload; alt fa/en required; reference-counted; 30-day trash</td></tr><tr><td>Document</td><td>Documents (list + form)</td><td>A3 Documents tab · public Documents section</td><td>PDF with title, language, version, links; size and page count shown</td></tr><tr><td>Section</td><td>A5</td><td>A7 diff</td><td>Fixed set and fixed fields; hero pinned first; fa/en side by side</td></tr><tr><td>CompanySetting</td><td>A8</td><td>Header, contact, footer, structured data</td><td>Phones stored E.164, shown Latin; tri-state hours; empty never renders</td></tr><tr><td>SEO</td><td>A3 SEO tab · SEO overview</td><td>A7 validation</td><td>Auto-generated defaults, overridable; length meters; index flag follows status</td></tr><tr><td>Inquiry</td><td>A6 · A9</td><td>A1 · demand list</td><td>Stored before notifying; status workflow; never published</td></tr><tr><td>User / Role</td><td>A8 → Users</td><td>Top bar</td><td>Two roles: Owner, Editor</td></tr><tr><td>AuditEvent</td><td>Audit log (read-only)</td><td>A1 recent activity · A6 history</td><td>Append-only</td></tr><tr><td>Release / Publish</td><td>A7</td><td>Top bar count · A1 tile</td><td>Diff → validate → build → atomic switch; 5 kept; one-click rollback</td></tr>      </tbody>
+    </table></div>
+  </div>
+</section>
+
+<section class="doc-sec" id="standards" aria-labelledby="h-std" style="background:var(--sheet);border-top:1px solid var(--rule)">
+  <div class="wrap cols2">
+    <div>
+      <h2 id="h-std">Admin UX standards</h2>
+      <ul class="ticks">
+        <li><b>Inline validation</b> next to the field, with save feedback and an unsaved-change guard.</li>
+        <li><b>Confirmation dialogs</b> only for destructive or public actions (archive, delete, restore, rollback, publish).</li>
+        <li><b>Every list has an empty state and an error state</b>; empty states explain the next step (e.g. "No inquiries yet — they arrive from the site form").</li>
+        <li><b>Persian UI, RTL, Vazirmatn</b>; codes, dimensions, units, phone numbers and release IDs are always Latin JetBrains Mono; ordinary counts use Persian digits.</li>
+        <li><b>Minimum label size 13 px</b>, 34 px controls (46 px on touch), visible focus ring, full keyboard operation, WCAG 2.2 AA contrast.</li>
+        <li><b>Server-rendered PHP pages with a little vanilla JS</b> (tabs, chips, upload progress). No SPA framework; admin assets live under <span class="mono">/admin</span> and are never referenced by public pages.</li>
+      </ul>
+    </div>
+    <div>
+      <h2>Open questions for Gate 2</h2>
+      <ul class="ticks">
+        <li><b>English admin UI?</b> Recommended: no for v1 (Persian only), since content is still edited in both languages. Confirm.</li>
+        <li><b>Who verifies?</b> Proposed: only the Owner can set "Verified for indexing". Confirm, or allow Editors.</li>
+        <li><b>Inquiry notification address</b> and SMTP availability (host probe) are needed before launch.</li>
+        <li><b>CSV import</b> of the existing catalogue: confirm we should plan it (needs the old catalogue export).</li>
+        <li><b>Admin dark mode:</b> not planned (scope). The public site follows the device setting, as approved in Q1.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+</main>
+<footer class="foot"><div class="wrap">Polad Charkhesh Nova · Phase 2 V2 · Admin wireframes for Gate 2 review · placeholders are labelled; no production code, schema or Publish Engine exists yet.</div></footer>
+</body>
+</html>

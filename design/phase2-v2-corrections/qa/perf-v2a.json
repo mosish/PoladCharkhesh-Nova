@@ -1,0 +1,210 @@
+[
+ {
+  "lang": "fa",
+  "profile": "Slow 4G (1.6 Mbps, 150 ms RTT)",
+  "requests": 7,
+  "total": 70492,
+  "html": 20151,
+  "css": 6467,
+  "js": 4090,
+  "fonts": 39784,
+  "fcp": 652,
+  "lcp": 652,
+  "cls": 0,
+  "load": 795,
+  "maxEvent": 144,
+  "inp": 56,
+  "events": [
+   [
+    "pointerover",
+    144
+   ],
+   [
+    "pointerenter",
+    144
+   ],
+   [
+    "pointerenter",
+    144
+   ],
+   [
+    "pointerenter",
+    144
+   ],
+   [
+    "pointerenter",
+    144
+   ],
+   [
+    "mouseover",
+    144
+   ]
+  ],
+  "onDemandKB": 6.5,
+  "onDemand": [
+   "ws.js:5784",
+   "6205.json:864"
+  ]
+ },
+ {
+  "lang": "fa",
+  "profile": "3G-class (400 kbps, 400 ms RTT)",
+  "requests": 7,
+  "total": 70492,
+  "html": 20151,
+  "css": 6467,
+  "js": 4090,
+  "fonts": 39784,
+  "fcp": 840,
+  "lcp": 840,
+  "cls": 0,
+  "load": 2014,
+  "maxEvent": 144,
+  "inp": 64,
+  "events": [
+   [
+    "pointerout",
+    144
+   ],
+   [
+    "pointerover",
+    144
+   ],
+   [
+    "pointerenter",
+    144
+   ],
+   [
+    "pointerenter",
+    144
+   ],
+   [
+    "mouseout",
+    144
+   ],
+   [
+    "mouseover",
+    144
+   ],
+   [
+    "mouseout",
+    64
+   ],
+   [
+    "mouseover",
+    64
+   ],
+   [
+    "mousedown",
+    64
+   ],
+   [
+    "mouseup",
+    64
+   ],
+   [
+    "click",
+    64
+   ]
+  ],
+  "onDemandKB": 6.5,
+  "onDemand": [
+   "ws.js:5784",
+   "6205.json:864"
+  ]
+ },
+ {
+  "lang": "en",
+  "profile": "Slow 4G (1.6 Mbps, 150 ms RTT)",
+  "requests": 8,
+  "total": 67555,
+  "html": 18952,
+  "css": 6467,
+  "js": 4090,
+  "fonts": 38046,
+  "fcp": 536,
+  "lcp": 536,
+  "cls": 0,
+  "load": 760,
+  "maxEvent": 160,
+  "inp": 64,
+  "events": [
+   [
+    "pointerover",
+    160
+   ],
+   [
+    "pointerenter",
+    160
+   ],
+   [
+    "pointerenter",
+    160
+   ],
+   [
+    "pointerenter",
+    160
+   ],
+   [
+    "pointerenter",
+    160
+   ],
+   [
+    "mouseover",
+    160
+   ],
+   [
+    "mouseout",
+    64
+   ],
+   [
+    "mouseover",
+    64
+   ],
+   [
+    "mousedown",
+    64
+   ],
+   [
+    "mouseup",
+    64
+   ],
+   [
+    "click",
+    64
+   ]
+  ],
+  "onDemandKB": 6.5,
+  "onDemand": [
+   "ws.js:5784",
+   "6205.json:864"
+  ]
+ },
+ {
+  "lang": "en",
+  "profile": "3G-class (400 kbps, 400 ms RTT)",
+  "requests": 8,
+  "total": 67555,
+  "html": 18952,
+  "css": 6467,
+  "js": 4090,
+  "fonts": 38046,
+  "fcp": 732,
+  "lcp": 732,
+  "cls": 0,
+  "load": 2009,
+  "maxEvent": 144,
+  "inp": 144,
+  "events": [
+   [
+    "keyup",
+    144
+   ]
+  ],
+  "onDemandKB": 6.5,
+  "onDemand": [
+   "ws.js:5784",
+   "6205.json:864"
+  ]
+ }
+]

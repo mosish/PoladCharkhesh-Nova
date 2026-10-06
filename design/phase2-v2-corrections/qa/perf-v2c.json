@@ -1,0 +1,126 @@
+[
+ {
+  "lang": "fa",
+  "profile": "Slow 4G (1.6 Mbps, 150 ms RTT)",
+  "requests": 7,
+  "total": 74299,
+  "html": 21632,
+  "css": 6999,
+  "js": 5884,
+  "fonts": 39784,
+  "fcp": 692,
+  "lcp": 692,
+  "cls": 0,
+  "load": 831,
+  "maxEvent": 136,
+  "inp": 64,
+  "onDemandKB": 4.5,
+  "onDemand": [
+   "ws.js:3708",
+   "6205.json:919"
+  ],
+  "fcp_runs": [
+   632,
+   736,
+   692
+  ],
+  "lcp_runs": [
+   632,
+   736,
+   692
+  ]
+ },
+ {
+  "lang": "fa",
+  "profile": "3G-class (400 kbps, 400 ms RTT)",
+  "requests": 7,
+  "total": 74299,
+  "html": 21632,
+  "css": 6999,
+  "js": 5884,
+  "fonts": 39784,
+  "fcp": 844,
+  "lcp": 844,
+  "cls": 0,
+  "load": 2050,
+  "maxEvent": 128,
+  "inp": 64,
+  "onDemandKB": 4.5,
+  "onDemand": [
+   "ws.js:3708",
+   "6205.json:919"
+  ],
+  "fcp_runs": [
+   844,
+   844,
+   836
+  ],
+  "lcp_runs": [
+   844,
+   844,
+   836
+  ]
+ },
+ {
+  "lang": "en",
+  "profile": "Slow 4G (1.6 Mbps, 150 ms RTT)",
+  "requests": 8,
+  "total": 71140,
+  "html": 20211,
+  "css": 6999,
+  "js": 5884,
+  "fonts": 38046,
+  "fcp": 508,
+  "lcp": 508,
+  "cls": 0,
+  "load": 763,
+  "maxEvent": 176,
+  "inp": 72,
+  "onDemandKB": 4.5,
+  "onDemand": [
+   "ws.js:3708",
+   "6205.json:919"
+  ],
+  "fcp_runs": [
+   508,
+   512,
+   492
+  ],
+  "lcp_runs": [
+   508,
+   512,
+   492
+  ]
+ },
+ {
+  "lang": "en",
+  "profile": "3G-class (400 kbps, 400 ms RTT)",
+  "requests": 8,
+  "total": 71140,
+  "html": 20211,
+  "css": 6999,
+  "js": 5884,
+  "fonts": 38046,
+  "fcp": 736,
+  "lcp": 736,
+  "cls": 0,
+  "load": 2034,
+  "maxEvent": 64,
+  "inp": 64,
+  "onDemandKB": 4.5,
+  "onDemand": [
+   "ws.js:3708",
+   "6205.json:919"
+  ],
+  "fcp_runs": [
+   736,
+   728,
+   744
+  ],
+  "lcp_runs": [
+   736,
+   728,
+   744
+  ]
+ }
+]

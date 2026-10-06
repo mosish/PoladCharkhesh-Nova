@@ -1,0 +1,6 @@
+8091 clicks [48, 96, 120, 40] max key 32
+8091 clicks [40, 104, 112, 48] max key 32
+8091 clicks [40, 104, 88, 40] max key 32
+8090 clicks [40, 112, 144, 48] max key 32
+8090 clicks [48, 112, 136, 40] max key 32
+8090 clicks [40, 120, 120, 40] max key 32

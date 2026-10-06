@@ -1,0 +1,29 @@
+<svg class="dwg-svg" viewBox="0 0 520 380" role="img" aria-label="{{ t.hero_fig_alt }}">
+  <!-- front view -->
+  <path class="ln-ctr" d="M22 180H278M150 52V308"/>
+  <circle class="ln-obj" cx="150" cy="180" r="110"/>
+  <circle class="ln-obj" cx="150" cy="180" r="84"/>
+  <circle class="ln-thin" cx="150" cy="180" r="75" stroke-dasharray="3 3"/>
+  <circle class="ln-obj" cx="150" cy="180" r="66"/>
+  <circle class="ln-obj" cx="150" cy="180" r="44"/>
+  {% for x, y in hero_balls %}<circle class="fill-paper" cx="{{ x }}" cy="{{ y }}" r="11.5"/>{% endfor %}
+  <!-- cutting plane A–A -->
+  <path class="ln-obj" stroke-width="2.6" d="M150 56v12M150 292v12"/>
+  <path class="ln-dim" d="M150 60h22M150 300h22" marker-end="url(#ar)"/>
+  <text class="dim-t" x="178" y="64" font-weight="600">A</text><text class="dim-t" x="178" y="304" font-weight="600">A</text>
+  <!-- section A–A -->
+  <path class="ln-ctr" d="M356 180H466"/>
+  <path class="fill-sec" d="M378 70H442V96H418.8A12.6 12.6 0 0 0 401.2 96H378Z"/>
+  <path class="fill-sec" d="M378 136V114H401.2A12.6 12.6 0 0 0 418.8 114H442V136Z"/>
+  <circle class="fill-paper" cx="410" cy="105" r="12"/>
+  <path class="fill-sec" d="M378 290H442V264H418.8A12.6 12.6 0 0 1 401.2 264H378Z"/>
+  <path class="fill-sec" d="M378 224V246H401.2A12.6 12.6 0 0 1 418.8 246H442V224Z"/>
+  <circle class="fill-paper" cx="410" cy="255" r="12"/>
+  <!-- dimensions -->
+  <path class="ln-dim" d="M446 70H488M446 290H488M374 136H344M374 224H344M378 294V328M442 294V328"/>
+  <path class="ln-dim" d="M482 70V290M350 136V224M378 320H442" marker-start="url(#ar)" marker-end="url(#ar)"/>
+  <text class="dim-t" x="490" y="184" font-size="14" font-weight="600">D</text>
+  <text class="dim-t" x="342" y="184" text-anchor="end" font-size="14" font-weight="600">d</text>
+  <text class="dim-t" x="410" y="344" text-anchor="middle" font-size="14" font-weight="600">B</text>
+  <text class="dim-t" x="410" y="370" text-anchor="middle" font-weight="600">A–A</text>
+</svg>

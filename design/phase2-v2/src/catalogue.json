@@ -1,0 +1,342 @@
+{
+  "checked": "2026-10-04",
+  "note": "Prototype sample only. Boundary dimensions were checked against public distributor listings (search results) for layout purposes. Load ratings and speeds are intentionally empty. Not CMS data.",
+  "families": [
+    {
+      "slug": "ball",
+      "glyph": "g-ball",
+      "fa": "بلبرینگ ساچمه‌ای",
+      "en": "Ball bearings",
+      "def_fa": "پرکاربردترین نوع؛ بار شعاعی و بار محوری متوسط در سرعت بالا.",
+      "def_en": "The most widely used type: radial and moderate axial loads at high speed.",
+      "short_fa": "ساچمه‌ای",
+      "short_en": "Ball"
+    },
+    {
+      "slug": "tapered",
+      "glyph": "g-tapered",
+      "fa": "رولبرینگ مخروطی",
+      "en": "Tapered roller bearings",
+      "def_fa": "بار ترکیبی شعاعی و محوری؛ معمولاً جفتی نصب می‌شود.",
+      "def_en": "Combined radial and axial loads; usually mounted in pairs.",
+      "short_fa": "مخروطی",
+      "short_en": "Tapered"
+    },
+    {
+      "slug": "spherical",
+      "glyph": "g-spherical",
+      "fa": "رولبرینگ بشکه‌ای",
+      "en": "Spherical roller bearings",
+      "def_fa": "بارهای سنگین، همراه با تحمل ناهمراستایی شفت.",
+      "def_en": "Heavy loads, while accommodating shaft misalignment.",
+      "short_fa": "بشکه‌ای",
+      "short_en": "Spherical"
+    },
+    {
+      "slug": "cylindrical",
+      "glyph": "g-cylindrical",
+      "fa": "رولبرینگ استوانه‌ای",
+      "en": "Cylindrical roller bearings",
+      "def_fa": "ظرفیت بار شعاعی بالا؛ برخی طرح‌ها جابه‌جایی محوری شفت را می‌پذیرند.",
+      "def_en": "High radial capacity; some designs allow axial shaft movement.",
+      "short_fa": "استوانه‌ای",
+      "short_en": "Cylindrical"
+    },
+    {
+      "slug": "needle",
+      "glyph": "g-needle",
+      "fa": "رولبرینگ سوزنی",
+      "en": "Needle roller bearings",
+      "def_fa": "مقطع بسیار کم برای جاهای تنگ.",
+      "def_en": "A very low cross-section for tight spaces.",
+      "short_fa": "سوزنی",
+      "short_en": "Needle"
+    },
+    {
+      "slug": "thrust",
+      "glyph": "g-thrust",
+      "fa": "بلبرینگ کف‌گرد",
+      "en": "Thrust bearings",
+      "def_fa": "ویژه بار محوری.",
+      "def_en": "Built for axial loads.",
+      "short_fa": "کف‌گرد",
+      "short_en": "Thrust"
+    },
+    {
+      "slug": "unit",
+      "glyph": "g-unit",
+      "fa": "یاتاقان آماده نصب",
+      "en": "Bearing units",
+      "def_fa": "بلبرینگ و پوسته در یک واحد، آماده نصب روی شاسی.",
+      "def_en": "Bearing and housing as one unit, ready to bolt down.",
+      "short_fa": "یاتاقان",
+      "short_en": "Units"
+    },
+    {
+      "slug": "housing",
+      "glyph": "g-housing",
+      "fa": "پوسته یاتاقان",
+      "en": "Bearing housings",
+      "def_fa": "محفظه‌ای که بلبرینگ را روی ماشین نگه می‌دارد و آب‌بندی می‌کند.",
+      "def_en": "Holds and seals the bearing on the machine.",
+      "short_fa": "پوسته",
+      "short_en": "Housings"
+    },
+    {
+      "slug": "seal",
+      "glyph": "g-seal",
+      "fa": "کاسه‌نمد صنعتی",
+      "en": "Oil seals",
+      "def_fa": "جلوی نشت روانکار و ورود آلودگی را می‌گیرد.",
+      "def_en": "Keeps lubricant in and contamination out.",
+      "short_fa": "کاسه‌نمد",
+      "short_en": "Seals"
+    },
+    {
+      "slug": "lubricant",
+      "glyph": "g-lubricant",
+      "fa": "روانکار صنعتی",
+      "en": "Industrial lubricants",
+      "def_fa": "گریس و روغن متناسب با بار، سرعت و دمای کار.",
+      "def_en": "Grease and oil matched to load, speed and temperature.",
+      "short_fa": "روانکار",
+      "short_en": "Lubricants"
+    }
+  ],
+  "products": [
+    {
+      "slug": "6200",
+      "code": "6200",
+      "family": "ball",
+      "aliases": [
+        "6200-2RS",
+        "6200-ZZ"
+      ],
+      "status": "verified",
+      "dims": {
+        "d": 10,
+        "D": 30,
+        "B": 9
+      },
+      "source": {
+        "label": "bearingbasement.com — NTN 6200",
+        "url": "https://www.bearingbasement.com/en/us/NTN-6200-Deep-Groove-Ball-Bearings-10x30x9mm/m-65335.aspx"
+      }
+    },
+    {
+      "slug": "6201",
+      "code": "6201",
+      "family": "ball",
+      "aliases": [
+        "6201-2RS",
+        "6201-ZZ"
+      ],
+      "status": "verified",
+      "dims": {
+        "d": 12,
+        "D": 32,
+        "B": 10
+      },
+      "source": {
+        "label": "bearingbasement.com — SKF 6201",
+        "url": "https://www.bearingbasement.com/en/SKF-6201-Deep-Groove-Ball-Bearing-12x32x10mm/m-35071.aspx"
+      }
+    },
+    {
+      "slug": "6205",
+      "code": "6205",
+      "family": "ball",
+      "aliases": [
+        "6205-2RS",
+        "6205-ZZ",
+        "6205 2RS"
+      ],
+      "status": "verified",
+      "dims": {
+        "d": 25,
+        "D": 52,
+        "B": 15
+      },
+      "source": {
+        "label": "123bearing.com — 6205",
+        "url": "https://www.123bearing.com/bearing-housing/deep-groove-bearing/single-row/6205-skf"
+      }
+    },
+    {
+      "slug": "6206",
+      "code": "6206",
+      "family": "ball",
+      "aliases": [
+        "6206-2RS",
+        "6206-ZZ"
+      ],
+      "status": "verified",
+      "dims": {
+        "d": 30,
+        "D": 62,
+        "B": 16
+      },
+      "source": {
+        "label": "123bearing.com — 6206",
+        "url": "https://www.123bearing.com/bearing-housing/deep-groove-bearing/single-row/6206"
+      }
+    },
+    {
+      "slug": "6207",
+      "code": "6207",
+      "family": "ball",
+      "aliases": [
+        "6207-2RS",
+        "6207-ZZ"
+      ],
+      "status": "verified",
+      "dims": {
+        "d": 35,
+        "D": 72,
+        "B": 17
+      },
+      "source": {
+        "label": "123bearing.com — 6207",
+        "url": "https://www.123bearing.com/bearing-housing/deep-groove-bearing/single-row/6207"
+      }
+    },
+    {
+      "slug": "6305-2rs",
+      "code": "6305-2RS",
+      "family": "ball",
+      "aliases": [
+        "6305",
+        "6305 2RS"
+      ],
+      "status": "verified",
+      "dims": {
+        "d": 25,
+        "D": 62,
+        "B": 17
+      },
+      "source": {
+        "label": "123bearing.com — 6305-2RS",
+        "url": "https://www.123bearing.com/bearing-housing/deep-groove-bearing/single-row/6305-2rs"
+      }
+    },
+    {
+      "slug": "30208",
+      "code": "30208",
+      "family": "tapered",
+      "aliases": [],
+      "status": "verified",
+      "dims": {
+        "d": 40,
+        "D": 80,
+        "T": 19.75
+      },
+      "source": {
+        "label": "123bearing.com — 30208",
+        "url": "https://www.123bearing.com/bearing-housing/roller-bearing/tapered/30208"
+      }
+    },
+    {
+      "slug": "22220-e",
+      "code": "22220 E",
+      "family": "spherical",
+      "aliases": [
+        "22220E"
+      ],
+      "status": "verified",
+      "dims": {
+        "d": 100,
+        "D": 180,
+        "B": 46
+      },
+      "source": {
+        "label": "qualitybearingsonline.com — 22220 E",
+        "url": "https://www.qualitybearingsonline.com/22220-e-skf-spherical-roller-bearing-100x180x46/"
+      }
+    },
+    {
+      "slug": "nu-205",
+      "code": "NU 205",
+      "family": "cylindrical",
+      "aliases": [
+        "NU205"
+      ],
+      "status": "verified",
+      "dims": {
+        "d": 25,
+        "D": 52,
+        "B": 15
+      },
+      "source": {
+        "label": "hitecbearings.com — NU 205",
+        "url": "https://www.hitecbearings.com/products/nu-205/"
+      }
+    },
+    {
+      "slug": "hk-2520",
+      "code": "HK 2520",
+      "family": "needle",
+      "aliases": [
+        "HK2520"
+      ],
+      "status": "verified",
+      "dims": {
+        "Fw": 25,
+        "D": 32,
+        "C": 20
+      },
+      "source": {
+        "label": "123bearing.com — HK2520",
+        "url": "https://www.123bearing.com/bearing-housing/needle-roller-bearing/drawn-cup/hk2520"
+      }
+    },
+    {
+      "slug": "51105",
+      "code": "51105",
+      "family": "thrust",
+      "aliases": [],
+      "status": "verified",
+      "dims": {
+        "d": 25,
+        "D": 42,
+        "H": 11
+      },
+      "source": {
+        "label": "123bearing.com — 51105",
+        "url": "https://www.123bearing.com/bearing-housing/deep-groove-bearing/thrust/51105"
+      }
+    },
+    {
+      "slug": "ucp-208",
+      "code": "UCP 208",
+      "family": "unit",
+      "aliases": [
+        "UCP208"
+      ],
+      "status": "pending",
+      "dims": {
+        "d": 40
+      },
+      "source": {
+        "label": "kugellager-express.de — UCP208 (shaft size only)",
+        "url": "https://www.kugellager-express.de/pillow-block-housing-unit-ucp208-shaft-40-mm"
+      }
+    },
+    {
+      "slug": "tc-25x42x7",
+      "code": "TC 25×42×7",
+      "family": "seal",
+      "aliases": [
+        "TC 25x42x7",
+        "25x42x7"
+      ],
+      "status": "pending",
+      "dims": {
+        "d": 25,
+        "D": 42,
+        "b": 7
+      },
+      "source": null,
+      "dims_note": "nominal"
+    }
+  ]
+}

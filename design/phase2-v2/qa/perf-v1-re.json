@@ -1,0 +1,140 @@
+[
+ {
+  "lang": "fa",
+  "profile": "Slow 4G (1.6 Mbps, 150 ms RTT)",
+  "requests": 7,
+  "total": 75336,
+  "html": 13687,
+  "css": 9334,
+  "js": 3711,
+  "fonts": 48604,
+  "fcp": 868,
+  "lcp": 868,
+  "cls": 0,
+  "load": 871,
+  "maxEvent": 40,
+  "inp": 40,
+  "events": [],
+  "onDemandKB": 6.3,
+  "onDemand": [
+   "ws.js:5625",
+   "6205.json:864"
+  ]
+ },
+ {
+  "lang": "fa",
+  "profile": "3G-class (400 kbps, 400 ms RTT)",
+  "requests": 7,
+  "total": 75336,
+  "html": 13687,
+  "css": 9334,
+  "js": 3711,
+  "fonts": 48604,
+  "fcp": 1752,
+  "lcp": 1752,
+  "cls": 0.001,
+  "load": 2374,
+  "maxEvent": 176,
+  "inp": 48,
+  "events": [
+   [
+    "pointerover",
+    176
+   ],
+   [
+    "pointerenter",
+    176
+   ],
+   [
+    "pointerenter",
+    176
+   ],
+   [
+    "pointerenter",
+    176
+   ],
+   [
+    "pointerenter",
+    176
+   ],
+   [
+    "mouseover",
+    176
+   ]
+  ],
+  "onDemandKB": 6.3,
+  "onDemand": [
+   "ws.js:5625",
+   "6205.json:864"
+  ]
+ },
+ {
+  "lang": "en",
+  "profile": "Slow 4G (1.6 Mbps, 150 ms RTT)",
+  "requests": 8,
+  "total": 63783,
+  "html": 12692,
+  "css": 9334,
+  "js": 3711,
+  "fonts": 38046,
+  "fcp": 740,
+  "lcp": 740,
+  "cls": 0,
+  "load": 837,
+  "maxEvent": 96,
+  "inp": 48,
+  "events": [
+   [
+    "pointerover",
+    96
+   ],
+   [
+    "pointerenter",
+    96
+   ],
+   [
+    "pointerenter",
+    96
+   ],
+   [
+    "pointerenter",
+    96
+   ],
+   [
+    "pointerenter",
+    96
+   ],
+   [
+    "mouseover",
+    96
+   ]
+  ],
+  "onDemandKB": 6.3,
+  "onDemand": [
+   "ws.js:5625",
+   "6205.json:864"
+  ]
+ },
+ {
+  "lang": "en",
+  "profile": "3G-class (400 kbps, 400 ms RTT)",
+  "requests": 8,
+  "total": 63783,
+  "html": 12692,
+  "css": 9334,
+  "js": 3711,
+  "fonts": 38046,
+  "fcp": 1628,
+  "lcp": 1628,
+  "cls": 0.001,
+  "load": 2404,
+  "maxEvent": 48,
+  "inp": 48,
+  "events": [],
+  "onDemandKB": 6.3,
+  "onDemand": [
+   "ws.js:5625",
+   "6205.json:864"
+  ]
+ }
+]

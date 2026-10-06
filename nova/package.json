@@ -1,0 +1,17 @@
+{
+  "name": "nova",
+  "private": true,
+  "description": "Polad Charkhesh Nova: workstation tooling (asset build, browser tests).",
+  "type": "module",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "dev:init": "node tools/dev-init.mjs",
+    "test:e2e": "playwright test"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "4.13.0",
+    "@playwright/test": "1.63.0"
+  }
+}
