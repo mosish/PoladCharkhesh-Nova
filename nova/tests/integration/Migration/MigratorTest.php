@@ -7,6 +7,7 @@ namespace Nova\Tests\Integration\Migration;
 use Nova\Core\Paths;
 use Nova\Core\Sql;
 use Nova\Migration\MigrationError;
+use Nova\Migration\MigrationFile;
 use Nova\Migration\Migrator;
 use Nova\Migration\UnavailableBackupGuard;
 use Nova\Tests\Integration\TestDatabase;
@@ -41,7 +42,8 @@ final class MigratorTest extends TestCase
         $migrator = new Migrator($pdo, Paths::fromHere()->migrations(), 'test');
 
         $applied = $migrator->migrate(new UnavailableBackupGuard());
-        self::assertSame(['0001_catalogue_core', '0002_relationship_evidence_and_redirects'], $applied);
+        $all = array_map(static fn(MigrationFile $f): string => \sprintf('%04d_%s', $f->version, $f->name), MigrationFile::scan(Paths::fromHere()->migrations()));
+        self::assertSame($all, $applied);
         self::assertSame([], $migrator->migrate(new UnavailableBackupGuard()), 'second run is a no-op');
         self::assertSame('applied', $migrator->status()[0]['state']);
 

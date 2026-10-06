@@ -41,6 +41,7 @@ final class MigrationLintTest extends TestCase
     #[DataProvider('migrations')]
     public function testEveryNewTableDeclaresEngineAndCollation(MigrationFile $file): void
     {
+        self::assertNotSame([], $file->statements(), 'a migration has at least one statement');
         foreach ($file->statements() as $statement) {
             if (preg_match('/^CREATE TABLE/i', $statement) === 1) {
                 self::assertStringContainsString('ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_520_ci', $statement);
