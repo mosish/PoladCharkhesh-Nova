@@ -15,9 +15,14 @@ use PDO;
  */
 final class VerificationReset
 {
+    /**
+     * Must run inside the transaction that made the change. The product row is
+     * read with a lock: PageVerification::verify() takes the same lock first,
+     * so a concurrent verify and edit serialize instead of both committing.
+     */
     public static function product(PDO $pdo, AuditLog $audit, ?Actor $actor, int $productId, string $why, ?int $variantId = null): void
     {
-        $was = Sql::scalar($pdo, 'SELECT verification FROM product WHERE id = ?', [$productId]);
+        $was = Sql::scalar($pdo, 'SELECT verification FROM product WHERE id = ? FOR UPDATE', [$productId]);
         if ($was === 'verified') {
             Sql::run($pdo, "UPDATE product SET verification = 'pending', verified_at = NULL, verified_by = NULL, row_version = row_version + 1 WHERE id = ?", [$productId]);
             $audit->record($actor, 'product.verification_reset', 'product', $productId, null, ['verification' => 'verified'], ['verification' => 'pending', 'reason' => $why]);

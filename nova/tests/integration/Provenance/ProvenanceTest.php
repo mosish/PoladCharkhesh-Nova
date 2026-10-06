@@ -127,6 +127,36 @@ final class ProvenanceTest extends TestCase
         self::assertSame('verified', $this->f->products->variant($v)['verification']);
     }
 
+    /**
+     * Regression (security review of 97c6487): an Owner verify must not commit
+     * on a stale snapshot while a core-value edit of the same page is in flight.
+     */
+    public function testVerifyCannotRaceAnInFlightCoreValueEdit(): void
+    {
+        [$p, $v] = $this->verifiablePage();
+        $editor = TestDatabase::connect();
+        $editorValues = new \Nova\Provenance\SpecValueService($editor, new \Nova\Audit\AuditLog($editor));
+        // A base-designation edit touches no row that verify itself writes, so only the product lock can serialize them.
+        $value = Sql::row($editor, 'SELECT row_version FROM spec_value WHERE product_id = ? AND spec_key_id = ?', [$p, $this->f->keyD]);
+        self::assertNotNull($value);
+
+        $editor->beginTransaction();
+        $editorValues->setValue($this->f->editor, DesignationRef::base($p), $this->f->keyD, new ValueInput('11'), (int) $value['row_version']);
+
+        $this->f->pdo->exec('SET SESSION innodb_lock_wait_timeout = 1');
+        try {
+            $this->f->verification->verify($this->f->owner, $p, $this->f->version('product', $p));
+            self::fail('verify committed while a core edit of the page was in flight');
+        } catch (\PDOException $e) {
+            self::assertStringContainsString('Lock wait timeout', $e->getMessage());
+        } finally {
+            $editor->commit();
+        }
+
+        self::assertSame('pending', $this->f->products->product($p)['verification']);
+        $this->refused('conflict', fn() => $this->f->verification->verify($this->f->owner, $p, $this->f->version('product', $p)));
+    }
+
     public function testEditingACoreValueResetsVerificationButNonCoreAndNoOpEditsDoNot(): void
     {
         [$p, $v] = $this->verifiablePage();

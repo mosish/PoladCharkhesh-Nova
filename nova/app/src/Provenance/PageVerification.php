@@ -73,6 +73,11 @@ final readonly class PageVerification
             throw CatalogueError::forbidden('verify a page for indexing');
         }
         Transaction::run($this->pdo, function () use ($actor, $productId, $expectedVersion): void {
+            // Lock first, read second: the lock waits for any in-flight edit of this page, and the
+            // snapshot used by issues() is only taken after it, so it sees that edit (no fail-open race).
+            if (Sql::row($this->pdo, 'SELECT id FROM product WHERE id = ? FOR UPDATE', [$productId]) === null) {
+                throw CatalogueError::notFound('Product');
+            }
             $issues = $this->issues($productId);
             if ($issues !== []) {
                 throw CatalogueError::conflict('The page cannot be verified yet: ' . implode('; ', $issues));
