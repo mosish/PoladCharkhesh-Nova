@@ -40,6 +40,7 @@ final class Application
                 'migrate' => $this->migrate($options),
                 'migrate:status' => $this->migrateStatus(),
                 'dev:sample-catalogue' => $this->sampleCatalogue(),
+                'dev:reset' => $this->devReset(),
                 default => $this->help(),
             };
         } catch (MigrationError $e) {
@@ -97,6 +98,29 @@ final class Application
         return 0;
     }
 
+    /**
+     * DEVELOPMENT ONLY: empties the local development database, migrates it and
+     * loads the sample fixtures. Refused in any other environment.
+     */
+    private function devReset(): int
+    {
+        if ($this->config->environment !== Environment::Development || $this->sapi !== 'cli' || !class_exists(\Nova\Dev\SampleCatalogue::class)) {
+            $this->output->error('dev:reset is available only from the command line of a development build.');
+
+            return 2;
+        }
+        $pdo = $this->pdo();
+        $pdo->exec('SET FOREIGN_KEY_CHECKS = 0');
+        foreach (\Nova\Core\Sql::column($pdo, 'SELECT TABLE_NAME FROM information_schema.TABLES WHERE TABLE_SCHEMA = DATABASE()') as $table) {
+            $pdo->exec('DROP TABLE `' . str_replace('`', '', (string) $table) . '`');
+        }
+        $pdo->exec('SET FOREIGN_KEY_CHECKS = 1');
+        $this->output->line('Development database emptied.');
+        (new Migrator($pdo, $this->paths->migrations(), self::VERSION, $this->output->line(...)))->migrate(new UnavailableBackupGuard());
+
+        return $this->sampleCatalogue();
+    }
+
     /** The real pre-migration backup arrives with step 12; until then a non-empty database is refused. */
     private function backupGuard(): BackupGuard
     {
@@ -122,6 +146,7 @@ final class Application
         $this->output->line('  migrate [--no-backup]   apply pending migrations (--no-backup: development only)');
         $this->output->line('  migrate:status          list migrations and their state');
         $this->output->line('  dev:sample-catalogue    load the Phase 2 SAMPLE fixtures (development only)');
+        $this->output->line('  dev:reset               rebuild the local development database with the SAMPLE fixtures (development only)');
 
         return 0;
     }

@@ -75,7 +75,7 @@ final class SchemaV1Test extends TestCase
     public function testEveryTableIsInnoDbWithTheProjectCollation(): void
     {
         $rows = Sql::rows($this->pdo, 'SELECT TABLE_NAME, ENGINE, TABLE_COLLATION FROM information_schema.TABLES WHERE TABLE_SCHEMA = DATABASE()');
-        self::assertCount(15, $rows);
+        self::assertCount(16, $rows);
         foreach ($rows as $row) {
             self::assertSame('InnoDB', $row['ENGINE'], (string) $row['TABLE_NAME']);
             self::assertSame('utf8mb4_unicode_520_ci', $row['TABLE_COLLATION'], (string) $row['TABLE_NAME']);
@@ -104,7 +104,7 @@ final class SchemaV1Test extends TestCase
     public static function foreignKeys(): iterable
     {
         $cascade = ['product_variant.product_id', 'spelling.product_id', 'spelling.variant_id', 'designation_key.product_id', 'designation_key.variant_id', 'designation_key.spelling_id', 'spec_value.product_id', 'spec_value.variant_id', 'document_link.product_id', 'document_link.variant_id'];
-        $restrict = ['product.family_id', 'product.verified_by', 'product_variant.verified_by', 'spec_key.family_id', 'spec_value.spec_key_id', 'spec_value.source_id', 'spec_value.updated_by', 'spelling.source_id', 'source.document_id', 'document_link.document_id', 'audit_event.user_id', 'setting.updated_by'];
+        $restrict = ['product_variant.relationship_source_id', 'product_variant.relationship_confirmed_by', 'spelling.confirmed_by', 'redirect.created_by', 'product.family_id', 'product.verified_by', 'product_variant.verified_by', 'spec_key.family_id', 'spec_value.spec_key_id', 'spec_value.source_id', 'spec_value.updated_by', 'spelling.source_id', 'source.document_id', 'document_link.document_id', 'audit_event.user_id', 'setting.updated_by'];
         foreach ($cascade as $c) {
             yield $c => [...explode('.', $c), 'CASCADE'];
         }
@@ -246,6 +246,27 @@ final class SchemaV1Test extends TestCase
             $this->product('A', 'same');
             $this->product('B', 'same');
         });
+    }
+
+    // --- 0002: relationship evidence and redirects
+
+    public function testVariantRelationshipConfirmationNeedsOwnerAndSource(): void
+    {
+        $p = $this->product('6305', '6305');
+        $user = $this->insert('app_user', ['email' => 'o@test.invalid', 'display_name' => 'o', 'role' => 'owner', 'password_hash' => 'x']);
+        $this->assertViolates('ck_product_variant_relationship', fn() => $this->insert('product_variant', ['product_id' => $p, 'designation' => 'x', 'slug' => 'x', 'relationship_confirmed_at' => '2026-10-06 00:00:00', 'relationship_confirmed_by' => $user]));
+        $this->insert('product_variant', ['product_id' => $p, 'designation' => 'y', 'slug' => 'y', 'relationship_confirmed_at' => '2026-10-06 00:00:00', 'relationship_confirmed_by' => $user, 'relationship_source_id' => $this->source()]);
+        $this->assertViolates('ck_spelling_confirmed', fn() => $this->insert('spelling', ['product_id' => $p, 'spelling' => 'z', 'confirmed_at' => '2026-10-06 00:00:00']));
+    }
+
+    public function testRedirectShape(): void
+    {
+        $this->assertViolates('ck_redirect_status', fn() => $this->insert('redirect', ['from_path' => '/p/a/', 'status' => 301, 'reason' => 'x']));
+        $this->assertViolates('ck_redirect_status', fn() => $this->insert('redirect', ['from_path' => '/p/a/', 'to_path' => '/p/b/', 'status' => 410, 'reason' => 'x']));
+        $this->assertViolates('ck_redirect_status', fn() => $this->insert('redirect', ['from_path' => '/p/a/', 'to_path' => '/p/b/', 'status' => 302, 'reason' => 'x']));
+        $this->assertViolates('ck_redirect_paths', fn() => $this->insert('redirect', ['from_path' => 'https://evil.test/', 'status' => 410, 'reason' => 'x']));
+        $this->insert('redirect', ['from_path' => '/p/a/', 'to_path' => '/p/b/#v-a', 'status' => 301, 'reason' => 'x']);
+        $this->assertViolates('uq_redirect_from', fn() => $this->insert('redirect', ['from_path' => '/p/a/', 'status' => 410, 'reason' => 'x']));
     }
 
     // --- delete behaviour

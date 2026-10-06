@@ -41,7 +41,7 @@ final class MigratorTest extends TestCase
         $migrator = new Migrator($pdo, Paths::fromHere()->migrations(), 'test');
 
         $applied = $migrator->migrate(new UnavailableBackupGuard());
-        self::assertSame(['0001_catalogue_core'], $applied);
+        self::assertSame(['0001_catalogue_core', '0002_relationship_evidence_and_redirects'], $applied);
         self::assertSame([], $migrator->migrate(new UnavailableBackupGuard()), 'second run is a no-op');
         self::assertSame('applied', $migrator->status()[0]['state']);
 

@@ -23,7 +23,11 @@ final class SampleCatalogueTest extends TestCase
         self::assertSame(13, (int) Sql::scalar($pdo, 'SELECT COUNT(*) FROM product'));
         self::assertSame(10, (int) Sql::scalar($pdo, 'SELECT COUNT(*) FROM product_variant'));
         self::assertSame(0, (int) Sql::scalar($pdo, 'SELECT COUNT(*) FROM product WHERE is_sample <> 1'), 'every row is labelled as a sample');
-        self::assertSame(0, (int) Sql::scalar($pdo, 'SELECT COUNT(*) FROM spec_value'), 'no values are loaded');
+        self::assertSame(37, (int) Sql::scalar($pdo, 'SELECT COUNT(*) FROM spec_value'), 'all 37 dimension values of the sample');
+        self::assertSame(0, (int) Sql::scalar($pdo, 'SELECT COUNT(*) FROM spec_value WHERE variant_id IS NOT NULL'), 'no value copied to a variant');
+        self::assertSame(0, (int) Sql::scalar($pdo, "SELECT COUNT(*) FROM spec_value WHERE status <> 'pending'"), 'sample values are never verified');
+        self::assertSame(3, (int) Sql::scalar($pdo, "SELECT COUNT(*) FROM spec_value v JOIN product p ON p.id = v.product_id WHERE p.designation = 'TC 25×42×7' AND v.source_id IS NULL"), 'unsourced in the sample, unsourced here');
+        self::assertSame(['B', 'D', 'd'], array_map(strval(...), Sql::column($pdo, "SELECT k.code FROM spec_key k JOIN family f ON f.id = k.family_id WHERE f.slug = 'ball' ORDER BY k.code")));
 
         $review = Sql::column($pdo, 'SELECT designation FROM product WHERE relationship_review = 1 ORDER BY designation');
         self::assertSame(['22220 E', '6305-2RS'], $review);

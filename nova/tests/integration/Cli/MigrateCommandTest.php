@@ -83,6 +83,22 @@ final class MigrateCommandTest extends TestCase
         self::assertSame('migration.no_backup', Sql::scalar($pdo, 'SELECT action FROM audit_event'));
     }
 
+    #[DataProvider('nonDevelopment')]
+    public function testDevResetIsRefusedOutsideDevelopment(Environment $environment): void
+    {
+        $pdo = $this->nonEmptyDatabase();
+        $output = new Output(false);
+
+        self::assertSame(2, $this->app($environment, $output)->run(['nova', 'dev:reset']));
+        self::assertSame(1, (int) Sql::scalar($pdo, "SELECT COUNT(*) FROM information_schema.TABLES WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'pre_existing'"), 'nothing was dropped');
+    }
+
+    public function testDevResetIsRefusedOutsideTheCommandLine(): void
+    {
+        $this->nonEmptyDatabase();
+        self::assertSame(2, $this->app(Environment::Development, new Output(false), 'apache2handler')->run(['nova', 'dev:reset']));
+    }
+
     public function testStatusCommandListsMigrations(): void
     {
         TestDatabase::migrated();
