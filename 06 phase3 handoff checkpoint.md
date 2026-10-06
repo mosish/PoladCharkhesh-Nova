@@ -231,3 +231,11 @@ Then proceed to step 3 (designation corpus, normaliser and matcher) and step 4 (
 - Do not run or deploy the old probe.
 - Do not install server software natively on Windows.
 - Do not edit hosted snapshots.
+
+## 14. Progress log (autonomous delivery, 2026-10-06)
+
+Steps committed after verification: 4 `ec96a09` (migrations, schema v1), 5 `97c6487` + fix `64fc68e` (catalogue, relationship review, provenance; verify/edit race fixed), 6 `a1d4956` (rich content), 7 `0b05847` (public site port, Product pages), 8 `31237e8` (Publish Engine, switchers S and D, journal, rollback, prune). Latest totals: 420 PHPUnit, 171 JS, 36 Playwright, PHPStan max.
+
+**Resume at step 9** (sign-in, Admin shell from the frozen A1–A9 wireframes / admin-wf.css, Product/variant vertical slice, audit). Then steps 10–16 per `05` §24.
+
+**Open items to handle first:** a background security review of `31237e8` flagged (1) possible information disclosure in `app/src/Publish/PublishFactory.php` and (2) missing authorization on CLI publish/rollback in `app/src/Cli/Application.php`. Neither is yet investigated.
