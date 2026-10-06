@@ -18,6 +18,7 @@
     },
     "autoload-dev": {
         "psr-4": {
+            "Nova\\Dev\\": "app/dev/src/",
             "Nova\\Tests\\Unit\\": "tests/unit/",
             "Nova\\Tests\\Integration\\": "tests/integration/"
         }

@@ -85,6 +85,11 @@ Hosted copies are historical snapshots (D18); the local files are authoritative:
   - Frozen: the 64-code-point requested-designation limit; English-only case folding; no folding of look-alike slashes into "/"; invisible characters kept in the stored verbatim requested designation and removed only from the matching key.
   - V-1–V-5 stay unresolved as documented.
   - Spec: `nova/docs/designation-matching.md`; executable spec: `nova/tests/fixtures/designation/corpus.json`.
+- Step 4 decisions (owner, 2026-10-06):
+  - Pre-migration backup is required. Until step 12 exists, an explicit `--no-backup` bypass is allowed only in local development; it is visible and logged, and impossible in staging/production.
+  - Schema v1 is limited to the catalogue/core tables. Content, publish/journal, sessions/throttling, inquiries, media and backup records come in later migrations.
+  - Internal keys are auto-increment integers and never business identity; public identity is slugs and designations.
+  - The schema design reviewed in the same turn was accepted. From then on the owner delegated ordinary technical decisions for Phase 3 (stop only for business/UX, unresolved-semantics, irreversible public-URL, architecture, destructive/production-data or owner-input decisions).
 - D14/D17 reconfirmed again (owner, 2026-10-06): no byte, file or request budgets; no numeric CWV/performance gates; measurements are for diagnosis and regression only; no time on arbitrary micro-optimisation.
 
 ## Gate 1 clarifications

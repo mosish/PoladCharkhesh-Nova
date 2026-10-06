@@ -38,6 +38,8 @@ node tools/dev-init.mjs          # once: writes .env with random local passwords
 docker compose up -d --build     # web http://localhost:8080 · mail UI http://localhost:8025
 docker compose exec web composer install
 docker compose exec web composer check        # cs + phpstan + phpunit (unit + integration)
+docker compose exec web php app/bin/nova migrate               # apply migrations (a non-empty DB needs a backup; dev-only: --no-backup)
+docker compose exec web php app/bin/nova dev:sample-catalogue  # load the labelled Phase 2 SAMPLE fixtures (development only)
 npm ci && npm run test:js                      # JS copy of the designation matcher vs the shared corpus
 npm run test:e2e                               # Playwright on the installed Chrome
 docker compose down                             # add -v to wipe the dev database

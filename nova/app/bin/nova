@@ -1,0 +1,14 @@
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
+// Nova operator command line. Configuration: ~/config/config.php on a server
+// (NOVA_CONFIG_FILE overrides the path), NOVA_* variables in the dev stack.
+
+require \dirname(__DIR__, 2) . '/vendor/autoload.php';
+
+$configFile = getenv('NOVA_CONFIG_FILE') ?: (getenv('HOME') ?: '/nonexistent') . '/config/config.php';
+$app = new Nova\Cli\Application(Nova\Core\Config::load($configFile), Nova\Core\Paths::fromHere());
+
+exit($app->run($argv));
