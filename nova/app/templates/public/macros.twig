@@ -1,0 +1,10 @@
+{# Drawing-set reference strip, as in the frozen Phase 2 page (references in Latin mono on every page). #}
+{% macro sheethead(n, name) %}<div class="sheethead" aria-hidden="true"><span class="sheethead__no">{{ '%02d'|format(n) }} <small>/ 10</small></span><span class="sheethead__name">{{ name }}</span><span class="sheethead__ticks"></span><span class="sheethead__ref">PC-{{ '%02d'|format(n) }}</span></div>{% endmacro %}
+
+{# Persian digits on the Persian page, Latin elsewhere (codes and phone numbers stay Latin, Q2). #}
+{% macro num(n, lang) %}{% if lang == 'fa' %}{{ n|replace({'0': '۰', '1': '۱', '2': '۲', '3': '۳', '4': '۴', '5': '۵', '6': '۶', '7': '۷', '8': '۸', '9': '۹'}) }}{% else %}{{ n }}{% endif %}{% endmacro %}
+
+{% macro wa(text, number) %}https://wa.me/{{ number }}?text={{ text|url_encode }}{% endmacro %}
+
+{# Verified = solid badge, pending = dashed and hatched (frozen status convention). #}
+{% macro badge(verified, t) %}{% if verified %}<span class="badge badge--ok" title="{{ t.st_ok_long }}"><span>{{ t.st_ok }}</span></span>{% else %}<span class="badge badge--pending" title="{{ t.st_pending_long }}"><span>{{ t.st_pending }}</span></span>{% endif %}{% endmacro %}

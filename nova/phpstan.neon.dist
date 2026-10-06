@@ -7,4 +7,6 @@ parameters:
         - tests/unit
         - tests/integration
         - docker/dev-www
+    excludePaths:
+        - app/templates
     tmpDir: .phpstan.cache

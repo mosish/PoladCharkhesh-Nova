@@ -1,0 +1,78 @@
+{% import 'macros.twig' as m %}
+<!doctype html>
+<html lang="{{ lang }}" dir="{{ dir }}" class="no-js">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>{{ page_title }}</title>
+<meta name="description" content="{{ page_desc }}">
+<meta name="robots" content="{{ robots }}">
+<meta name="theme-color" content="#0b1136">
+{# No icon until the Owner supplies the logo (launch input); an empty one avoids a stray /favicon.ico request. #}
+<link rel="icon" href="data:,">
+{% if canonical is not null %}
+<link rel="canonical" href="{{ self_url ~ canonical }}">
+<link rel="alternate" hreflang="fa" href="{{ hosts.fa ~ canonical }}">
+<link rel="alternate" hreflang="en" href="{{ hosts.en ~ canonical }}">
+<link rel="alternate" hreflang="x-default" href="{{ hosts.en ~ canonical }}">
+{% endif %}
+<link rel="preload" href="{{ asset('fonts/vazirmatn-Bold-' ~ subset ~ '.woff2') }}" as="font" type="font/woff2" crossorigin>
+<style>
+@font-face{font-family:"Vazirmatn";src:url({{ asset('fonts/vazirmatn-Regular-' ~ subset ~ '.woff2') }}) format("woff2");font-weight:400;font-display:swap}
+@font-face{font-family:"Vazirmatn";src:url({{ asset('fonts/vazirmatn-Bold-' ~ subset ~ '.woff2') }}) format("woff2");font-weight:700;font-display:swap}
+{% if lang == 'fa' %}@font-face{font-family:"PC Code";src:url({{ asset('fonts/jbmono-400.woff2') }}) format("woff2");font-weight:100 500;font-display:swap;unicode-range:U+002D-002F,U+0030-0039,U+0041-005A,U+0061-007A}@font-face{font-family:"PC Code";src:url({{ asset('fonts/jbmono-600.woff2') }}) format("woff2");font-weight:600 900;font-display:swap;unicode-range:U+002D-002F,U+0030-0039,U+0041-005A,U+0061-007A}@font-face{font-family:"Vazirmatn";src:url({{ asset('fonts/jbmono-400.woff2') }}) format("woff2");font-weight:400;font-display:swap;unicode-range:U+0041-005A,U+0061-007A}@font-face{font-family:"Vazirmatn";src:url({{ asset('fonts/jbmono-600.woff2') }}) format("woff2");font-weight:700;font-display:swap;unicode-range:U+0041-005A,U+0061-007A}{% endif %}
+{% if lang == 'en' %}@font-face{font-family:"Vazirmatn";src:url({{ asset('fonts/vazirmatn-Regular-arabic.woff2') }}) format("woff2");font-weight:400;font-display:swap;unicode-range:U+0600-06FF,U+200C-200F,U+FB50-FDFF,U+FE70-FEFF}@font-face{font-family:"Vazirmatn";src:url({{ asset('fonts/vazirmatn-Regular-arabic.woff2') }}) format("woff2");font-weight:700;font-display:swap;unicode-range:U+0600-06FF,U+200C-200F,U+FB50-FDFF,U+FE70-FEFF}
+{% endif %}@font-face{font-family:"JetBrains Mono";src:url({{ asset('fonts/jbmono-400.woff2') }}) format("woff2");font-weight:400;font-display:swap}
+@font-face{font-family:"JetBrains Mono";src:url({{ asset('fonts/jbmono-600.woff2') }}) format("woff2");font-weight:600;font-display:swap}
+</style>
+<link rel="stylesheet" href="{{ asset('nova.css') }}">
+{% block scripts %}{% endblock %}
+{% block structured %}{% endblock %}
+</head>
+<body>
+{% include 'partials/symbols.svg.twig' %}
+<a class="skip" href="{% block skip_target %}#main{% endblock %}">{% block skip_label %}{{ t.skip_content }}{% endblock %}</a>
+{% if dev_banner %}<aside class="proto" aria-label="Development build"><div class="wrap"><span>{{ t.dev_banner }}</span></div></aside>{% endif %}
+<header class="bar navy">
+  <div class="wrap bar__in">
+    <a class="brand" href="{{ home }}#top" aria-label="{{ t.brand }}">
+      <svg aria-hidden="true"><use href="#logo"/></svg>
+      <span><b>{{ t.brand }}</b><small lang="{{ other_lang }}">{{ t.brand_alt }}</small></span>
+    </a>
+    <nav class="bar__nav" aria-label="{{ t.nav_label }}">
+      {% for item in t.nav %}<a href="{{ home }}#{{ item[0] }}">{{ item[1] }}</a>{% endfor %}
+    </nav>
+    <span class="bar__sheet" aria-hidden="true"><span id="sheet-now">{% block sheet_now %}01{% endblock %}</span> / 10</span>
+    <details class="menu">
+      <summary aria-label="{{ t.menu }}"><svg class="ico"><use href="#i-menu"/></svg></summary>
+      <nav aria-label="{{ t.menu }}">{% for item in t.nav %}<a href="{{ home }}#{{ item[0] }}">{{ item[1] }}</a>{% endfor %}</nav>
+    </details>
+    <div class="bar__tools">
+      <a class="lang" href="{{ other_url ~ (canonical ?? '/') }}" hreflang="{{ other_lang }}" lang="{{ other_lang }}" data-lang-switch>{{ t.other_lang_short }}</a>
+      <a class="btn btn--line btn--sm bar__call" href="tel:{{ c.tel1 }}"><svg class="ico"><use href="#i-phone"/></svg><span class="num">{{ c.tel1_show }}</span></a>
+    </div>
+  </div>
+</header>
+
+{% block main %}{% endblock %}
+
+<footer class="foot navy">
+  <div class="wrap">
+    <div class="foot__grid">
+      <div><b>{{ t.brand }}</b><p>{{ t.foot_p }}</p></div>
+      <nav aria-label="{{ t.foot_nav }}">{% for item in t.nav %}<a href="{{ home }}#{{ item[0] }}">{{ item[1] }}</a>{% endfor %}<a href="/privacy/">{{ t.pv_link }}</a></nav>
+      <div><a href="{{ other_url ~ (canonical ?? '/') }}" hreflang="{{ other_lang }}" lang="{{ other_lang }}" data-lang-switch>{{ t.other_lang_long }}</a></div>
+    </div>
+    <p class="foot__fine">{{ t.foot_fine }}</p>
+  </div>
+</footer>
+
+<nav class="dock navy" aria-label="{{ t.dock_label }}">
+  <a href="tel:{{ c.tel1 }}"><svg class="ico"><use href="#i-phone"/></svg>{{ t.dock_call }}</a>
+  <a class="is-primary" href="{{ m.wa(t.wa_hello, c.wa) }}" rel="noopener"><svg class="ico"><use href="#i-chat"/></svg>{{ t.dock_wa }}</a>
+  <a href="{{ home }}#explorer" data-focus-search><svg class="ico"><use href="#i-search"/></svg>{{ t.dock_search }}</a>
+</nav>
+{% block after %}{% endblock %}
+<script type="application/json" id="i18n">{{ js_strings|raw }}</script>
+</body>
+</html>

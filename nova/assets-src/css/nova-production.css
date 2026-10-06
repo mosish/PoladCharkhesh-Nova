@@ -1,0 +1,68 @@
+/* Polad Charkhesh Nova — production additions to the frozen design system (nova.css, Gate 2).
+   Only what the production model needs (D20 listed items, the Product page, rich content, the live form), built
+   from the same tokens, layers and components; no new visual language. */
+
+@layer comp {
+  /* Explorer: a Product row names its listed designations under the Product designation (05 §5) */
+  .cat__items { display: flex; flex-wrap: wrap; gap: 2px 10px; margin-top: 2px; font-family: var(--mono); font-size: var(--fs--2); color: var(--ink-3); }
+  .cat__varies { font-family: var(--font); font-size: var(--fs--2); color: var(--ink-3); }
+
+  /* Workspace: listed-item selection (frozen .seg control) */
+  .ws__items { margin: 0 20px 12px; flex: none; flex-wrap: wrap; align-self: start; }
+  .ws__items button bdi { font-family: var(--mono); }
+  .ws__sub { font-size: var(--fs-0); margin-top: var(--s5); }
+
+  /* Rich content (05 §27): Nova's renderer emits only these elements */
+  .rc { display: grid; gap: var(--s3); color: var(--ink-2); font-size: var(--fs-0); line-height: 1.8; max-width: 72ch; }
+  .rc h3, .rc h4 { color: var(--ink); line-height: 1.4; margin-top: var(--s3); }
+  .rc h3 { font-size: var(--fs-2); } .rc h4 { font-size: var(--fs-1); }
+  .rc ul, .rc ol { margin: 0; padding-inline-start: 1.4em; display: grid; gap: var(--s1); }
+  .rc a { color: var(--link); }
+  .rc .mono { color: var(--ink); font-weight: 600; }
+  .rc-table { overflow-x: auto; border-top: 1.5px solid var(--line); }
+  .rc-table table { width: 100%; font-size: var(--fs--1); }
+  .rc-table caption { caption-side: top; text-align: start; font-size: var(--fs--2); color: var(--ink-3); padding: 8px 0; }
+  .rc-table th, .rc-table td { text-align: start; padding: 8px 12px; border-bottom: 1px solid var(--line-3); }
+  .rc-table th { font-weight: 600; color: var(--ink); }
+  .rc-figure { border: 1px solid var(--line-2); background: var(--sheet); }
+  .rc-figure img { width: 100%; height: auto; }
+  .rc-figure figcaption { border-top: 1px solid var(--line-2); padding: 6px 12px; font-size: var(--fs--2); color: var(--ink-3); }
+  .rc-doc a { font-weight: 600; } .rc-doc__meta { font-size: var(--fs--2); color: var(--ink-3); }
+
+  /* Inquiry form: honeypot is never shown; failures read as errors (05 §13) */
+  .hp { position: absolute; inline-size: 1px; block-size: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  .form__err { grid-column: 1 / -1; color: var(--danger); border-inline-start: 3px solid var(--danger); padding: 8px 12px; background: var(--sheet); font-size: var(--fs--1); }
+}
+
+@layer sect {
+  /* Product page (/p/<slug>/): the workspace's components, laid out as a sheet (05 §17, §25) */
+  .pp__crumb { margin-bottom: var(--s5); font-size: var(--fs--1); }
+  .pp__crumb a { display: inline-flex; align-items: center; gap: 6px; color: var(--link); }
+  .pp__back { transform: scaleX(-1); }
+  [dir="rtl"] .pp__back { transform: none; }
+  .pp__head { display: grid; gap: var(--s3); margin-bottom: var(--s6); }
+  .pp__head .ws__match { justify-self: start; }
+  .pp__def { max-width: 60ch; }
+  .pp__title { grid-column: 1 / -1; font-size: var(--fs-5); line-height: var(--lh-d); }
+  .pp__h { font-size: var(--fs-3); margin: var(--s7) 0 var(--s4); }
+  .pp__about .rc { margin-bottom: var(--s4); }
+  .pp__toc { margin-bottom: var(--s5); flex-wrap: wrap; }
+  .pp__toc a { padding: 7px 12px; border-inline-end: 1px solid var(--line-3); background: var(--sheet); color: var(--ink-2); font-family: var(--mono); font-size: var(--fs--1); text-decoration: none; }
+  .pp__toc a:last-child { border-inline-end: 0; }
+  .pp__toc a:hover { background: var(--tint); color: var(--ink); }
+  .pp__item { border: 1px solid var(--line-2); background: var(--sheet); margin-bottom: var(--s6); scroll-margin-top: calc(var(--bar-h) + 16px); }
+  .pp__item:target { box-shadow: inset 3px 0 0 var(--ice); }
+  .pp__item-h { font-family: var(--mono); font-weight: 600; font-size: var(--fs-3); padding: 14px 20px; }
+  .pp__item-body { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: var(--col-gap); padding: 20px; align-items: start; }
+  .pp__item-body > div { display: grid; gap: var(--s4); min-width: 0; }
+  .pp__item-body:not(:has(.dwg)) { grid-template-columns: minmax(0, 1fr); }
+  .pp__ctas { display: flex; flex-wrap: wrap; gap: 8px; padding: 0 20px 20px; }
+  .pp__more { display: grid; gap: var(--s3); }
+  .pp__none { display: grid; gap: var(--s3); justify-items: start; }
+  .pp__prose { margin-bottom: var(--s6); }
+  @media (max-width: 899px) {
+    .pp__item-body { grid-template-columns: minmax(0, 1fr); padding: 16px; }
+    .pp__item-h { padding: 12px 16px; }
+    .pp__ctas { padding: 0 16px 16px; }
+  }
+}

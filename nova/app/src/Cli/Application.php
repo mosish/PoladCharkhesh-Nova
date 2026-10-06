@@ -41,6 +41,9 @@ final class Application
                 'migrate:status' => $this->migrateStatus(),
                 'dev:sample-catalogue' => $this->sampleCatalogue(),
                 'dev:reset' => $this->devReset(),
+                'assets:build' => $this->assetsBuild(),
+                'dev:preview' => $this->devPreview(),
+                'dev:e2e' => $this->devE2e(),
                 default => $this->help(),
             };
         } catch (MigrationError $e) {
@@ -121,6 +124,46 @@ final class Application
         return $this->sampleCatalogue();
     }
 
+    private function assetsBuild(): int
+    {
+        $manifest = \Nova\Publish\AssetBuilder::build($this->paths->root . '/assets-src', $this->paths->root . '/public_html/assets');
+        $this->output->line('Built ' . \count($manifest) . ' assets into public_html/assets/.');
+
+        return 0;
+    }
+
+    /** DEVELOPMENT ONLY: renders the current catalogue (with the SAMPLE fixtures) into public_html/_site/preview. */
+    private function devPreview(): int
+    {
+        if ($this->config->environment !== Environment::Development) {
+            $this->output->error('dev:preview is available only in development.');
+
+            return 2;
+        }
+        $out = $this->paths->root . '/public_html/_site/preview';
+        \Nova\Core\Files::removeTree($out);
+        $data = \Nova\Publish\SiteData::load($this->pdo(), true, $this->paths->root . '/app/i18n/contact.php');
+        $builder = new \Nova\Publish\SiteBuilder($this->paths->root . '/app', $this->paths->root . '/public_html/assets', \Nova\Publish\BuildConfig::development());
+        $files = $builder->build($data, $out);
+        $this->output->line('Rendered ' . \count($files) . ' files: http://fa.nova.localhost:8080/ · http://en.nova.localhost:8080/');
+
+        return 0;
+    }
+
+    /** DEVELOPMENT ONLY: the browser-test site: dev:reset + synthetic QZ fixtures + assets + preview. */
+    private function devE2e(): int
+    {
+        $code = $this->devReset();
+        if ($code !== 0 || !class_exists(\Nova\Dev\SyntheticCatalogue::class)) {
+            return $code === 0 ? 2 : $code;
+        }
+        \Nova\Dev\SyntheticCatalogue::load($this->pdo(), $this->config->environment);
+        $this->output->line('Added the SYNTHETIC browser-test designations (QZ…).');
+        $this->assetsBuild();
+
+        return $this->devPreview();
+    }
+
     /** The real pre-migration backup arrives with step 12; until then a non-empty database is refused. */
     private function backupGuard(): BackupGuard
     {
@@ -147,6 +190,8 @@ final class Application
         $this->output->line('  migrate:status          list migrations and their state');
         $this->output->line('  dev:sample-catalogue    load the Phase 2 SAMPLE fixtures (development only)');
         $this->output->line('  dev:reset               rebuild the local development database with the SAMPLE fixtures (development only)');
+        $this->output->line('  assets:build            build content-hashed assets into public_html/assets/');
+        $this->output->line('  dev:preview             render the site with SAMPLE data into public_html/_site/preview (development only)');
 
         return 0;
     }

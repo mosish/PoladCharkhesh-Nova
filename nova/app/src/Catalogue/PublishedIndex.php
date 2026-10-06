@@ -32,6 +32,7 @@ final class PublishedIndex
         }
 
         $variantIds = [];
+        $variantProduct = [];
         foreach (Sql::rows($pdo, "SELECT v.id, v.product_id, v.slug, v.designation, v.listed, v.relationship_confirmed_at FROM product_variant v WHERE v.status = 'published' ORDER BY v.product_id, v.sort, v.id") as $v) {
             $productId = (int) $v['product_id'];
             if (!isset($products[$productId])) {
@@ -42,12 +43,15 @@ final class PublishedIndex
             }
             $products[$productId]['variants'][] = ['id' => 'v:' . $v['slug'], 'designation' => (string) $v['designation'], 'listed' => (int) $v['listed'] === 1];
             $variantIds[(int) $v['id']] = 'v:' . $v['slug'];
+            $variantProduct[(int) $v['id']] = $productId;
         }
 
         $spellings = [];
         foreach (Sql::rows($pdo, 'SELECT spelling, product_id, variant_id, confirmed_at FROM spelling ORDER BY id') as $s) {
             $target = $s['product_id'] !== null ? ($products[(int) $s['product_id']]['id'] ?? null) : ($variantIds[(int) $s['variant_id']] ?? null);
-            if ($target === null || $s['confirmed_at'] === null) {
+            $owner = $s['product_id'] !== null ? (int) $s['product_id'] : ($variantProduct[(int) $s['variant_id']] ?? 0);
+            $sample = $includeSamples && ($productIds[$owner] ?? false);
+            if ($target === null || ($s['confirmed_at'] === null && !$sample)) {
                 continue;
             }
             $spellings[] = ['spelling' => (string) $s['spelling'], 'target' => $target];

@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+{% import 'macros.twig' as m %}
+{% block main %}
+<main id="main">
+<section class="sheet" aria-labelledby="nf-h">
+  <div class="wrap">
+    {{ m.sheethead(3, t.s3) }}
+    <div class="empty pp__none">
+      <svg class="ico" aria-hidden="true"><use href="#i-search"/></svg>
+      <b id="nf-h">{{ t.nf_h }}</b>
+      <span>{{ t.nf_p }}</span>
+      <a class="btn" href="/#explorer">{{ t.nf_home }}</a>
+    </div>
+  </div>
+</section>
+</main>
+{% endblock %}

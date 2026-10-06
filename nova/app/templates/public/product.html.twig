@@ -1,0 +1,81 @@
+{% extends 'base.html.twig' %}
+{% import 'macros.twig' as m %}
+{% block scripts %}<script type="module" src="{{ asset('product-page.js') }}"></script>{% endblock %}
+{% block structured %}{% if structured %}<script type="application/ld+json">{{ structured|raw }}</script>{% endif %}{% endblock %}
+{% block sheet_now %}03{% endblock %}
+{% block main %}
+{% set items = p.items %}
+{% set srcmap = p.sources|reduce((acc, s) => acc|merge({(s.key): s}), {}) %}
+<main id="main">
+<section class="sheet pp" data-sheet="03" aria-labelledby="pp-title" data-slug="{{ p.slug }}">
+  <div class="wrap">
+    {{ m.sheethead(3, t.s3) }}
+    <p class="pp__crumb"><a href="/#explorer"><svg class="ico ico--dir pp__back" aria-hidden="true"><use href="#i-arrow"/></svg>{{ t.pp_back }}</a></p>
+    <header class="pp__head">
+      <h1 class="ws__code" id="pp-title"><bdi dir="ltr">{{ p.designation }}</bdi></h1>
+      <div class="ws__meta"><span>{{ p.family[lang] }}</span>{{ m.badge(p.verified, t) }}</div>
+      <p class="ws__match" id="pp-match" hidden></p>
+      <p class="pp__def muted">{{ p.family['def_' ~ lang] }}</p>
+    </header>
+
+    {% if description_html %}
+    <section class="pp__about" aria-labelledby="pp-about-h">
+      <h2 class="pp__h" id="pp-about-h">{{ t.pp_about }}</h2>
+      <div class="rc{% if lang == 'en' %} en-prose{% endif %}">{{ description_html|raw }}</div>
+    </section>
+    {% endif %}
+
+    <h2 class="pp__h">{{ t.pp_items_h }}</h2>
+    {% if items is empty %}
+    <div class="empty pp__none"><svg class="ico" aria-hidden="true"><use href="#i-doc"/></svg><span>{{ t.pp_items_none|fill({code: p.designation}) }}</span>
+      <a class="btn" href="{{ m.wa(js.wa_ask|default('')|fill({q: p.designation|iso}), c.wa) }}" rel="noopener"><svg class="ico" aria-hidden="true"><use href="#i-chat"/></svg><span>{{ t.pp_ask|fill({code: p.designation}) }}</span></a>
+    </div>
+    {% else %}
+    {% if items|length > 1 %}
+    <nav class="pp__toc seg" aria-label="{{ t.pp_items_h }}"><span>{{ items|length }}</span>{% for item in items %}<a href="#{{ item.anchor }}"><bdi dir="ltr">{{ item.designation }}</bdi></a>{% endfor %}</nav>
+    {% endif %}
+    {% for item in items %}
+    {% set core = item.values|filter(v => v.core) %}
+    {% set keys = item.values|map(v => v.src)|filter(k => k is not null)|reduce((acc, k) => k in acc ? acc : acc|merge([k]), []) %}
+    <article class="pp__item" id="{{ item.anchor }}" aria-labelledby="h-{{ item.anchor }}" data-designation="{{ item.designation }}">
+      <h3 class="pp__item-h" id="h-{{ item.anchor }}"><bdi dir="ltr">{{ item.designation }}</bdi></h3>
+      {% if core %}
+      <div class="readout" style="--n:{{ core|length }}" role="group" aria-label="{{ js.readout }}">{% for v in core %}<div class="{{ v.st == 'ok' ? '' : 'is-pending' }}"><small><bdi dir="ltr">{{ v.s }}</bdi> · <span>{{ v[lang] }}</span></small><b>{{ v.v }}<i>{{ v.u }}</i></b>{% if v.st == 'ok' and v.src %}<span class="pv" aria-hidden="true">{{ v.src }}</span><span class="sr">{{ js.st_val_ok }}, {{ js.col_src }} {{ v.src }}</span>{% else %}<span class="pv pv--pending">{{ js.st_val_pending }}</span>{% endif %}</div>{% endfor %}</div>
+      {% endif %}
+      <div class="pp__item-body">
+        {% if item.drawing %}<figure class="dwg">{{ item.drawing|raw }}<figcaption><span>{{ item.designation }} · SECTION</span><span>NTS</span></figcaption></figure>{% endif %}
+        <div>
+          {% if item.values %}
+          <table class="spec prov"><caption>{{ js.item_values_h|fill({code: item.designation|iso}) }}</caption>
+            <thead><tr><th scope="col">{{ js.prop }}</th><th scope="col" class="sym">{{ js.sym }}</th><th scope="col" class="val">{{ js.value }}</th><th scope="col" class="pvc">{{ js.col_src }}</th></tr></thead>
+            <tbody>{% for v in item.values %}<tr class="{{ v.st == 'ok' ? '' : 'is-pending' }}"><th scope="row">{{ v[lang] }}</th><td class="sym"><bdi dir="ltr">{{ v.s }}</bdi></td><td class="val"><bdi dir="ltr">{{ v.v }}</bdi> <span class="u">{{ v.u }}</span></td><td class="pvc">{% if v.st == 'ok' and v.src %}<span class="pv" aria-hidden="true">{{ v.src }}</span><span class="sr">{{ js.st_val_ok }}, {{ js.col_src }} {{ v.src }}</span>{% elseif v.src %}<span class="pv pv--pending">{{ js.st_val_pending }}</span> <span class="pv" aria-hidden="true">{{ v.src }}</span><span class="sr">{{ js.col_src }} {{ v.src }}</span>{% else %}<span class="pv pv--pending">{{ js.st_val_pending }}</span> <span class="note">{{ js.no_src }}</span>{% endif %}</td></tr>{% endfor %}</tbody>
+          </table>
+          {% else %}
+          <p class="note">{{ js.no_values|fill({code: item.designation|iso}) }}</p>
+          {% endif %}
+          {% if keys %}
+          <div class="prov-legend"><b>{{ js.prov_h }}</b><ol>{% for k in keys %}{% set s = srcmap[k] %}<li><span class="pv" aria-hidden="true">{{ k }}</span><span class="sr">{{ js.col_src }} {{ k }}:</span>{% if s.url %}<a href="{{ s.url }}" target="_blank" rel="noopener" lang="en" dir="ltr">{{ s.label }} <svg class="ico" aria-hidden="true"><use href="#i-ext"/></svg></a>{% else %}<span lang="en" dir="ltr">{{ s.label }}</span>{% endif %}{% if s.checked %}<span>{{ js.checked_t|fill({date: s.checked}) }}</span>{% endif %}</li>{% endfor %}</ol><p class="note">{{ js.prov_note }}</p></div>
+          {% endif %}
+        </div>
+      </div>
+      <div class="pp__ctas">
+        <a class="btn" href="{{ m.wa(js.wa_code|fill({code: item.designation|iso}), c.wa) }}" rel="noopener"><svg class="ico" aria-hidden="true"><use href="#i-chat"/></svg><span>{{ t.cta_wa }}</span></a>
+        <a class="btn btn--line" href="tel:{{ c.tel1 }}"><svg class="ico" aria-hidden="true"><use href="#i-phone"/></svg><span>{{ t.cta_call }}</span></a>
+        <a class="btn btn--line" href="/?r={{ item.designation|url_encode }}&amp;p={{ p.slug|url_encode }}&amp;i={{ item.slug|url_encode }}#inquiry" data-item="{{ item.slug }}"><svg class="ico ico--dir" aria-hidden="true"><use href="#i-send"/></svg><span>{{ t.cta_form }}</span></a>
+      </div>
+    </article>
+    {% endfor %}
+    {% endif %}
+
+    <section class="pp__more" aria-labelledby="pp-more-h">
+      <h2 class="pp__h" id="pp-more-h">{{ js.rating_h }}</h2>
+      <p class="note">{{ js.rating_p }}</p>
+      {% if p.spellings %}<p class="src"><span>{{ js.spellings_h }}:</span>{% for s in p.spellings %}<span class="chip" dir="ltr">{{ s }}</span>{% endfor %}</p>{% endif %}
+      <p class="note">{{ js.dwg_cap }}</p>
+      <p class="ws__msg">{{ t.ws_msg }}</p>
+    </section>
+  </div>
+</section>
+</main>
+{% endblock %}
+{% block after %}<script type="application/json" id="dindex">{{ dindex|raw }}</script>{% endblock %}
