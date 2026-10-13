@@ -15,10 +15,12 @@ use Nova\Core\Files;
  * - kind 'publish': `identity` (what the release publishes, captured from the
  *   snapshot) and `summary` are stored before the switch, so recovery records
  *   the release that actually went live, not whatever the database holds now.
+ *   `snapshot` holds the content changes the snapshot contains that no earlier
+ *   release recorded (ChangeTracking), recorded with the release.
  * - kind 'rollback': written before the switch back; `release` is the target.
  *
  * @phpstan-type Identity array{products: list<int>, variants: list<int>}
- * @phpstan-type SnapshotPoint array{audit: int, gaps: list<int>}
+ * @phpstan-type SnapshotPoint array{audit: int, changes: list<int>}
  * @phpstan-type Entry array{kind?: string, release: string, record: int, strategy: string, previous: ?string, step: string, at: int, by?: array<string, int|string>, identity?: Identity, snapshot?: SnapshotPoint, summary?: array<string, mixed>}
  */
 final readonly class PublishJournal

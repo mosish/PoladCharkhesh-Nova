@@ -25,6 +25,7 @@ use Nova\Security\ArraySessionStore;
 use Nova\Security\Totp;
 use Nova\Security\UserAdmin;
 use Nova\Tests\Integration\Catalogue\CatalogueFixture;
+use Nova\Tests\Integration\Publish\BrokenAfterActivate;
 use Nova\Tests\Integration\Publish\FailingActivate;
 use Nova\Tests\Integration\Publish\TestClock;
 use Nova\Tests\Integration\Publish\ThrowAfterActivate;
@@ -461,5 +462,87 @@ final class AdminAppTest extends TestCase
         $flash = $this->flash()[0] ?? ['type' => '', 'text' => '', 'detail' => null];
         self::assertStringNotContainsString('تغییری نکرد', $flash['text'], 'must not claim the live release is unchanged');
         self::assertStringContainsString($first, $flash['text'] . ' ' . ($flash['detail'] ?? ''));
+    }
+
+    // ---- unverifiable live state is never reported as "unchanged" or "recovered"
+
+    /** @return array{type: string, text: string, detail: ?string} */
+    private function lastFlash(): array
+    {
+        return $this->flash()[0] ?? ['type' => '', 'text' => '', 'detail' => null];
+    }
+
+    public function testAFirstPublishThatFailsBeforeItsSwitchReportsAVerifiedAbsence(): void
+    {
+        $this->signInEditor();
+        $this->switcher = static fn(string $dir): ReleaseSwitcher => new FailingActivate(new SymlinkSwitcher($dir));
+        $this->app = $this->app();
+        $this->req('POST', '/admin/publish');
+
+        self::assertNull((new SymlinkSwitcher($this->tmp . '/site'))->current());
+        $flash = $this->lastFlash();
+        self::assertStringContainsString('دست‌نخورده', $flash['text']);
+        self::assertStringContainsString('هنوز نسخه‌ای زنده نیست', $flash['text'], 'a verified absence is stated as such');
+        self::assertStringNotContainsString('قابل تأیید نیست', $flash['text']);
+    }
+
+    public function testAnUnreadableLiveStateIsReportedAsUnverified(): void
+    {
+        $this->signInEditor();
+        $this->req('POST', '/admin/publish');
+        $this->session->remove('flash');
+        // Something outside Nova replaced the release link: the live release cannot be read.
+        unlink($this->tmp . '/site/current');
+        symlink('/nonexistent/releases/R-20261006-100000-aaaa', $this->tmp . '/site/current');
+
+        $this->req('POST', '/admin/publish');
+        $flash = $this->lastFlash();
+        self::assertSame('error', $flash['type']);
+        self::assertStringContainsString('قابل تأیید نیست', $flash['text']);
+        self::assertStringNotContainsString('دست‌نخورده', $flash['text'], 'no claim that the live site is unchanged');
+        self::assertStringNotContainsString('هنوز نسخه‌ای زنده نیست', $flash['text'], 'no claim that nothing is live');
+        self::assertStringNotContainsString('کامل کرد', $flash['text'], 'no claim of a successful recovery');
+
+        $this->session->remove('flash');
+        $this->req('POST', '/admin/publish/rollback');
+        $flash = $this->lastFlash();
+        self::assertStringContainsString('قابل تأیید نیست', $flash['text']);
+        self::assertStringNotContainsString('تغییری نکرد', $flash['text']);
+    }
+
+    public function testAPublishWhoseRecoveryFailsIsReportedAsUnverified(): void
+    {
+        $this->signInEditor();
+        $this->req('POST', '/admin/publish');
+        $this->session->remove('flash');
+
+        $this->switcher = static fn(string $dir): ReleaseSwitcher => new BrokenAfterActivate(new SymlinkSwitcher($dir));
+        $this->app = $this->app();
+        $this->req('POST', '/admin/publish');
+
+        $flash = $this->lastFlash();
+        self::assertSame('error', $flash['type']);
+        self::assertStringContainsString('قابل تأیید نیست', $flash['text']);
+        self::assertStringNotContainsString('دست‌نخورده', $flash['text']);
+        self::assertStringNotContainsString('کامل کرد', $flash['text']);
+        self::assertFileExists($this->tmp . '/journal.json', 'the interrupted publish is still waiting for recovery');
+    }
+
+    public function testARollbackWhoseRecoveryFailsIsReportedAsUnverified(): void
+    {
+        $this->signInEditor();
+        $this->req('POST', '/admin/publish');
+        $this->session->remove('flash');
+        $this->req('POST', '/admin/publish');
+        $this->session->remove('flash');
+
+        $this->switcher = static fn(string $dir): ReleaseSwitcher => new BrokenAfterActivate(new SymlinkSwitcher($dir));
+        $this->app = $this->app();
+        $this->req('POST', '/admin/publish/rollback');
+
+        $flash = $this->lastFlash();
+        self::assertStringContainsString('قابل تأیید نیست', $flash['text']);
+        self::assertStringNotContainsString('تغییری نکرد', $flash['text']);
+        self::assertStringNotContainsString('کامل کرد', $flash['text']);
     }
 }

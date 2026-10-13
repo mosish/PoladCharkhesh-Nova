@@ -369,3 +369,25 @@ Verification (Docker; a new disposable database plus a disposable stack with its
 - `nova` (schema 0004), `nova_test` and the live preview `R-20261012-131225-9d1c` were untouched, and the Admin was not activated in the dev stack.
 
 **Resume point:** the owner's review of Step 9, then the go-ahead for Step 10 (inquiry endpoint).
+
+**Step 9 corrections, 2026-10-13, owner-requested (committed and pushed to GitHub `main`; awaits the owner's review, no gate approved):**
+
+1. **The look-back window could miss a change.** `PublishEngine::snapshotPoint()` used a 1,000-id look-back, which missed a change whose transaction stayed open while more than 1,000 later changes committed.
+   - Reproduced: one open change, then 1,200 committed changes, then the snapshot, then the open change commits. The count read 0 instead of 1.
+   - Fix: exact tracking with no window (migration 0007 `publish_change`, `ChangeTracking`). Each live release records the content changes its snapshot contained that no earlier release recorded, and "in release R" means recorded by R or an earlier release.
+   - Rollback and recovery are preserved: recovery records the journalled list.
+   - The 0006 `snapshot_audit_gaps` column is dropped; `snapshot_audit_id` stays as the marker for a tracked release.
+   - Tests: `UnpublishedChangesTest` (6 tests, including the 1,200-change case and a recovered publish followed by a rollback).
+2. **Unverifiable live state reported as fact.** An unreadable live release and a failed recovery were both reported as "unchanged" and "no release live yet". Reproduced: 3 failing `AdminAppTest` tests.
+   - Fix: `liveOf()` distinguishes a release, a verified absence and "cannot be read".
+   - A failed recovery raises `RecoveryFailed`, carrying both errors.
+   - `pendingRecovery()` reports an interrupted operation still in the journal.
+   - The message claims neither "unchanged" nor "recovered" without that evidence.
+   - Tests: 4 new `AdminAppTest` tests: verified absence, unreadable link (publish and rollback), failed recovery (publish and rollback, using `BrokenAfterActivate`).
+
+Verification (Docker; new disposable databases plus a disposable stack with its own docroot and storage on port 8090; all removed):
+- PHPUnit 584 tests / 6,776 assertions; PHPStan max; CS clean; 171 JS tests.
+- Playwright: `admin.spec.js` 12/12, `site.spec.js` 32/32, `stack.spec.js` 4/4.
+- `nova` (schema 0004), `nova_test` and the preview `R-20261012-131225-9d1c` were untouched.
+
+**Resume point:** the owner's review of Step 9, then the go-ahead for Step 10.

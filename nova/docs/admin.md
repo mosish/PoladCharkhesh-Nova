@@ -22,10 +22,17 @@ Built and verified locally on 2026-10-12. It approves nothing and changes no dec
   - **A7 Publish:** live release, changes since it went live (audit trail, with who made them), a validation dry run, the publish button, retained history and rollback.
 - **Navigation:** shows the full frozen structure; screens built in later steps are listed as "به‌زودی" and are not links.
 - **Several forms on one page:** the Product editor has many forms, and saving one reloads the page. If other forms hold unsaved edits, the save first asks («در N بخش دیگر این صفحه تغییرات ذخیره‌نشده دارید…»). Nothing is discarded silently, and leaving the page with edits still asks too.
-- **Unpublished changes** (top bar, dashboard, A7) are the content changes the live release does not contain, measured against the snapshot that release was built from (migration 0006: `snapshot_audit_id` and `snapshot_audit_gaps`), not against when it went live.
-  - It stays right after a rollback: the changes that are no longer live reappear.
-  - An edit saved while a release was being built counts as unpublished, including one whose transaction was still open at the snapshot.
-- **After a failed publish or rollback,** the message states which release is live now, read from the switch. If the switch had happened, the engine's recovery has finished it and the message names the new release; otherwise it says the live release is unchanged and names it.
+- **Unpublished changes** (top bar, dashboard, A7) are exactly the content changes the live release does not contain, with no look-back window (migration 0007, `ChangeTracking`).
+  - Each live release records, as append-only `publish_change` rows, the content changes its consistent snapshot contained that no earlier release recorded.
+  - A change is in release R if and only if R or an earlier release recorded it. Releases are numbered in snapshot order, one publish at a time, and a committed change stays visible.
+  - It stays right after a rollback: changes recorded by later releases count as unpublished again.
+  - A change saved while a release was being built counts as unpublished. So does a change whose transaction was still open at the snapshot, however many later changes committed in between (tested with 1,200).
+  - Recovery records the journalled list, so a recovered release is tracked like any other.
+  - A live release published before tracking existed falls back, approximately, to the time it was first recorded.
+- **After a failed publish or rollback,** the message says only what is verified.
+  - The state counts as verified only when the engine's own recovery succeeded, no interrupted operation is left waiting in the journal, and the live release could be read before and after.
+  - Then the message names the release that is live now, saying whether recovery finished a switch or nothing changed. "No release is live yet" appears only when that absence was read.
+  - If recovery failed (`RecoveryFailed`, which carries both errors) or the live release cannot be read, the message says the current state could not be verified and points to `publish:status` and `publish:recover`. It never says "unchanged" or "recovered".
 
 ## Security properties (05 §6, §14, §15; E-10)
 

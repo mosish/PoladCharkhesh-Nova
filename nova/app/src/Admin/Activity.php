@@ -46,7 +46,7 @@ final class Activity
     /**
      * @param list<array<string, scalar|null>> $rows audit_event rows joined with the user's display_name
      *
-     * @return list<array{who: string, text: string, label: string, at: string, action: string}>
+     * @return list<array{id: int, who: string, text: string, label: string, at: string, action: string}>
      */
     public static function describe(array $rows): array
     {
@@ -60,7 +60,7 @@ final class Activity
                 default => 'سیستم',
             };
             $action = (string) $r['action'];
-            $out[] = ['who' => $who, 'text' => self::VERBS[$action] ?? 'رویداد ثبت شد: ' . $action, 'label' => (string) ($r['entity_label'] ?? ''), 'at' => (string) $r['occurred_at'], 'action' => $action];
+            $out[] = ['id' => (int) $r['id'], 'who' => $who, 'text' => self::VERBS[$action] ?? 'رویداد ثبت شد: ' . $action, 'label' => (string) ($r['entity_label'] ?? ''), 'at' => (string) $r['occurred_at'], 'action' => $action];
         }
 
         return $out;

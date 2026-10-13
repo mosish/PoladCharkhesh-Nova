@@ -10,6 +10,7 @@ use Nova\Http\Response;
 use Nova\Publish\Clock;
 use Nova\Publish\Initiator;
 use Nova\Publish\PublishEngine;
+use Nova\Publish\RecoveryFailed;
 use Nova\Publish\SystemClock;
 use Nova\Security\Actor;
 use Nova\Security\AdminAuth;
@@ -305,7 +306,7 @@ final class AdminApp
             if (str_contains($e->getMessage(), 'in progress')) {
                 $this->flash('error', 'انتشار دیگری در حال اجراست؛ چند لحظه بعد دوباره تلاش کنید.', $e->getMessage());
             } else {
-                $this->flashAfterError('انتشار', $before, self::liveOf($engine), $e);
+                $this->flashAfterError('انتشار', $before, $engine, $e);
             }
 
             return Response::redirect('/admin/publish');
@@ -327,33 +328,53 @@ final class AdminApp
             $release = $engine->rollback(Initiator::admin($actor));
             $this->flash('ok', 'سایت به نسخه قبلی برگشت.', $release);
         } catch (RuntimeException $e) {
-            $this->flashAfterError('بازگشت', $before, self::liveOf($engine), $e);
+            $this->flashAfterError('بازگشت', $before, $engine, $e);
         }
 
         return Response::redirect('/admin/publish');
     }
 
     /**
-     * After a failed publish or rollback the engine has already recovered: a
-     * switch that happened was finished, one that did not was rolled back.
-     * The message states which release is live now, read from the switch.
+     * After a failed publish or rollback, says only what is verified. The
+     * engine normally recovers on its error path (a switch that happened is
+     * finished, one that did not is undone). The state counts as verified only
+     * when that recovery succeeded, nothing is left waiting in the journal,
+     * and the live release can be read, before and after. Otherwise the
+     * message says the current state could not be verified, and claims
+     * neither "unchanged" nor a completed recovery.
+     *
+     * @param string|false|null $before the live release before; null = verified that none was live; false = unknown
      */
-    private function flashAfterError(string $operation, ?string $before, ?string $after, RuntimeException $e): void
+    private function flashAfterError(string $operation, string|false|null $before, PublishEngine $engine, RuntimeException $e): void
     {
+        $after = self::liveOf($engine);
+        $pending = true;
+        try {
+            $pending = $engine->pendingRecovery();
+        } catch (Throwable) {
+        }
+        if ($e instanceof RecoveryFailed || $pending || $after === false || $before === false) {
+            $known = $after === false ? '' : ' آخرین وضعیت خوانده‌شده: ' . ($after === null ? 'نسخه زنده‌ای نیست' : "نسخه {$after}") . '.';
+            $this->flash('error', "{$operation} با خطا روبه‌رو شد و وضعیت فعلی سایت قابل تأیید نیست: بازیابی خودکار کامل نشد یا نسخه زنده خوانده نشد.{$known} پیش از هر کار دیگر، وضعیت را در خط فرمان با publish:status و publish:recover بررسی کنید.", $e->getMessage());
+
+            return;
+        }
         $now = $after === null ? 'هنوز نسخه‌ای زنده نیست' : "نسخه زنده: {$after}";
         $this->flash('error', match (true) {
-            $after !== null && $after !== $before => "{$operation} با خطا روبه‌رو شد، اما جابه‌جایی انجام شده بود و بازیابی خودکار آن را کامل کرد. نسخه {$after} اکنون زنده است.",
+            $after !== $before && $after !== null => "{$operation} با خطا روبه‌رو شد، اما جابه‌جایی انجام شده بود و بازیابی خودکار آن را کامل کرد. نسخه {$after} اکنون زنده است.",
+            $after !== $before => "{$operation} با خطا روبه‌رو شد و نسخه زنده‌ای نمانده است.",
             $operation === 'انتشار' => "انتشار انجام نشد؛ سایت زنده دست‌نخورده ماند ({$now}).",
             default => "بازگشت انجام نشد؛ نسخه زنده تغییری نکرد ({$now}).",
         }, $e->getMessage());
     }
 
-    private static function liveOf(PublishEngine $engine): ?string
+    /** The live release read from the switch; null when it verifiably has none; false when it cannot be read. */
+    private static function liveOf(PublishEngine $engine): string|false|null
     {
         try {
             return $engine->live();
         } catch (Throwable) {
-            return null;   // a link Nova did not write: the engine's own error says so
+            return false;
         }
     }
 

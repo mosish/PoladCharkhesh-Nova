@@ -17,6 +17,7 @@ use Nova\Publish\BuildConfig;
 use Nova\Publish\Initiator;
 use Nova\Publish\PublishEngine;
 use Nova\Publish\PublishJournal;
+use Nova\Publish\SimulatedCrash;
 use Nova\Publish\SiteBuilder;
 use Nova\Publish\SymlinkSwitcher;
 use Nova\Tests\Integration\Catalogue\CatalogueFixture;
@@ -132,5 +133,63 @@ final class UnpublishedChangesTest extends TestCase
         self::assertSame('live', $engine->publish(Initiator::cli('test'))->status);
         self::assertSame(1, $this->admin->unpublishedCount(), 'the slow edit was not in the snapshot');
         self::assertSame(['product.update'], array_column($this->admin->changes(), 'action'));
+    }
+
+    /**
+     * However many changes commit after it, a change whose transaction was
+     * still open at the snapshot is not in that release (no look-back window).
+     */
+    public function testAChangeOpenAtTheSnapshotStaysUnpublishedAfterManyLaterChanges(): void
+    {
+        $this->engine()->publish(Initiator::cli('test'));
+        $slow = TestDatabase::connect();
+        $slow->beginTransaction();
+        (new AuditLog($slow))->record($this->f->editor, 'product.update', 'product', $this->product, 'QZ 1', null, ['slow' => true]);
+        $slowId = (int) $slow->lastInsertId();
+
+        // 1,200 later changes commit before the snapshot.
+        $values = implode(', ', array_fill(0, 1200, "(?, 'product.update', 'product', ?, 'QZ 1')"));
+        $params = [];
+        for ($i = 0; $i < 1200; ++$i) {
+            array_push($params, $this->f->editor->userId, $this->product);
+        }
+        Sql::run($this->f->pdo, "INSERT INTO audit_event (user_id, action, entity_type, entity_id, entity_label) VALUES {$values}", $params);
+        self::assertGreaterThan($slowId + 1000, Sql::int($this->f->pdo, 'SELECT MAX(id) FROM audit_event'));
+
+        $engine = $this->engine();
+        $engine->injectFault(static function (string $at) use ($slow): void {
+            if ($at === 'prepared') {                       // the snapshot has been read
+                $slow->commit();
+            }
+        });
+        self::assertSame('live', $engine->publish(Initiator::cli('test'))->status);
+        self::assertSame(1, $this->admin->unpublishedCount(), 'only the change that was still open at the snapshot');
+        self::assertSame([$slowId], array_column($this->admin->changes(), 'id'));
+    }
+
+    public function testARecoveredPublishRecordsWhatItsSnapshotContained(): void
+    {
+        $this->engine()->publish(Initiator::cli('test'));
+        $engine = $this->engine();
+        $engine->injectFault(function (string $at): void {
+            if ($at === 'built') {
+                $this->edit('0');                           // after the snapshot: not in this release
+            }
+            if ($at === 'switched') {
+                throw new SimulatedCrash('killed after the switch');
+            }
+        });
+        try {
+            $engine->publish(Initiator::cli('test'));
+            self::fail('no crash');
+        } catch (SimulatedCrash) {
+        }
+        self::assertNotNull($this->engine()->recover());
+        self::assertSame(1, $this->admin->unpublishedCount());
+
+        $this->engine()->publish(Initiator::cli('test'));
+        self::assertSame(0, $this->admin->unpublishedCount());
+        $this->engine()->rollback(Initiator::cli('test'));
+        self::assertSame(1, $this->admin->unpublishedCount(), 'back on the recovered release, the edit is unpublished again');
     }
 }

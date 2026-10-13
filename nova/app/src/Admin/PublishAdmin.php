@@ -7,6 +7,7 @@ namespace Nova\Admin;
 use Nova\Core\Environment;
 use Nova\Core\Sql;
 use Nova\Publish\BuildConfig;
+use Nova\Publish\ChangeTracking;
 use Nova\Publish\SiteData;
 use Nova\Publish\Validator;
 use PDO;
@@ -20,9 +21,6 @@ use PDO;
  */
 final readonly class PublishAdmin
 {
-    /** Audit actions that are not changes to published content. */
-    private const string NOT_CONTENT = "a.action NOT LIKE 'auth.%' AND a.action NOT LIKE 'user.%' AND a.action NOT LIKE 'publish%' AND a.action NOT LIKE 'migration.%'";
-
     public function __construct(
         private PDO $pdo,
         private BuildConfig $config,
@@ -40,7 +38,7 @@ final readonly class PublishAdmin
 
     public function unpublishedCount(): int
     {
-        [$sql, $params] = $this->sinceLive();
+        [$sql, $params] = ChangeTracking::notLive($this->pdo);
 
         return Sql::int($this->pdo, "SELECT COUNT(*) FROM audit_event a WHERE {$sql}", $params);
     }
@@ -48,7 +46,7 @@ final readonly class PublishAdmin
     /** @return list<array<string, mixed>> */
     public function changes(int $limit = 100): array
     {
-        [$sql, $params] = $this->sinceLive();
+        [$sql, $params] = ChangeTracking::notLive($this->pdo);
 
         return Activity::describe(Sql::rows($this->pdo, "SELECT a.*, u.display_name FROM audit_event a LEFT JOIN app_user u ON u.id = a.user_id WHERE {$sql} ORDER BY a.id DESC LIMIT {$limit}", $params));
     }
@@ -83,31 +81,4 @@ final readonly class PublishAdmin
         return $id === null ? null : (string) $id;
     }
 
-    /**
-     * The content changes the live release does not contain: audit events
-     * newer than its snapshot, or older ids its snapshot could not see yet
-     * (transactions still open then). Deciding by the snapshot, not by when
-     * the release went live, keeps this right after a rollback and for edits
-     * saved during a build. Releases from before migration 0006 have no
-     * snapshot point and fall back to the time they were first recorded.
-     *
-     * @return array{string, list<int|string>}
-     */
-    private function sinceLive(): array
-    {
-        $live = Sql::row($this->pdo, "SELECT finished_at, went_live_at, snapshot_audit_id, snapshot_audit_gaps FROM publish_record WHERE status = 'live' ORDER BY went_live_at DESC, id DESC LIMIT 1");
-        if ($live === null) {
-            return [self::NOT_CONTENT, []];
-        }
-        if ($live['snapshot_audit_id'] === null) {
-            return [self::NOT_CONTENT . ' AND a.occurred_at > ?', [(string) ($live['finished_at'] ?? $live['went_live_at'])]];
-        }
-        $gaps = json_decode((string) ($live['snapshot_audit_gaps'] ?? '[]'), true);
-        $gaps = \is_array($gaps) ? array_values(array_filter($gaps, \is_int(...))) : [];
-        if ($gaps === []) {
-            return [self::NOT_CONTENT . ' AND a.id > ?', [(int) $live['snapshot_audit_id']]];
-        }
-
-        return [self::NOT_CONTENT . ' AND (a.id > ? OR a.id IN (' . implode(', ', array_fill(0, \count($gaps), '?')) . '))', [(int) $live['snapshot_audit_id'], ...$gaps]];
-    }
 }

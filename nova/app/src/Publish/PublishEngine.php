@@ -29,7 +29,6 @@ use Throwable;
 final class PublishEngine
 {
     public const int KEEP = 5;
-    private const int SNAPSHOT_LOOKBACK = 1000;
     private const string LOCK = 'nova_publish';
 
     /** @var (\Closure(string): void)|null */
@@ -73,7 +72,7 @@ final class PublishEngine
             } catch (SimulatedCrash $crash) {
                 throw $crash;                       // a killed process does no cleanup; recover() handles it
             } catch (Throwable $e) {
-                $this->recoverLocked($e->getMessage());
+                $this->recoverAfter($e);
 
                 throw $e;
             }
@@ -86,6 +85,12 @@ final class PublishEngine
     public function live(): ?string
     {
         return $this->switcher->current();
+    }
+
+    /** Whether an interrupted publish or rollback is still waiting to be finished or rolled back. */
+    public function pendingRecovery(): bool
+    {
+        return $this->journal->read() !== null;
     }
 
     /** Finishes or rolls back an interrupted publish or rollback. Safe to call at any time, any number of times. */
@@ -132,7 +137,7 @@ final class PublishEngine
             } catch (SimulatedCrash $crash) {
                 throw $crash;
             } catch (Throwable $e) {
-                $this->recoverLocked();
+                $this->recoverAfter($e);
 
                 throw $e;
             }
@@ -236,7 +241,7 @@ final class PublishEngine
             if ($startedBy !== null) {
                 $summary['started_by'] = $startedBy;
             }
-            $this->recordLive(Initiator::recovery(), $release, $entry['record'], $summary, $entry['identity'] ?? null, $entry['snapshot'] ?? null);
+            $this->recordLive(Initiator::recovery(), $release, $entry['record'], $summary, $entry['identity'] ?? null, self::point($entry['snapshot'] ?? null));
         }
         $this->prune();
         $this->journal->clear();
@@ -247,7 +252,7 @@ final class PublishEngine
     /**
      * @param array<string, mixed> $summary
      * @param Identity|null $identity what the release publishes; null only for a journal written without it
-     * @param SnapshotPoint|null $point where the release's snapshot stands in the audit trail
+     * @param SnapshotPoint|null $point the snapshot's newest audit id and the changes it contains (null: not tracked)
      */
     private function recordLive(Initiator $by, string $release, int $record, array $summary, ?array $identity, ?array $point = null): void
     {
@@ -258,10 +263,12 @@ final class PublishEngine
         try {
             Sql::run($this->pdo, "UPDATE publish_record SET status = 'superseded' WHERE status = 'live' AND id <> ?", [$record]);
             $manifest = @hash_file('sha256', $this->manifestPath($release));
-            Sql::run($this->pdo, "UPDATE publish_record SET status = 'live', went_live_at = UTC_TIMESTAMP(6), finished_at = UTC_TIMESTAMP(6), manifest_sha256 = ?, summary_text = ?, snapshot_audit_id = ?, snapshot_audit_gaps = ? WHERE id = ?", [
-                $manifest === false ? null : $manifest, json_encode($summary, JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR),
-                $point['audit'] ?? null, $point === null ? null : json_encode($point['gaps'], JSON_THROW_ON_ERROR), $record,
+            Sql::run($this->pdo, "UPDATE publish_record SET status = 'live', went_live_at = UTC_TIMESTAMP(6), finished_at = UTC_TIMESTAMP(6), manifest_sha256 = ?, summary_text = ?, snapshot_audit_id = ? WHERE id = ?", [
+                $manifest === false ? null : $manifest, json_encode($summary, JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR), $point['audit'] ?? null, $record,
             ]);
+            if ($point !== null) {
+                ChangeTracking::record($this->pdo, $record, $point['changes']);
+            }
             // Public identity is frozen from the first publish on (slugs, 410/301 on archive).
             foreach ($identity['products'] ?? [] as $id) {
                 Sql::run($this->pdo, 'UPDATE product SET first_published_at = COALESCE(first_published_at, UTC_TIMESTAMP()) WHERE id = ?', [$id]);
@@ -321,26 +328,45 @@ final class PublishEngine
     }
 
     /**
-     * Where the snapshot stands in the audit trail, read inside it: the newest
-     * audit id it sees, and the lower ids it does not see (transactions still
-     * open at the snapshot; they may commit later and are then unpublished).
-     * The look-back is far wider than any open transaction can be.
+     * Read inside the snapshot: its newest audit id, and exactly the content
+     * changes it contains that no earlier release recorded (ChangeTracking).
+     * A change still open at the snapshot is not among them, whatever its id.
      *
      * @return SnapshotPoint
      */
     private function snapshotPoint(): array
     {
-        $newest = Sql::int($this->pdo, 'SELECT COALESCE(MAX(id), 0) FROM audit_event');
-        $from = max(0, $newest - self::SNAPSHOT_LOOKBACK);
-        $seen = array_flip(array_map(intval(...), Sql::column($this->pdo, 'SELECT id FROM audit_event WHERE id > ? AND id <= ?', [$from, $newest])));
-        $gaps = [];
-        for ($id = $from + 1; $id <= $newest; ++$id) {
-            if (!isset($seen[$id])) {
-                $gaps[] = $id;
-            }
+        return ['audit' => Sql::int($this->pdo, 'SELECT COALESCE(MAX(id), 0) FROM audit_event'), 'changes' => ChangeTracking::newInSnapshot($this->pdo)];
+    }
+
+    /**
+     * A journalled snapshot point, or null when the journal predates change
+     * tracking (the release is then recorded without it).
+     *
+     * @return SnapshotPoint|null
+     */
+    private static function point(mixed $point): ?array
+    {
+        if (!\is_array($point) || !\is_int($point['audit'] ?? null) || !\is_array($point['changes'] ?? null)) {
+            return null;
         }
 
-        return ['audit' => $newest, 'gaps' => $gaps];
+        return ['audit' => $point['audit'], 'changes' => array_values(array_filter($point['changes'], \is_int(...)))];
+    }
+
+    /**
+     * The error path of a publish or rollback: finish or undo what the failed
+     * operation did. If that recovery fails too, the live state is unknown, so
+     * the caller gets RecoveryFailed (carrying both errors), never the
+     * original error as if the site were in a known state.
+     */
+    private function recoverAfter(Throwable $failure): void
+    {
+        try {
+            $this->recoverLocked($failure->getMessage());
+        } catch (Throwable $recovery) {
+            throw new RecoveryFailed($failure, $recovery);
+        }
     }
 
     private function recordStatus(int $record): ?string

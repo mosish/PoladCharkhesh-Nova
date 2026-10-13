@@ -55,9 +55,9 @@ The 2026-10-13 source review identified follow-up work in seven areas. Each find
 - atomic TOTP consumption and enrollment;
 - concurrent login-failure counters;
 - cross-form unsaved edits;
-- unpublished-change tracking after rollbacks and during builds;
+- unpublished-change tracking after rollbacks and during builds (now exact per release, with no look-back window);
 - password-check timing for unknown accounts;
-- publish/rollback error messages after recovery.
+- publish/rollback error messages after recovery (an unverifiable state is reported as unverified).
 
 The details and tests are in the [Admin runbook](nova/docs/admin.md) and the [handoff checkpoint](06%20phase3%20handoff%20checkpoint.md). These fixes still await the owner's review; no gate is approved by them.
 
@@ -134,15 +134,14 @@ The JavaScript suite exercises the shared designation corpus. Composer checks PH
 
 Browser testing uses `npm run test:e2e` and requires a prepared local stack. Read the prerequisites in `nova/tests/e2e/` and the Admin runbook first. The `dev:e2e` fixture command changes development data; it is not a read-only check.
 
-Verification evidence for the Step 9 follow-up (2026-10-13). Everything ran in Docker on disposable databases and a disposable stack with its own docroot and storage, all removed afterwards:
+Verification evidence for the Step 9 follow-up (2026-10-13), latest run after the change-tracking and live-state corrections. Everything ran in Docker on disposable databases and a disposable stack with its own docroot and storage, all removed afterwards:
 
-- **PHPUnit:** 574 tests / 6,732 assertions passed; PHPStan at maximum level and PHP style passed.
+- **PHPUnit:** 584 tests / 6,776 assertions passed; PHPStan at maximum level and PHP style passed.
 - **JavaScript:** 171 tests passed.
 - **Playwright on installed Chrome:**
   - Admin: 12/12, including the multiple-form case;
   - public site: 32/32;
   - stack smoke checks: 4/4.
-- **Concurrency:** the suite (independent connections and sessions, plus real parallel processes) passed in 5 of 5 repeats.
 - **Untouched:** the development database, its live release and its volumes.
 - Passing tests do not replace security review, data reconciliation, restore verification or owner acceptance.
 
