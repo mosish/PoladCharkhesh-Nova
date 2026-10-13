@@ -8,8 +8,7 @@
 <meta name="description" content="{{ page_desc }}">
 <meta name="robots" content="{{ robots }}">
 <meta name="theme-color" content="#0b1136">
-{# No icon until the Owner supplies the logo (launch input); an empty one avoids a stray /favicon.ico request. #}
-<link rel="icon" href="data:,">
+<link rel="icon" type="image/svg+xml" sizes="any" href="{{ asset('favicon.svg') }}">
 {% if canonical is not null %}
 <link rel="canonical" href="{{ self_url ~ canonical }}">
 <link rel="alternate" hreflang="fa" href="{{ hosts.fa ~ canonical }}">
@@ -32,7 +31,7 @@
 <body>
 {% include 'partials/symbols.svg.twig' %}
 <a class="skip" href="{% block skip_target %}#main{% endblock %}">{% block skip_label %}{{ t.skip_content }}{% endblock %}</a>
-{% if dev_banner %}<aside class="proto" aria-label="Development build"><div class="wrap"><span>{{ t.dev_banner }}</span></div></aside>{% endif %}
+{% if preview|default(false) %}<aside class="proto" aria-label="Draft preview"><div class="wrap"><span>{{ t.preview_banner }}</span></div></aside>{% elseif dev_banner %}<aside class="proto" aria-label="Development build"><div class="wrap"><span>{{ t.dev_banner }}</span></div></aside>{% endif %}
 <header class="bar navy">
   <div class="wrap bar__in">
     <a class="brand" href="{{ home }}#top" aria-label="{{ t.brand }}">

@@ -1,0 +1,16 @@
+{% extends 'gate.html.twig' %}
+{% block title %}فعال‌سازی ورود دومرحله‌ای{% endblock %}
+{% block gate %}
+<form class="card" method="post" action="/admin/login/enroll" novalidate>
+  <div class="card__h"><h1>فعال‌سازی ورود دومرحله‌ای</h1></div>
+  <div class="card__b">
+    <input type="hidden" name="_csrf" value="{{ csrf }}">
+    <p>حساب مالک بدون ورود دومرحله‌ای استفاده نمی‌شود. این کلید را در برنامه احراز هویت (مانند Google Authenticator یا Aegis) به‌صورت دستی وارد کنید، سپس کد شش‌رقمی آن را بنویسید.</p>
+    <div class="field"><span class="lbl">کلید (فقط همین یک بار نمایش داده می‌شود)</span><p class="secret">{{ secret }}</p></div>
+    <details><summary class="muted">نشانی otpauth برای برنامه‌هایی که آن را می‌پذیرند</summary><p class="uri">{{ uri }}</p></details>
+    {% if failed|default(false) %}<p class="flash flash--error" role="alert">کد پذیرفته نشد. ساعت دستگاه را بررسی کنید و کد تازه را وارد کنید.</p>{% endif %}
+    <div class="field"><label for="code">کد شش‌رقمی برنامه</label><input class="a-in code-in" id="code" name="code" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9۰-۹ ]*" maxlength="8" required autofocus></div>
+    <button type="submit" class="a-btn a-btn--pri a-btn--lg">فعال‌سازی و ورود</button>
+  </div>
+</form>
+{% endblock %}

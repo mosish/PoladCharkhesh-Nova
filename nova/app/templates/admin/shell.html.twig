@@ -1,0 +1,40 @@
+{% extends 'layout.html.twig' %}
+{% set nav = [
+  ['', [['dash', 'پیشخوان', '/admin/']]],
+  ['کاتالوگ', [['products', 'محصولات', '/admin/products'], ['fam', 'خانواده‌ها', null], ['src', 'منابع', null], ['brand', 'برندها', null]]],
+  ['محتوا', [['sections', 'بخش‌های صفحه', null], ['media', 'رسانه', null], ['docs', 'مستندات', null], ['seo', 'سئو', null]]],
+  ['ارتباط', [['inq', 'استعلام‌ها', null], ['company', 'شرکت و تماس', null]]],
+  ['انتشار', [['publish', 'انتشار', '/admin/publish']]],
+  ['سیستم', [['users', 'کاربران و نقش‌ها', null], ['audit', 'گزارش رویدادها', null], ['backup', 'پشتیبان‌گیری', null]]],
+] %}
+{% block body %}
+<a class="skip" href="#main">رفتن به محتوا</a>
+<div class="adm">
+  <header class="adm__top">
+    <a class="adm__brand" href="/admin/">{% include 'mark.html.twig' %} پولاد چرخش <small>مرکز کنترل وب‌سایت</small></a>
+    <span class="adm__state"><span class="dot{% if unpublished == 0 %} dot--ok{% endif %}"></span> <span>{% if unpublished > 0 %}<b>{{ unpublished|fa }} تغییر</b> منتشرنشده{% else %}تغییر منتشرنشده‌ای نیست{% endif %}</span></span>
+    <a class="a-btn a-btn--pri" href="/admin/publish">بررسی و انتشار</a>
+    <a class="a-btn a-btn--q" href="{{ site_url }}" target="_blank" rel="noopener noreferrer">مشاهده سایت ↗</a>
+    <span class="adm__user"><span class="avatar" aria-hidden="true">{{ user.display_name|first }}</span> <span>{{ user.display_name }} · {{ is_owner ? 'مالک' : 'ویرایشگر' }}</span>
+      <form method="post" action="/admin/logout"><input type="hidden" name="_csrf" value="{{ csrf }}"><button type="submit" class="a-btn a-btn--link a-btn--sm">خروج</button></form></span>
+  </header>
+  <div class="adm__body">
+    <nav class="adm__nav" aria-label="بخش‌های مدیریت">
+      {% for group in nav %}
+        {% if group[0] %}<p class="navh">{{ group[0] }}</p>{% endif %}
+        {% for item in group[1] %}
+          {% if item[2] %}
+            <a href="{{ item[2] }}"{% if item[0] == active %} aria-current="page"{% endif %}><i></i>{{ item[1] }}{% if item[0] == 'publish' and unpublished > 0 %}<span class="n">{{ unpublished|fa }}</span>{% endif %}</a>
+          {% else %}
+            <span class="off" title="در فازهای بعدی ساخته می‌شود"><i></i>{{ item[1] }}<small>به‌زودی</small></span>
+          {% endif %}
+        {% endfor %}
+      {% endfor %}
+    </nav>
+    <main class="adm__main" id="main">
+      {% include 'flash.html.twig' %}
+      {% block main %}{% endblock %}
+    </main>
+  </div>
+</div>
+{% endblock %}

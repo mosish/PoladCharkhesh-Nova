@@ -1,0 +1,15 @@
+{% extends 'gate.html.twig' %}
+{% block title %}ورود{% endblock %}
+{% block gate %}
+<form class="card" method="post" action="/admin/login" novalidate>
+  <div class="card__h"><h1>ورود به مرکز کنترل</h1></div>
+  <div class="card__b">
+    <input type="hidden" name="_csrf" value="{{ csrf }}">
+    {% if failed|default(false) %}<p class="flash flash--error" role="alert">ورود ناموفق بود. نشانی ایمیل و گذرواژه را بررسی کنید و دوباره تلاش کنید. پس از چند تلاش ناموفق، ورود برای مدتی متوقف می‌شود.</p>{% endif %}
+    <div class="field"><label for="email">نشانی ایمیل</label><input class="a-in" id="email" name="email" type="email" dir="ltr" autocomplete="username" required value="{{ email }}" autofocus></div>
+    <div class="field"><label for="password">گذرواژه</label><input class="a-in" id="password" name="password" type="password" dir="ltr" autocomplete="current-password" required></div>
+    <button type="submit" class="a-btn a-btn--pri a-btn--lg">ورود</button>
+    <p class="muted">حساب‌ها فقط از خط فرمان سرور ساخته و بازیابی می‌شوند؛ این صفحه ثبت‌نام ندارد.</p>
+  </div>
+</form>
+{% endblock %}

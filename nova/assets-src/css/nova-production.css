@@ -38,6 +38,9 @@
   /* Product page (/p/<slug>/): the workspace's components, laid out as a sheet (05 §17, §25) */
   .pp__crumb { margin-bottom: var(--s5); font-size: var(--fs--1); }
   .pp__crumb a { display: inline-flex; align-items: center; gap: 6px; color: var(--link); }
+  .pp__crumb ol { display: flex; flex-wrap: wrap; gap: 6px 10px; list-style: none; padding: 0; margin: 0; }
+  .pp__crumb li { display: inline-flex; align-items: baseline; gap: 10px; }
+  .pp__crumb li + li::before { content: "/"; color: var(--ink-3); }
   .pp__back { transform: scaleX(-1); }
   [dir="rtl"] .pp__back { transform: none; }
   .pp__head { display: grid; gap: var(--s3); margin-bottom: var(--s6); }
@@ -57,6 +60,7 @@
   .pp__item-body > div { display: grid; gap: var(--s4); min-width: 0; }
   .pp__item-body:not(:has(.dwg)) { grid-template-columns: minmax(0, 1fr); }
   .pp__ctas { display: flex; flex-wrap: wrap; gap: 8px; padding: 0 20px 20px; }
+  .pp__ctas .btn, .pp__none .btn { min-width: 0; max-width: 100%; white-space: normal; overflow-wrap: anywhere; text-align: start; }
   .pp__more { display: grid; gap: var(--s3); }
   .pp__none { display: grid; gap: var(--s3); justify-items: start; }
   .pp__prose { margin-bottom: var(--s6); }

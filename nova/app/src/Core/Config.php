@@ -81,6 +81,11 @@ final readonly class Config
             [
                 'smtp' => ['host' => $get('NOVA_SMTP_HOST', ''), 'port' => (int) $get('NOVA_SMTP_PORT', '25')],
                 'test_database' => $get('NOVA_DB_TEST_NAME', ''),
+                'admin_host' => $get('NOVA_ADMIN_HOST', ''),
+                // The host port of the dev stack, so development builds link to where they are served.
+                'dev_port' => (int) $get('NOVA_HTTP_PORT', '8080'),
+                // Separate docroot/storage for a disposable verification stack; unset = the repository's own.
+                'paths' => array_filter(['public' => $get('NOVA_PUBLIC_DIR', ''), 'storage' => $get('NOVA_STORAGE_DIR', '')], static fn(string $v): bool => $v !== ''),
             ],
         );
     }

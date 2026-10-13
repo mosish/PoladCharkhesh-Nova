@@ -7,11 +7,18 @@ namespace Nova\Publish;
 use Nova\Core\Files;
 
 /**
- * The crash journal of the publish in progress (05 §7): written atomically
- * after every step, so an interrupted publish is finished or rolled back on
- * the next run or Admin request; no queue or worker is needed.
+ * The crash journal of the publish or rollback in progress (05 §7): written
+ * atomically and durably after every step, so an interrupted operation is
+ * finished or rolled back on the next run or Admin request; no queue or
+ * worker is needed.
  *
- * @phpstan-type Entry array{release: string, record: int, strategy: string, previous: ?string, step: string, at: int}
+ * - kind 'publish': `identity` (what the release publishes, captured from the
+ *   snapshot) and `summary` are stored before the switch, so recovery records
+ *   the release that actually went live, not whatever the database holds now.
+ * - kind 'rollback': written before the switch back; `release` is the target.
+ *
+ * @phpstan-type Identity array{products: list<int>, variants: list<int>}
+ * @phpstan-type Entry array{kind?: string, release: string, record: int, strategy: string, previous: ?string, step: string, at: int, by?: array<string, int|string>, identity?: Identity, summary?: array<string, mixed>}
  */
 final readonly class PublishJournal
 {
@@ -38,21 +45,25 @@ final readonly class PublishJournal
         if (!is_dir(\dirname($this->file))) {
             mkdir(\dirname($this->file), 0775, true);
         }
-        Files::writeAtomic($this->file, json_encode($entry, JSON_THROW_ON_ERROR));
+        Files::writeAtomic($this->file, json_encode($entry, JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR));
     }
 
-    public function step(string $step): void
+    /** @param array<string, mixed> $extra fields to add to the entry (identity, summary) */
+    public function step(string $step, array $extra = []): void
     {
         $entry = $this->read();
         if ($entry !== null) {
-            $entry['step'] = $step;
-            $entry['at'] = time();
+            /** @var Entry $entry */
+            $entry = [...$entry, ...$extra, 'step' => $step, 'at' => time()];
             $this->write($entry);
         }
     }
 
     public function clear(): void
     {
-        @unlink($this->file);
+        if (is_file($this->file)) {
+            @unlink($this->file);
+            Files::syncDirectory(\dirname($this->file));
+        }
     }
 }

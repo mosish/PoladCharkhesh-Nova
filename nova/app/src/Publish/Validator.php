@@ -109,7 +109,7 @@ final readonly class Validator
      */
     public static function checkOutput(string $releaseDir, BuildConfig $config): array
     {
-        $blockers = [];
+        $blockers = SeoAudit::release($releaseDir, $config);
         foreach (['fa', 'en'] as $lang) {
             $sitemap = (string) @file_get_contents("{$releaseDir}/{$lang}/sitemap.xml");
             preg_match_all('#<loc>([^<]+)</loc>#', $sitemap, $m);

@@ -146,7 +146,8 @@ final class SiteBuilderTest extends TestCase
         $out = $this->build($f->pdo, self::production());
         $pending = (string) file_get_contents("{$out}/en/p/qz-7/index.html");
         self::assertStringContainsString('<meta name="robots" content="noindex">', $pending, 'pending pages are noindex (D9/C1)');
-        self::assertStringNotContainsString('application/ld+json', $pending);
+        self::assertStringNotContainsString('"@type":"ProductGroup"', $pending);
+        self::assertStringContainsString('"@type":"BreadcrumbList"', $pending);
         self::assertStringNotContainsString('/p/qz-7/', (string) file_get_contents("{$out}/en/sitemap.xml"));
     }
 }

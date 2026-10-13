@@ -19,7 +19,36 @@ final class AssetBuilder
     public const array CSS = ['css/nova.css', 'css/nova-production.css'];
 
     /** JS modules in dependency order (a module may import only modules listed before it). */
-    public const array JS = ['js/designation.js', 'js/ws.js', 'js/nova.js', 'js/product-page.js', 'js/admin.js'];
+    public const array JS = ['js/designation.js', 'js/ws.js', 'js/nova.js', 'js/product-page.js'];
+
+    /**
+     * The Admin's own stylesheet and script (05 §6: served under /admin, never
+     * referenced by public pages) into public_html/admin/assets/. Fonts are
+     * the public ones: `url(font:<file>)` in the source becomes the hashed
+     * public path from the public manifest.
+     *
+     * @param array<string, string> $publicManifest
+     *
+     * @return array<string, string> logical name => URL
+     */
+    public static function buildAdmin(string $sourceDir, array $publicManifest, string $outDir): array
+    {
+        if (!is_dir($outDir) && !mkdir($outDir, 0775, true) && !is_dir($outDir)) {
+            throw new RuntimeException("Cannot create {$outDir}");
+        }
+        $css = (string) preg_replace_callback('/url\(font:([A-Za-z0-9._-]+\.woff2)\)/', static function (array $m) use ($publicManifest): string {
+            return 'url(' . ($publicManifest['fonts/' . $m[1]] ?? throw new RuntimeException("Unknown font {$m[1]}")) . ')';
+        }, self::read("{$sourceDir}/admin/admin.css"));
+        $manifest = [
+            'admin.css' => self::write($outDir, 'admin.css', $css, '/admin/assets/'),
+            'admin.js' => self::write($outDir, 'admin.js', self::read("{$sourceDir}/admin/admin.js"), '/admin/assets/'),
+            // The site's own bearing mark (public, content-hashed) as the Admin's tab icon.
+            'favicon.svg' => $publicManifest['favicon.svg'] ?? throw new RuntimeException('The public favicon is not built.'),
+        ];
+        file_put_contents("{$outDir}/manifest.json", json_encode($manifest, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR) . "\n");
+
+        return $manifest;
+    }
 
     /** @return array<string, string> logical name => public path */
     public static function build(string $sourceDir, string $outDir): array
@@ -28,6 +57,7 @@ final class AssetBuilder
             throw new RuntimeException("Cannot create {$outDir}");
         }
         $manifest = [];
+        $manifest['favicon.svg'] = self::write($outDir, 'favicon.svg', self::read("{$sourceDir}/favicon.svg"));
 
         foreach (glob("{$sourceDir}/fonts/*.woff2") ?: [] as $font) {
             $manifest['fonts/' . basename($font)] = self::write($outDir, 'fonts/' . basename($font), (string) file_get_contents($font));
@@ -73,7 +103,7 @@ final class AssetBuilder
         return json_decode($json, true, flags: JSON_THROW_ON_ERROR);
     }
 
-    private static function write(string $outDir, string $logical, string $bytes): string
+    private static function write(string $outDir, string $logical, string $bytes, string $urlPrefix = '/assets/'): string
     {
         $info = pathinfo($logical);
         $dir = ($info['dirname'] ?? '.') === '.' ? '' : $info['dirname'] . '/';
@@ -86,7 +116,7 @@ final class AssetBuilder
             file_put_contents($path, $bytes);
         }
 
-        return '/assets/' . $name;
+        return $urlPrefix . $name;
     }
 
     private static function read(string $path): string

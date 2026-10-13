@@ -1,0 +1,13 @@
+{% extends 'shell.html.twig' %}
+{% block title %}محصول جدید{% endblock %}
+{% block main %}
+<div class="adm__head"><div><p class="crumbs"><a href="/admin/products">محصولات</a> / جدید</p><h1>محصول جدید</h1></div></div>
+<form class="card" method="post" action="/admin/products" data-guard>
+  <input type="hidden" name="_csrf" value="{{ csrf }}">
+  <div class="ident">
+    <div class="field"><label for="designation">کد (Designation)</label><input class="a-in code-in" id="designation" name="designation" dir="ltr" maxlength="64" required autocomplete="off"><span class="hint">کد را دقیقاً همان‌طور که روی قطعه است بنویسید؛ «/» معنادار است و پسوند هرگز حدس زده نمی‌شود.</span></div>
+    <div class="field"><label for="family_id">خانواده</label><select class="a-sel" id="family_id" name="family_id" required>{% for f in families %}<option value="{{ f.id }}">{{ f.name }}</option>{% endfor %}</select></div>
+  </div>
+  <div class="savebar"><span>محصول به‌صورت پیش‌نویس ساخته می‌شود و تا «منتشرشده» شدن در سایت نمی‌آید.</span><span class="sp"></span><button class="a-btn a-btn--pri" type="submit">ساخت پیش‌نویس</button></div>
+</form>
+{% endblock %}

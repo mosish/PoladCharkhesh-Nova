@@ -45,13 +45,16 @@ docker compose exec web php app/bin/nova publish               # validate → bu
 docker compose exec web php app/bin/nova publish:rollback      # instant switch back; publish:recover / publish:status
                                                                # live release: http://fa.nova.localhost:8080 · http://en.nova.localhost:8080
 docker compose exec web php app/bin/nova dev:e2e               # dev DB = SAMPLE + SYNTHETIC QZ fixtures, then assets + publish (run before npm run test:e2e)
+docker compose exec web php app/bin/nova user:create-owner <email> <name>   # first Owner (once); password asked, never an argument; TOTP enrolled at first sign-in
+                                                               # Admin: http://fa.nova.localhost:8080/admin/ (setup and recovery: nova/docs/admin.md)
 npm ci && npm run test:js                      # JS copy of the designation matcher vs the shared corpus
 npm run test:e2e                               # Playwright on the installed Chrome
 docker compose down                             # add -v to wipe the dev database
 ```
 
 - `/_dev/` is a development-only diagnostics page from `nova/docker/dev-www/`. It is not in the docroot and never deployed.
-- Integration tests use the `nova_test` database, never `nova`.
+- Integration tests use the `nova_test` database, never `nova`. `NOVA_DB_TEST_NAME` can point a run at a new disposable database (`docker compose exec -e NOVA_DB_TEST_NAME=… web …`).
+- Release storage and Step 13 routing requirements: `nova/docs/release-routing.md`. Admin security and runbook: `nova/docs/admin.md`.
 - Designation matching: the spec is `nova/docs/designation-matching.md`, and the executable spec is `nova/tests/fixtures/designation/corpus.json`. Change PHP (`app/src/Designation/`) and JS (`assets-src/js/designation.js`) together, and add the vectors first.
 
 ## 4. Conventions

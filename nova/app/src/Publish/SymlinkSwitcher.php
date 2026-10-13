@@ -49,13 +49,32 @@ final readonly class SymlinkSwitcher implements ReleaseSwitcher
 
             throw new RuntimeException('Cannot switch the current release.');
         }
+        Files::syncDirectory($this->siteDir);
     }
 
+    /**
+     * The live release, read from the link Nova writes: always the relative
+     * target `releases/<id>`, so it stays valid wherever the tree is mounted.
+     * Anything else (an absolute or dangling target, as left by a tool outside
+     * Nova re-creating the link, or a plain file or folder) is refused rather
+     * than read as "nothing is live", which would misdirect rollback,
+     * recovery and pruning.
+     */
     public function current(): ?string
     {
-        $target = @readlink($this->siteDir . '/current');
+        $link = $this->siteDir . '/current';
+        if (!is_link($link) && !file_exists($link)) {
+            return null;
+        }
+        $target = is_link($link) ? readlink($link) : false;
+        if (\is_string($target) && preg_match('#^releases/(R-[0-9]{8}-[0-9]{6}-[0-9a-f]{4})$#', $target, $m) === 1 && is_dir($this->dir($m[1]))) {
+            return $m[1];
+        }
 
-        return \is_string($target) && preg_match('#^releases/(R-[0-9-a-f]+)$#', $target, $m) === 1 ? $m[1] : null;
+        throw new RuntimeException(
+            '_site/current is not the relative release link Nova writes (found: ' . (\is_string($target) ? "a link to \"{$target}\"" : 'not a symlink') . '). '
+            . 'Something outside Nova changed it. Replace it with a relative link to a release on disk (ln -sfn releases/<id> _site/current) or remove it and publish again.',
+        );
     }
 
     public function has(string $id): bool

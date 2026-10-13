@@ -1,7 +1,7 @@
 {% extends 'base.html.twig' %}
 {% import 'macros.twig' as m %}
 {% block scripts %}<script type="module" src="{{ asset('product-page.js') }}"></script>{% endblock %}
-{% block structured %}{% if structured %}<script type="application/ld+json">{{ structured|raw }}</script>{% endif %}{% endblock %}
+{% block structured %}<script type="application/ld+json">{{ breadcrumb_json|raw }}</script>{% if structured %}<script type="application/ld+json">{{ structured|raw }}</script>{% endif %}{% endblock %}
 {% block sheet_now %}03{% endblock %}
 {% block main %}
 {% set items = p.items %}
@@ -10,7 +10,7 @@
 <section class="sheet pp" data-sheet="03" aria-labelledby="pp-title" data-slug="{{ p.slug }}">
   <div class="wrap">
     {{ m.sheethead(3, t.s3) }}
-    <p class="pp__crumb"><a href="/#explorer"><svg class="ico ico--dir pp__back" aria-hidden="true"><use href="#i-arrow"/></svg>{{ t.pp_back }}</a></p>
+    {% include 'partials/breadcrumbs.html.twig' %}
     <header class="pp__head">
       <h1 class="ws__code" id="pp-title"><bdi dir="ltr">{{ p.designation }}</bdi></h1>
       <div class="ws__meta"><span>{{ p.family[lang] }}</span>{{ m.badge(p.verified, t) }}</div>

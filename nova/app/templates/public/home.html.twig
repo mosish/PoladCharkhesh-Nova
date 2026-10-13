@@ -1,4 +1,5 @@
 {% extends 'base.html.twig' %}
+{% block structured %}<script type="application/ld+json">{{ business_json|raw }}</script>{% endblock %}
 {% import 'macros.twig' as m %}
 {% block scripts %}<script type="module" src="{{ asset('nova.js') }}"></script>{% endblock %}
 {% block skip_target %}#explorer{% endblock %}
@@ -72,7 +73,7 @@
     </div>
     <div class="ask" id="ask" hidden>
       <div><p id="ask-t"></p><p id="ask-p"></p></div>
-      <div class="ask__acts"><button class="btn" type="button" id="ask-reveal" hidden>{{ t.reveal_btn }}</button><button class="btn btn--line" type="button" id="ask-open" hidden></button><a class="btn" id="ask-wa" href="#"><svg class="ico"><use href="#i-chat"/></svg><span>{{ t.ask_btn }}</span></a><a class="btn btn--line" href="#contact" id="ask-form">{{ t.ask_form }}</a></div>
+      <div class="ask__acts"><button class="btn" type="button" id="ask-reveal" hidden>{{ t.reveal_btn }}</button><button class="btn btn--line" type="button" id="ask-open" hidden></button><a class="btn" id="ask-wa" href="{{ m.wa(t.wa_hello, c.wa) }}"><svg class="ico"><use href="#i-chat"/></svg><span>{{ t.ask_btn }}</span></a><a class="btn btn--line" href="#contact" id="ask-form">{{ t.ask_form }}</a></div>
     </div>
     <p class="sr" id="exp-live" aria-live="polite"></p>
     <div class="rail explorer__rail" role="group" aria-label="{{ t.f_family }}">
@@ -127,7 +128,7 @@
           </div>
           <div class="ws__main" id="ws-main"></div>
           <div class="ws__foot">
-            <a class="btn ws__wa" id="ws-wa" href="#" rel="noopener"><svg class="ico" aria-hidden="true"><use href="#i-chat"/></svg><span>{{ t.cta_wa }}</span></a>
+            <a class="btn ws__wa" id="ws-wa" href="{{ m.wa(t.wa_hello, c.wa) }}" rel="noopener"><svg class="ico" aria-hidden="true"><use href="#i-chat"/></svg><span>{{ t.cta_wa }}</span></a>
             <a class="btn btn--line ws__call" href="tel:{{ c.tel1 }}"><svg class="ico" aria-hidden="true"><use href="#i-phone"/></svg><span>{{ t.cta_call }}</span></a>
             <a class="btn btn--line ws__inq" href="#inquiry" data-act="inq"><svg class="ico ico--dir" aria-hidden="true"><use href="#i-send"/></svg><span>{{ t.cta_form }}</span></a>
             <p class="ws__msg">{{ t.ws_msg }}</p>
@@ -182,13 +183,13 @@
       </figure>
       <div class="tools">
         <article class="tool">
-          <div style="display:flex;justify-content:space-between;gap:8px;align-items:center"><h3>{{ t.l10_h|raw }}</h3><span class="badge badge--pending"><span>{{ t.phase5 }}</span></span></div>
+          <div style="display:flex;justify-content:space-between;gap:8px;align-items:center"><h3>{{ t.l10_h|raw }}</h3><span class="badge badge--pending"><span>{{ t.reference_badge }}</span></span></div>
           <p class="formula">L<sub>10</sub> = (C / P)<sup>p</sup></p>
           <p>{{ t.l10_p|raw }}</p>
           <p class="note">{{ t.indicative }}</p>
         </article>
         <article class="tool">
-          <div style="display:flex;justify-content:space-between;gap:8px;align-items:center"><h3>{{ t.ref_h }}</h3><span class="badge badge--pending"><span>{{ t.phase5 }}</span></span></div>
+          <div style="display:flex;justify-content:space-between;gap:8px;align-items:center"><h3>{{ t.ref_h }}</h3><span class="badge badge--pending"><span>{{ t.reference_badge }}</span></span></div>
           <p>{{ t.ref_p }}</p>
         </article>
       </div>

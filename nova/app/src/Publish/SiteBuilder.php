@@ -71,13 +71,14 @@ final class SiteBuilder
                 $files[] = $this->write($out, "{$lang}/p/{$p['slug']}/index.html", $this->productPage($p, $lang, $context, $slugs));
             }
             $files[] = $this->write($out, "{$lang}/privacy/index.html", $this->twig->render('privacy.html.twig', $context + [
-                'canonical' => '/privacy/', 'robots' => $this->robots(true), 'page_title' => self::str($t['pv_title'] ?? ''), 'page_desc' => self::str($t['desc'] ?? ''),
-            ]));
+                'canonical' => '/privacy/', 'robots' => $this->robots(true), 'page_title' => self::str($t['pv_title'] ?? ''), 'page_desc' => self::str($t['pv_desc'] ?? ''),
+            ] + $this->breadcrumbContext($lang, self::str($t['breadcrumb_home'] ?? ''), self::str($t['pv_h'] ?? ''), '/privacy/')));
             $files[] = $this->write($out, "{$lang}/404.html", $this->twig->render('404.html.twig', $context + [
-                'canonical' => null, 'robots' => 'noindex', 'page_title' => self::str($t['nf_title'] ?? ''), 'page_desc' => self::str($t['desc'] ?? ''),
+                'canonical' => null, 'robots' => 'noindex', 'page_title' => self::str($t['nf_title'] ?? ''), 'page_desc' => self::str($t['nf_desc'] ?? ''),
             ]));
             $files[] = $this->write($out, "{$lang}/sitemap.xml", $this->sitemap($data, $lang));
             $files[] = $this->write($out, "{$lang}/robots.txt", $this->robotsTxt($lang));
+            $files[] = $this->write($out, "{$lang}/llms.txt", Seo::llms($data, $this->config, $lang));
         }
         foreach ($data->products as $p) {
             $files[] = $this->write($out, "data/p/{$p['slug']}.json", json_encode($this->productJson($p, $slugs), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR));
@@ -94,9 +95,30 @@ final class SiteBuilder
     }
 
     /**
+     * One Product page from the working state, for the Admin's draft preview
+     * (05 §6): the same templates as a publish, always noindex, labelled as
+     * a preview, written nowhere.
+     */
+    public function previewPage(SiteData $data, string $lang): ?string
+    {
+        $p = $data->products[0] ?? null;
+        if ($p === null) {
+            return null;
+        }
+        $slugs = [];
+        foreach ($data->products as $product) {
+            $slugs[$product['slug']] = true;
+        }
+        $context = ['preview' => true] + $this->context($data, $lang === 'en' ? 'en' : 'fa');
+
+        return $this->productPage($p, $lang === 'en' ? 'en' : 'fa', $context, $slugs, true);
+    }
+
+    /**
      * Whether a Product page may be indexed: verified, at least one listed item, never a sample (D9/C1, 05 §17).
+     * The Admin's outcome panel asks the same question of the working state.
      *
-     * @param Product $product
+     * @param array{verified: bool, items: array<array-key, mixed>, is_sample: bool} $product
      */
     public static function indexable(array $product): bool
     {
@@ -108,13 +130,15 @@ final class SiteBuilder
      * @param array<string, mixed> $context
      * @param array<string, true> $slugs
      */
-    private function productPage(array $p, string $lang, array $context, array $slugs): string
+    private function productPage(array $p, string $lang, array $context, array $slugs, bool $preview = false): string
     {
         /** @var array<string, mixed> $t */
         $t = $context['t'];
         $code = $p['designation'];
         $family = $lang === 'fa' ? $p['family']['fa'] : $p['family']['en'];
         $items = array_map(static fn(array $i): string => $i['designation'], $p['items']);
+        $variants = array_values(array_filter($items, static fn(string $item): bool => $item !== $code));
+        $titleCode = $code . ($variants === [] ? '' : ' — ' . implode($lang === 'fa' ? '، ' : ', ', $variants));
         $desc = $items === [] ? self::fill(self::str($t['pp_desc'] ?? ''), ['code' => $code, 'family' => $family])
             : self::fill(self::str($t['pp_desc_items'] ?? ''), ['code' => $code, 'family' => $family, 'items' => implode($lang === 'fa' ? '، ' : ', ', $items)]);
 
@@ -122,11 +146,19 @@ final class SiteBuilder
             'p' => $p,
             'description_html' => $this->description($p, $lang, $slugs),
             'canonical' => "/p/{$p['slug']}/",
-            'robots' => $this->robots(self::indexable($p)),
-            'page_title' => self::fill(self::str($t['pp_title'] ?? ''), ['code' => $code, 'family' => $family]),
+            'robots' => $preview ? 'noindex' : $this->robots(self::indexable($p)),
+            'page_title' => self::fill(self::str($t['pp_title'] ?? ''), ['code' => $titleCode, 'family' => $family]),
             'page_desc' => $desc,
             'structured' => $this->structuredData($p, $lang),
-        ]);
+        ] + $this->breadcrumbContext($lang, self::str($t['breadcrumb_home'] ?? ''), $code, "/p/{$p['slug']}/"));
+    }
+
+    /** @return array{breadcrumbs: list<array{name: string, url: string}>, breadcrumb_json: string} */
+    private function breadcrumbContext(string $lang, string $home, string $name, string $path): array
+    {
+        $crumbs = [['name' => $home, 'url' => $this->config->url($lang, '/')], ['name' => $name, 'url' => $this->config->url($lang, $path)]];
+
+        return ['breadcrumbs' => $crumbs, 'breadcrumb_json' => Seo::breadcrumbs($crumbs)];
     }
 
     /**
@@ -172,6 +204,7 @@ final class SiteBuilder
             'steps_range' => [[0, .1], [.1, .3], [.3, .45], [.45, .72], [.72, .86], [.86, 1.01]],
             'bom_range' => array_map(static fn(int $i): array => [round(.45 + $i * .045, 3), round(.45 + ($i + 1) * .045, 3)], range(0, 5)),
             'js_strings' => self::json($js),
+            'business_json' => Seo::business(self::str($strings['page']['brand'] ?? ''), $this->config->hosts[$lang === 'fa' ? 'fa' : 'en'], $this->config->hosts['en'], self::str($strings['page']['address'] ?? ''), $contact['land1'] ?? ''),
             // suffix_rules is a map: an empty one must stay a JSON object, never [] (the JS matcher rejects a list).
             'dindex' => self::json(['suffix_rules' => (object) $data->index['suffix_rules']] + $data->index),
         ];

@@ -1,0 +1,10 @@
+{% if items is empty %}
+  <p class="empty">هنوز رویدادی ثبت نشده است.</p>
+{% else %}
+<ul class="list">
+  {% for a in items %}
+  {% set parts = a.text|split('{label}') %}
+  <li><span class="grow"><b>{{ a.who }}</b> {{ parts[0] }}{% if parts|length > 1 %}<span class="code">{{ a.label }}</span>{{ parts[1] }}{% endif %}</span><span class="tm">{{ a.at|when }}</span></li>
+  {% endfor %}
+</ul>
+{% endif %}

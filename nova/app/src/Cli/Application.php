@@ -22,16 +22,29 @@ final class Application
 
     private ?PDO $pdo = null;
 
+    /** @var \Closure(string): string reads a secret (prompt => answer) without echoing it */
+    private readonly \Closure $readSecret;
+
+    /** @param (\Closure(string): string)|null $readSecret tests pass answers here; the default reads the terminal or standard input */
     public function __construct(
         private readonly Config $config,
         private readonly Paths $paths,
         private readonly Output $output = new Output(),
         private readonly string $sapi = PHP_SAPI,
-    ) {}
+        ?\Closure $readSecret = null,
+    ) {
+        $this->readSecret = $readSecret ?? self::terminalSecret(...);
+    }
 
     /** @param list<string> $argv */
     public function run(array $argv): int
     {
+        // The operator command line never runs inside a web request (05 §14), whatever the entry point.
+        if ($this->sapi !== 'cli') {
+            $this->output->error('app/bin/nova runs only from the command line (PHP CLI).');
+
+            return 2;
+        }
         $command = $argv[1] ?? 'help';
         $options = \array_slice($argv, 2);
 
@@ -47,6 +60,11 @@ final class Application
                 'publish:recover' => $this->publishRecover(),
                 'publish:status' => $this->publishStatus(),
                 'dev:e2e' => $this->devE2e(),
+                'user:create-owner' => $this->createUser($options, true),
+                'user:create-editor' => $this->createUser($options, false),
+                'user:reset-password' => $this->resetPassword($options),
+                'user:reset-totp' => $this->resetTotp($options),
+                'user:list' => $this->listUsers(),
                 default => $this->help(),
             };
         } catch (MigrationError $e) {
@@ -129,16 +147,119 @@ final class Application
 
     private function assetsBuild(): int
     {
-        $manifest = \Nova\Publish\AssetBuilder::build($this->paths->root . '/assets-src', $this->paths->root . '/public_html/assets');
-        $this->output->line('Built ' . \count($manifest) . ' assets into public_html/assets/.');
+        [$public] = \Nova\Publish\PublishFactory::locations($this->config, $this->paths);
+        $manifest = \Nova\Publish\AssetBuilder::build($this->paths->root . '/assets-src', $public . '/assets');
+        $admin = \Nova\Publish\AssetBuilder::buildAdmin($this->paths->root . '/assets-src', $manifest, $public . '/admin/assets');
+        $this->output->line('Built ' . \count($manifest) . ' public assets into assets/ and ' . \count($admin) . ' Admin assets into admin/assets/.');
 
         return 0;
+    }
+
+    /** @param list<string> $options email, then the display name (the rest of the line) */
+    private function createUser(array $options, bool $owner): int
+    {
+        $email = $options[0] ?? '';
+        $name = trim(implode(' ', \array_slice($options, 1)));
+        if ($email === '' || $name === '') {
+            $this->output->error('Usage: app/bin/nova user:create-' . ($owner ? 'owner' : 'editor') . ' <email> <display name>');
+
+            return 2;
+        }
+        $password = $this->newPassword();
+        if ($password === null) {
+            return 2;
+        }
+        $users = new \Nova\Security\UserAdmin($this->pdo(), \Nova\Publish\Initiator::currentProcess()->toArray());
+        $owner ? $users->createFirstOwner($email, $name, $password) : $users->createEditor($email, $name, $password);
+        $this->output->line(($owner ? 'Owner' : 'Editor') . " {$email} created." . ($owner ? ' Two-factor sign-in (TOTP) is set up at the first Admin sign-in.' : ''));
+
+        return 0;
+    }
+
+    /** @param list<string> $options */
+    private function resetPassword(array $options): int
+    {
+        $email = $options[0] ?? '';
+        if ($email === '') {
+            $this->output->error('Usage: app/bin/nova user:reset-password <email>');
+
+            return 2;
+        }
+        $password = $this->newPassword();
+        if ($password === null) {
+            return 2;
+        }
+        (new \Nova\Security\UserAdmin($this->pdo(), \Nova\Publish\Initiator::currentProcess()->toArray()))->resetPassword($email, $password);
+        $this->output->line("Password of {$email} reset; its sessions have ended and the lockout is cleared.");
+
+        return 0;
+    }
+
+    /** @param list<string> $options */
+    private function resetTotp(array $options): int
+    {
+        $email = $options[0] ?? '';
+        if ($email === '') {
+            $this->output->error('Usage: app/bin/nova user:reset-totp <email>');
+
+            return 2;
+        }
+        (new \Nova\Security\UserAdmin($this->pdo(), \Nova\Publish\Initiator::currentProcess()->toArray()))->resetTotp($email);
+        $this->output->line("Two-factor sign-in of {$email} reset; a new authenticator is enrolled at the next sign-in.");
+
+        return 0;
+    }
+
+    private function listUsers(): int
+    {
+        foreach ((new \Nova\Security\UserAdmin($this->pdo(), []))->list() as $u) {
+            $this->output->line(\sprintf('%-32s %-7s %-8s totp:%s%s  %s', $u['email'], $u['role'], $u['status'], $u['totp'] ? 'on ' : 'off', $u['locked'] ? ' LOCKED' : '', $u['display_name']));
+        }
+
+        return 0;
+    }
+
+    /** Asks twice; never echoes and never takes the password from the command line (history, process list). */
+    private function newPassword(): ?string
+    {
+        $password = ($this->readSecret)('New password (at least ' . \Nova\Security\PasswordHasher::MIN_LENGTH . ' characters): ');
+        $again = ($this->readSecret)('Repeat the password: ');
+        if (!hash_equals($password, $again)) {
+            $this->output->error('The two passwords differ; nothing was changed.');
+
+            return null;
+        }
+        try {
+            \Nova\Security\PasswordHasher::assertAcceptable($password);
+        } catch (\InvalidArgumentException $e) {
+            $this->output->error($e->getMessage());
+
+            return null;
+        }
+
+        return $password;
+    }
+
+    private static function terminalSecret(string $prompt): string
+    {
+        fwrite(STDERR, $prompt);
+        $tty = \function_exists('posix_isatty') && posix_isatty(STDIN);
+        if ($tty) {
+            shell_exec('stty -echo');
+        }
+        $line = fgets(STDIN);
+        if ($tty) {
+            shell_exec('stty echo');
+            fwrite(STDERR, PHP_EOL);
+        }
+
+        return rtrim($line === false ? '' : $line, "\r\n");
     }
 
     /** Publish from the command line (the Admin's Publish button runs the same engine). */
     private function publish(): int
     {
-        $result = \Nova\Publish\PublishFactory::engine($this->config, $this->paths, $this->pdo())->publish(null);
+        $result = \Nova\Publish\PublishFactory::engine($this->config, $this->paths, $this->pdo())->publish(\Nova\Publish\Initiator::currentProcess());
         foreach ($result->warnings as $w) {
             $this->output->line("warning: {$w}");
         }
@@ -161,7 +282,7 @@ final class Application
 
     private function publishRollback(): int
     {
-        $release = \Nova\Publish\PublishFactory::engine($this->config, $this->paths, $this->pdo())->rollback(null);
+        $release = \Nova\Publish\PublishFactory::engine($this->config, $this->paths, $this->pdo())->rollback(\Nova\Publish\Initiator::currentProcess());
         $this->output->line("Rolled back: {$release} is live.");
 
         return 0;
@@ -229,6 +350,11 @@ final class Application
         $this->output->line('  publish:recover         finish or roll back an interrupted publish');
         $this->output->line('  publish:status          the last releases and their state');
         $this->output->line('  dev:e2e                 dev DB = SAMPLE + SYNTHETIC fixtures, then assets + publish (development only)');
+        $this->output->line('  user:create-owner <email> <name>   create the first Owner (once); the password is asked, never an argument');
+        $this->output->line('  user:create-editor <email> <name>  create an Editor');
+        $this->output->line('  user:reset-password <email>        set a new password (ends that account\'s sessions, clears a lockout)');
+        $this->output->line('  user:reset-totp <email>            reset the Owner\'s two-factor sign-in (re-enrolled at the next sign-in)');
+        $this->output->line('  user:list                          accounts, roles and status');
 
         return 0;
     }

@@ -1,0 +1,46 @@
+{% extends 'shell.html.twig' %}
+{% block title %}محصولات{% endblock %}
+{% block main %}
+<div class="adm__head"><div><p class="crumbs">کاتالوگ</p><h1>محصولات <span class="sub">{{ rows|length|fa }} مورد{% if q or status %} (فیلترشده){% endif %} · {{ (counts.published ?? 0)|fa }} منتشرشده · {{ (counts.draft ?? 0)|fa }} پیش‌نویس</span></h1></div>
+  <div class="actions"><a class="a-btn a-btn--pri" href="/admin/products/new">+ محصول جدید</a></div></div>
+<form class="toolbar" method="get" action="/admin/products" role="search">
+  <label class="sr" for="q">جستجو</label>
+  <input class="a-in a-in--search" id="q" name="q" type="search" value="{{ q }}" placeholder="جستجوی کد، نگارش هم‌ارز یا نوع پسوندی…">
+  <label class="sr" for="status">وضعیت</label>
+  <select class="a-sel" id="status" name="status">
+    <option value="">وضعیت: همه</option>
+    <option value="published"{% if status == 'published' %} selected{% endif %}>منتشرشده</option>
+    <option value="draft"{% if status == 'draft' %} selected{% endif %}>پیش‌نویس</option>
+    <option value="archived"{% if status == 'archived' %} selected{% endif %}>بایگانی</option>
+  </select>
+  <button class="a-btn" type="submit">اعمال</button>
+  {% if q or status %}<a class="a-btn a-btn--link" href="/admin/products">پاک کردن فیلتر</a>{% endif %}
+</form>
+{% if rows is empty %}
+  <div class="card"><p class="empty">{% if q or status %}محصولی با این جستجو پیدا نشد. همان یکسان‌سازی جستجوی سایت (ارقام فارسی، فاصله و خط تیره) به کار می‌رود.{% else %}هنوز محصولی ثبت نشده است. با «محصول جدید» یک پیش‌نویس بسازید.{% endif %}</p></div>
+{% else %}
+<div class="t-wrap">
+<table class="t">
+  <caption class="sr">فهرست محصولات</caption>
+  <thead><tr><th scope="col">کد</th><th scope="col">خانواده</th><th scope="col">ابعاد اصلی</th><th scope="col">منبع</th><th scope="col">داده فنی</th><th scope="col">وضعیت</th><th scope="col">کاوشگر</th><th scope="col">ترجمه</th><th scope="col">آخرین ویرایش</th></tr></thead>
+  <tbody>
+  {% for p in rows %}
+    {% set shown = p.dims|filter(d => d.value is not null) %}
+    <tr>
+      <td><a class="code" href="/admin/products/{{ p.id }}">{{ p.designation }}</a>{% if p.variants > 0 %} <span class="muted">+{{ p.variants|fa }} نوع</span>{% endif %}{% if p.sample %} <span class="badge b-draft">نمونه</span>{% endif %}{% if p.review %} <span class="badge b-pend">بررسی رابطه</span>{% endif %}</td>
+      <td class="nw">{{ p.family }}</td>
+      <td class="n">{% if shown is empty %}<span class="muted">—</span>{% else %}<span class="muted">{{ p.dims|map(d => d.code)|join('×') }}</span>&nbsp;{{ p.dims|map(d => d.value ?? '?')|join('×') }}{% endif %}</td>
+      <td class="n{{ p.required > 0 and p.sourced < p.required ? ' bad' : '' }}">{% if p.required > 0 %}{{ p.sourced }}/{{ p.required }}{% else %}<span class="muted">—</span>{% endif %}</td>
+      <td>{% if p.verification == 'verified' %}<span class="badge b-ok">تأییدشده</span>{% elseif p.status == 'draft' %}<span class="muted">—</span>{% else %}<span class="badge b-pend">در انتظار</span>{% endif %}</td>
+      <td>{% if p.status == 'draft' %}<span class="badge b-draft">پیش‌نویس</span>{% elseif p.status == 'archived' %}<span class="badge b-draft">بایگانی</span>{% else %}منتشرشده{% endif %}</td>
+      <td>{% if p.explorer %}<span class="good">✓<span class="sr"> نمایش در کاوشگر</span></span>{% else %}<span class="muted">—<span class="sr"> پنهان از کاوشگر</span></span>{% endif %}</td>
+      <td class="nw"><span class="tag{{ p.has_fa ? '' : ' bad' }}">fa{{ p.has_fa ? '' : ' ✕' }}</span> <span class="tag{{ p.has_en ? '' : ' bad' }}">en{{ p.has_en ? '' : ' ✕' }}</span></td>
+      <td class="muted nw">{{ p.updated_at|when }}</td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>
+<div class="pager"><span>{{ rows|length|fa }} مورد</span><span>منبع = مقادیر هسته دارای منبع از کل مقادیر هسته موارد فهرست‌شده</span></div>
+{% endif %}
+{% endblock %}

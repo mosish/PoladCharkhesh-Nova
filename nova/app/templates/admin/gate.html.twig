@@ -1,0 +1,10 @@
+{% extends 'layout.html.twig' %}
+{% block body %}
+<main class="gatepage" id="main">
+  <div class="gatebox">
+    <p class="adm__brand">{% include 'mark.html.twig' %} پولاد چرخش <small class="muted">مرکز کنترل وب‌سایت</small></p>
+    {% include 'flash.html.twig' %}
+    {% block gate %}{% endblock %}
+  </div>
+</main>
+{% endblock %}

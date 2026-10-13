@@ -26,6 +26,7 @@ services:
       NOVA_DB_PASSWORD: *db-password
       NOVA_SMTP_HOST: mail
       NOVA_SMTP_PORT: "1025"
+      NOVA_HTTP_PORT: "${NOVA_HTTP_PORT:-8080}"
       COMPOSER_CACHE_DIR: /tmp/composer-cache
       TZ: UTC
     depends_on:

@@ -4,7 +4,9 @@ import AxeBuilder from '@axe-core/playwright';
 // The ported public site (Phase 3 step 7) against the dev:e2e build: the labelled Phase 2 SAMPLE plus the
 // SYNTHETIC "QZ" designations (invented; they exist only to reach every match category in a browser).
 // Prerequisite: `docker compose exec web php app/bin/nova dev:e2e`.
-const HOST = { fa: 'http://fa.nova.localhost:8080', en: 'http://en.nova.localhost:8080' };
+// NOVA_SITE_PORT points the suite at another stack (e.g. a disposable verification stack); default the dev stack.
+const PORT = process.env.NOVA_SITE_PORT ?? '8080';
+const HOST = { fa: `http://fa.nova.localhost:${PORT}`, en: `http://en.nova.localhost:${PORT}` };
 
 async function open(page, lang, path = '/') {
   const errors = [];

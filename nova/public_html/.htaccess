@@ -12,3 +12,13 @@ Options -Indexes -MultiViews
 <FilesMatch "^\.">
     Require all denied
 </FilesMatch>
+
+# Releases, slots, markers and manifests under /_site/ are never served to a
+# direct request (S: releases/<id>/, current/; D: slot-a/, slot-b/, ACTIVE_B;
+# both: manifest.json). Visitors reach only the live release, through the
+# internal rewrites that the step 13 template adds below this rule. An
+# internal rewrite sets REDIRECT_STATUS; a client request never has it.
+# Not wrapped in <IfModule>: without mod_rewrite this file fails closed (500).
+RewriteEngine On
+RewriteCond %{ENV:REDIRECT_STATUS} ^$
+RewriteRule ^_site(?:/|$) - [NC,R=404,L]

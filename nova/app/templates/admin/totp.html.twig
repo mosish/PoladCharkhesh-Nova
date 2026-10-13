@@ -1,0 +1,14 @@
+{% extends 'gate.html.twig' %}
+{% block title %}کد ورود دومرحله‌ای{% endblock %}
+{% block gate %}
+<form class="card" method="post" action="/admin/login/totp" novalidate>
+  <div class="card__h"><h1>کد ورود دومرحله‌ای</h1></div>
+  <div class="card__b">
+    <input type="hidden" name="_csrf" value="{{ csrf }}">
+    {% if failed|default(false) %}<p class="flash flash--error" role="alert">کد پذیرفته نشد. کد تازه برنامه احراز هویت را وارد کنید؛ هر کد فقط یک بار پذیرفته می‌شود.</p>{% endif %}
+    <div class="field"><label for="code">کد شش‌رقمی برنامه احراز هویت</label><input class="a-in code-in" id="code" name="code" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9۰-۹ ]*" maxlength="8" required autofocus></div>
+    <button type="submit" class="a-btn a-btn--pri a-btn--lg">تأیید</button>
+    <p class="muted">برای حساب مالک، ورود دومرحله‌ای همیشه لازم است.</p>
+  </div>
+</form>
+{% endblock %}

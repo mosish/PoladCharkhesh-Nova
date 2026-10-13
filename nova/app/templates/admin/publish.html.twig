@@ -1,0 +1,71 @@
+{% extends 'shell.html.twig' %}
+{% block title %}انتشار{% endblock %}
+{% set state = {live: 'زنده', superseded: 'قبلی', rolled_back: 'برگشت‌خورده'} %}
+{% block main %}
+<div class="adm__head">
+  <div><p class="crumbs">انتشار</p><h1>انتشار <span class="sub">{% if live %}نسخه زنده: <span class="code">{{ live.release }}</span> · {{ live.at|when }}{% if live.by %} · {{ live.by }}{% endif %}{% else %}هنوز نسخه‌ای منتشر نشده است{% endif %}</span></h1></div>
+  {% if live %}<div class="actions muted">راهبرد جابه‌جایی: <span class="code">{{ live.strategy == 'slots' ? 'D · two slots' : 'S · symlink' }}</span></div>{% endif %}
+</div>
+<div class="grid g-main">
+  <div class="grid">
+    <section class="card" aria-labelledby="h-changes">
+      <h2 class="card__h" id="h-changes">تغییرات ثبت‌شده از آخرین انتشار · {{ changes|length|fa }}</h2>
+      {% if changes is empty %}
+        <p class="empty">از آخرین انتشار تغییری ثبت نشده است.</p>
+      {% else %}
+      <ul class="diff">
+        {% for c in changes %}
+        {% set parts = c.text|split('{label}') %}
+        <li><span>{{ parts[0] }}{% if parts|length > 1 %}<span class="code">{{ c.label }}</span>{{ parts[1] }}{% endif %}</span><span class="muted">{{ c.who }}</span><span class="muted">{{ c.at|when }}</span></li>
+        {% endfor %}
+      </ul>
+      {% endif %}
+      <p class="card__note">پیش‌نویس‌ها فهرست می‌شوند اما ساخته نمی‌شوند؛ هر انتشار کل سایت را از یک عکس سازگار داده می‌سازد.</p>
+    </section>
+
+    <form class="pubbar" method="post" action="/admin/publish" data-confirm="نسخه تازه ساخته و منتشر شود؟ سایت فعلی تا لحظه جابه‌جایی دست‌نخورده می‌ماند.">
+      <input type="hidden" name="_csrf" value="{{ csrf }}">
+      <button class="a-btn a-btn--lg a-btn--pri" type="submit"{% if check.blockers is not empty %} disabled{% endif %}>انتشار</button>
+      <p>{% if check.blockers is not empty %}<b class="bad">{{ check.blockers|length|fa }} مانع پیش از انتشار باید رفع شود.</b> {% endif %}انتشار چند ثانیه طول می‌کشد؛ سایت فعلی تا لحظه جابه‌جایی دست‌نخورده می‌ماند و بازدیدکنندگان هرگز صفحه نیمه‌کاره نمی‌بینند. مالک و ویرایشگر هر دو می‌توانند منتشر کنند.</p>
+    </form>
+
+    <section class="card" aria-labelledby="h-steps">
+      <h2 class="card__h" id="h-steps">مراحل موتور انتشار</h2>
+      <ol class="steps"><li>قفل</li><li>عکس‌برداری از داده</li><li>اعتبارسنجی</li><li>ساخت فایل‌ها</li><li>بررسی فهرست</li><li class="sw">جابه‌جایی اتمی</li><li>ثبت</li><li>نگه‌داری ۵ نسخه</li></ol>
+    </section>
+  </div>
+
+  <div class="grid">
+    <section class="card" aria-labelledby="h-check">
+      <h2 class="card__h" id="h-check">بررسی پیش از انتشار</h2>
+      <ul class="checks">
+        {% for b in check.blockers %}<li><span class="bad-i" aria-hidden="true">!</span><span><b class="bad">مانع</b> · <span class="detail" lang="en">{{ b }}</span></span></li>{% endfor %}
+        {% for w in check.warnings %}<li><span class="warn-i" aria-hidden="true">!</span><span>هشدار · <span class="detail" lang="en">{{ w }}</span></span></li>{% endfor %}
+        {% if check.blockers is empty %}<li><span class="ok-i" aria-hidden="true">✓</span><span>مانعی برای انتشار نیست (پیوندها، رابطه‌ها، نمونه‌ها، صفحات تأییدشده و محتوای غنی بررسی شد).</span></li>{% endif %}
+      </ul>
+      <p class="card__note">موانع انتشار را متوقف می‌کنند و هشدارها نه. بودجه حجم یا تعداد درخواست بررسی نمی‌شود.</p>
+    </section>
+
+    <section class="card" aria-labelledby="h-history">
+      <h2 class="card__h" id="h-history">تاریخچه · ۵ نسخه نگه‌داری می‌شود</h2>
+      {% if history is empty %}
+        <p class="empty">هنوز نسخه‌ای منتشر نشده است.</p>
+      {% else %}
+      <div class="t-wrap">
+      <table class="t">
+        <caption class="sr">نسخه‌های نگه‌داری‌شده</caption>
+        <thead><tr><th scope="col">نسخه</th><th scope="col">زمان</th><th scope="col">وضعیت</th><th class="w1" scope="col"><span class="sr">عملیات</span></th></tr></thead>
+        <tbody>
+        {% for h in history %}
+          <tr><td><span class="code">{{ h.release }}</span>{% if h.status == 'live' %} <span class="badge b-live">زنده</span>{% endif %}</td><td class="muted nw">{{ h.at|when }}</td><td>{{ state[h.status] ?? h.status }}</td>
+            <td class="w1">{% if h.rollback_target %}<form method="post" action="/admin/publish/rollback" data-confirm="سایت به نسخه {{ h.release }} برگردد؟ این کار در گزارش رویدادها ثبت می‌شود."><input type="hidden" name="_csrf" value="{{ csrf }}"><button class="a-btn a-btn--sm" type="submit">بازگشت…</button></form>{% endif %}</td></tr>
+        {% endfor %}
+        </tbody>
+      </table>
+      </div>
+      {% endif %}
+      <p class="card__note">بازگشت همان جابه‌جایی اتمی به نسخه قبلی است و هر بار یک گام عقب‌تر می‌رود.</p>
+    </section>
+  </div>
+</div>
+{% endblock %}

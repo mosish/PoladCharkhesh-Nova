@@ -16,6 +16,7 @@
 # Generated: hashed assets (built at packaging) and rendered releases.
 /nova/public_html/assets/
 /nova/public_html/_site/
+/nova/public_html/admin/assets/
 /nova/storage/
 
 # Operating system and editor files.

@@ -1,0 +1,22 @@
+{% extends user ? 'shell.html.twig' : 'gate.html.twig' %}
+{% set titles = {403: 'دسترسی مجاز نیست', 404: 'صفحه پیدا نشد', 500: 'خطای داخلی'} %}
+{% block title %}{{ titles[code] ?? 'خطا' }}{% endblock %}
+{% block content %}
+<div class="card">
+  <div class="card__h"><h1>{{ titles[code] ?? 'خطا' }}</h1></div>
+  <div class="card__b">
+    {% if code == 403 and reason|default('') == 'csrf' %}
+      <p>این درخواست تأیید نشد (برگه منقضی شده یا از جای دیگری فرستاده شده است). صفحه را دوباره باز کنید و تغییر را تکرار کنید.</p>
+    {% elseif code == 403 %}
+      <p>این کار فقط از عهده مالک برمی‌آید.</p>
+    {% elseif code == 404 %}
+      <p>صفحه یا موردی که خواستید وجود ندارد.</p>
+    {% else %}
+      <p>درخواست انجام نشد. جزئیات فنی برای مدیر سرور ثبت شد؛ دوباره تلاش کنید.</p>
+    {% endif %}
+    <p><a href="/admin/">بازگشت به پیشخوان</a></p>
+  </div>
+</div>
+{% endblock %}
+{% block main %}{{ block('content') }}{% endblock %}
+{% block gate %}{{ block('content') }}{% endblock %}

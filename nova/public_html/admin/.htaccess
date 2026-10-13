@@ -1,0 +1,21 @@
+# Nova Admin (05 §6, D11): every request goes to index.php, which serves only
+# the .ir host. Built assets under assets/ are static; no other PHP runs here.
+Options -Indexes -MultiViews
+DirectoryIndex index.php
+
+<FilesMatch "\.(php|phtml|phar|inc)$">
+    Require all denied
+</FilesMatch>
+<Files "index.php">
+    Require all granted
+</Files>
+
+RewriteEngine On
+RewriteBase /admin/
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^ index.php [L]
+
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-Robots-Tag "noindex, nofollow"
+</IfModule>

@@ -1,0 +1,22 @@
+{% extends 'shell.html.twig' %}
+{% block title %}پیشخوان{% endblock %}
+{% block main %}
+<div class="adm__head"><div><p class="crumbs">مرکز کنترل</p><h1>پیشخوان</h1></div></div>
+{% if samples > 0 %}<p class="flash flash--error" role="note">این پایگاه داده {{ samples|fa }} محصول <b>نمونه</b> (فیکسچر توسعه) دارد؛ این‌ها داده واقعی نیستند و در محیط تولید منتشر نمی‌شوند.</p>{% endif %}
+<div class="grid g3 mb">
+  <div class="card tile tile--pri"><span class="k">تغییرات منتشرنشده</span><span class="v">{{ unpublished|fa }}</span><span class="s">سایت زنده فقط با «انتشار» تغییر می‌کند.</span><a href="/admin/publish">بررسی و انتشار ←</a></div>
+  <div class="card tile tile--warn"><span class="k">داده فنی در انتظار تأیید</span><span class="v">{{ pending|fa }}</span><span class="s">از {{ (counts.published ?? 0)|fa }} محصول منتشرشده · noindex تا تأیید مالک</span><a href="/admin/products?status=published">فهرست محصولات ←</a></div>
+  <div class="card tile"><span class="k">کاتالوگ</span><span class="v">{{ ((counts.published ?? 0) + (counts.draft ?? 0) + (counts.archived ?? 0))|fa }}</span><span class="s">{{ (counts.published ?? 0)|fa }} منتشرشده · {{ (counts.draft ?? 0)|fa }} پیش‌نویس · {{ (counts.archived ?? 0)|fa }} بایگانی</span><a href="/admin/products">محصولات ←</a></div>
+</div>
+<div class="grid g-main">
+  <section class="card" aria-labelledby="h-activity"><h2 class="card__h" id="h-activity">فعالیت اخیر</h2>{% include 'activity.html.twig' with {items: recent} %}</section>
+  <section class="card" aria-labelledby="h-quality"><h2 class="card__h" id="h-quality">کیفیت داده</h2>
+    <ul class="list">
+      <li>{% if pending > 0 %}<span class="warn-i" aria-hidden="true">!</span>{% else %}<span class="ok-i" aria-hidden="true">✓</span>{% endif %}<span class="grow">{{ pending|fa }} محصول منتشرشده با داده فنی در انتظار تأیید</span></li>
+      <li>{% if unsourced > 0 %}<span class="bad-i" aria-hidden="true">!</span>{% else %}<span class="ok-i" aria-hidden="true">✓</span>{% endif %}<span class="grow">{{ unsourced|fa }} مقدار هسته بدون منبع</span></li>
+      <li>{% if no_english > 0 %}<span class="warn-i" aria-hidden="true">!</span>{% else %}<span class="ok-i" aria-hidden="true">✓</span>{% endif %}<span class="grow">توضیح انگلیسی ناقص: {{ no_english|fa }} محصول</span></li>
+    </ul>
+    <p class="card__note">استعلام‌ها، رسانه و پشتیبان‌گیری در گام‌های بعدی ساخته می‌شوند و این‌جا اضافه خواهند شد.</p>
+  </section>
+</div>
+{% endblock %}

@@ -1,0 +1,233 @@
+{% extends 'shell.html.twig' %}
+{% block title %}{{ p.designation }} · ویرایش محصول{% endblock %}
+{% set statuses = {draft: 'پیش‌نویس', published: 'منتشرشده', archived: 'بایگانی'} %}
+{% set issue_text = {
+  relationship_review: 'رابطه این کد هنوز در حال بررسی است',
+  no_core_keys: 'برای این خانواده هنوز مشخصه هسته‌ای تعریف نشده است (V-6)',
+  no_listed_items: 'هیچ موردی در این صفحه فهرست نشده است',
+  unconfirmed_variant: 'رابطه این نوع پسوندی تأیید نشده است:',
+  missing_value: 'مقدار هسته ثبت نشده است:',
+  unverified_value: 'مقدار هسته منبع‌دار و تأییدشده نیست:',
+} %}
+{% block main %}
+<div class="adm__head">
+  <div><p class="crumbs"><a href="/admin/products">محصولات</a> / <span class="code">{{ p.designation }}</span></p>
+    <h1><span class="num code">{{ p.designation }}</span>
+      {% if p.verified %}<span class="badge b-ok">تأییدشده</span>{% else %}<span class="badge b-pend">در انتظار تأیید</span>{% endif %}
+      <span class="badge b-draft">{{ statuses[p.status] }}</span>
+      {% if p.sample %}<span class="badge b-draft">نمونه (فیکسچر توسعه)</span>{% endif %}
+      {% if p.review %}<span class="badge b-pend">بررسی رابطه</span>{% endif %}
+    </h1></div>
+  <div class="actions">
+    <a class="a-btn" href="/admin/products/{{ p.id }}/preview/fa" target="_blank" rel="noopener">پیش‌نمایش پیش‌نویس fa ↗</a>
+    <a class="a-btn" href="/admin/products/{{ p.id }}/preview/en" target="_blank" rel="noopener">Preview en ↗</a>
+  </div>
+</div>
+
+<div class="grid g-ed">
+<div class="grid">
+
+  {# ---- Identity, listing, variants and spellings #}
+  <section class="card" aria-labelledby="h-ident">
+    <h2 class="card__h" id="h-ident">شناسه و موارد فهرست‌شده</h2>
+    <form id="f-product" method="post" action="/admin/products/{{ p.id }}" data-guard>
+      <input type="hidden" name="_csrf" value="{{ csrf }}">
+      <input type="hidden" name="version" value="{{ p.version }}">
+      <div class="ident">
+        <div class="field"><label for="designation">کد (Designation)</label><input class="a-in code-in" id="designation" name="designation" dir="ltr" maxlength="64" required value="{{ p.designation }}" autocomplete="off"><span class="hint">کد عیناً حفظ می‌شود؛ تغییر آن تأیید صفحه را برمی‌دارد.</span></div>
+        <div class="field"><span class="lbl">خانواده</span><p class="a-in">{{ p.family }}</p></div>
+        <div class="field span2"><label class="check"><input type="checkbox" name="base_listed" value="1"{% if p.base_listed %} checked{% endif %}> خودِ کد پایه <span class="code">{{ p.designation }}</span> در صفحه فهرست شود (base_listed)</label>
+          <span class="hint">فقط همین گزینه تعیین می‌کند کد پایه فهرست شود؛ هیچ نوع پسوندی جای محصول را نمی‌گیرد.</span></div>
+      </div>
+      <div class="savebar"><span>ذخیره فقط پیش‌نویس را تغییر می‌دهد؛ سایت زنده با «انتشار» به‌روز می‌شود.</span><span class="sp"></span><button class="a-btn a-btn--pri" type="submit">ذخیره</button></div>
+    </form>
+
+    <div class="t-wrap">
+    <table class="t">
+      <caption class="sr">انواع پسوندی (کد متفاوت؛ ProductVariant)</caption>
+      <thead><tr><th scope="col">نوع پسوندی</th><th scope="col">فهرست</th><th scope="col">وضعیت</th><th scope="col">رابطه</th><th scope="col">داده فنی</th><th class="w1" scope="col"><span class="sr">عملیات</span></th></tr></thead>
+      <tbody>
+      {% set variants = p.items|filter(i => i.kind == 'variant') %}
+      {% for v in variants %}
+        <tr>
+          <td><span class="code">{{ v.designation }}</span></td>
+          <td><label class="check"><input type="checkbox" name="listed" value="1" form="fv-{{ v.id }}"{% if v.listed %} checked{% endif %}><span class="sr">فهرست شود</span></label></td>
+          <td><label class="sr" for="vs-{{ v.id }}">وضعیت</label><select class="a-sel" id="vs-{{ v.id }}" name="status" form="fv-{{ v.id }}">{% for k, label in statuses %}<option value="{{ k }}"{% if v.status == k %} selected{% endif %}>{{ label }}</option>{% endfor %}</select></td>
+          <td>{% if v.confirmed %}<span class="good">تأییدشده</span>{% if v.relationship_source %} <span class="muted" dir="auto">· {{ v.relationship_source }}</span>{% endif %}{% else %}<span class="badge b-pend">نیاز به تأیید</span>{% endif %}</td>
+          <td>{% if v.values is empty %}<span class="badge b-pend">داده اختصاصی ندارد</span>{% elseif v.verification == 'verified' %}<span class="badge b-ok">تأییدشده</span>{% else %}<span class="badge b-pend">در انتظار</span>{% endif %}</td>
+          <td class="w1"><form id="fv-{{ v.id }}" method="post" action="/admin/products/{{ p.id }}/variants/{{ v.id }}" data-guard><input type="hidden" name="_csrf" value="{{ csrf }}"><input type="hidden" name="version" value="{{ v.version }}"><button class="a-btn a-btn--sm" type="submit">ذخیره</button></form></td>
+        </tr>
+      {% else %}
+        <tr><td colspan="6" class="muted">نوع پسوندی ثبت نشده است. تا وقتی نوعی داده منبع‌دار خودش را ندارد، سایت آن را «تطبیق با سری پایه — نیاز به تأیید» نشان می‌دهد.</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+    </div>
+    {% if is_owner %}
+    <form class="inline-form" method="post" action="/admin/products/{{ p.id }}/variants" data-guard>
+      <input type="hidden" name="_csrf" value="{{ csrf }}">
+      <div class="field"><label for="nv-designation">نوع پسوندی تازه (کد کامل)</label><input class="a-in code-in" id="nv-designation" name="designation" dir="ltr" maxlength="64" required autocomplete="off"></div>
+      <div class="field"><label for="nv-source">منبعی که رابطه را تأیید می‌کند</label><select class="a-sel" id="nv-source" name="source" required><option value="">انتخاب منبع…</option>{% for s in p.sources %}<option value="{{ s.id }}">{{ s.title }}</option>{% endfor %}</select></div>
+      <label class="check"><input type="checkbox" name="listed" value="1"> فهرست شود</label>
+      <button class="a-btn" type="submit">ثبت رابطه</button>
+    </form>
+    {% else %}
+    <p class="card__note">ثبت رابطه نوع پسوندی (همیشه با منبع) فقط توسط مالک انجام می‌شود.</p>
+    {% endif %}
+
+    <div class="inline-form">
+      <div class="field"><span class="lbl">نگارش‌های هم‌ارز (همان کد، نوشته‌شده به شکل دیگر)</span>
+        <div class="chips" dir="ltr">
+          {% for s in p.spellings %}<span class="chip"><span class="code">{{ s.spelling }}</span> <span class="muted">→ {{ s.target }}</span>{% if is_owner %}<form method="post" action="/admin/products/{{ p.id }}/spellings/{{ s.id }}/delete" data-confirm="نگارش هم‌ارز {{ s.spelling }} حذف شود؟"><input type="hidden" name="_csrf" value="{{ csrf }}"><button type="submit" aria-label="حذف {{ s.spelling }}">×</button></form>{% endif %}</span>{% else %}<span class="muted">— فاصله، خط تیره و ارقام فارسی خودکار یکسان می‌شوند</span>{% endfor %}
+        </div></div>
+    </div>
+    {% if is_owner %}
+    <form class="inline-form" method="post" action="/admin/products/{{ p.id }}/spellings" data-guard>
+      <input type="hidden" name="_csrf" value="{{ csrf }}">
+      <div class="field"><label for="ns-spelling">نگارش هم‌ارز تازه</label><input class="a-in code-in" id="ns-spelling" name="spelling" dir="ltr" maxlength="64" required autocomplete="off"></div>
+      <div class="field"><label for="ns-target">برای کد</label><select class="a-sel" id="ns-target" name="target">{% for i in p.items %}<option value="{{ i.ref == 'base' ? 'base' : i.ref }}">{{ i.designation }}</option>{% endfor %}</select></div>
+      <div class="field"><label for="ns-source">منبع (اختیاری)</label><select class="a-sel" id="ns-source" name="source"><option value="">—</option>{% for s in p.sources %}<option value="{{ s.id }}">{{ s.title }}</option>{% endfor %}</select></div>
+      <button class="a-btn" type="submit">افزودن</button>
+    </form>
+    {% endif %}
+  </section>
+
+  {# ---- Per-value provenance, one table per designation #}
+  {% for item in p.items %}
+  <section class="card" aria-labelledby="h-values-{{ item.ref }}">
+    <h2 class="card__h" id="h-values-{{ item.ref }}">ابعاد و داده‌ها · <span class="code">{{ item.designation }}</span> <span class="actions muted">{% if item.kind == 'base' %}کد پایه{% else %}نوع پسوندی — مقدارها هرگز از کد پایه کپی نمی‌شوند{% endif %}</span></h2>
+    {% if p.keys is empty %}
+      <p class="empty">برای این خانواده مشخصه‌ای تعریف نشده است.</p>
+    {% else %}
+    <div class="t-wrap">
+    <table class="t spec">
+      <caption class="sr">مقدارهای {{ item.designation }}</caption>
+      <thead><tr><th scope="col">نماد</th><th scope="col">مقدار</th><th scope="col">واحد</th><th scope="col">منبع · جای دقیق</th><th scope="col">تاریخ بررسی</th><th scope="col">وضعیت</th></tr></thead>
+      <tbody>
+      {% for k in p.keys %}
+        {% set v = item.values[k.id] ?? null %}
+        {% set fid = 'val-' ~ item.ref ~ '-' ~ k.id %}
+        <tr{% if k.core %} class="core"{% endif %}>
+          <th scope="row" class="sym">{{ k.code }}<small>{{ k.label }}{% if k.core %} · هسته{% endif %}</small></th>
+          <td><label class="sr" for="{{ fid }}-v">مقدار {{ k.code }}</label><input class="a-in val" id="{{ fid }}-v" name="value" form="{{ fid }}" dir="ltr" maxlength="255" value="{{ v.value ?? '' }}" {% if k.type == 'number' %}inputmode="decimal"{% endif %}></td>
+          <td class="mono">{{ v.unit ?? k.unit }}</td>
+          <td><div class="stack"><label class="sr" for="{{ fid }}-s">منبع</label><select class="a-sel src" id="{{ fid }}-s" name="source" form="{{ fid }}"><option value="">بدون منبع</option>{% for s in p.sources %}<option value="{{ s.id }}"{% if v and v.source == s.id %} selected{% endif %}>{{ s.title }}</option>{% endfor %}</select>
+            <label class="sr" for="{{ fid }}-l">جای دقیق در منبع</label><input class="a-in loc" id="{{ fid }}-l" name="locator" form="{{ fid }}" maxlength="255" value="{{ v.locator ?? '' }}" placeholder="جای دقیق: صفحه/جدول" dir="auto"></div></td>
+          <td><label class="sr" for="{{ fid }}-d">تاریخ بررسی</label><input class="a-in date" id="{{ fid }}-d" type="date" name="checked_on" form="{{ fid }}" max="{{ today }}" value="{{ v.checked_on ?? '' }}"></td>
+          <td><div class="stack"><label class="sr" for="{{ fid }}-st">وضعیت</label><select class="a-sel" id="{{ fid }}-st" name="status" form="{{ fid }}"><option value="pending"{% if not v or v.status == 'pending' %} selected{% endif %}>در انتظار</option><option value="verified"{% if v and v.status == 'verified' %} selected{% endif %}>تأییدشده</option></select>
+            <div class="row-actions"><form id="{{ fid }}" method="post" action="/admin/products/{{ p.id }}/values" data-guard><input type="hidden" name="_csrf" value="{{ csrf }}"><input type="hidden" name="item" value="{{ item.ref }}"><input type="hidden" name="key" value="{{ k.id }}">{% if v %}<input type="hidden" name="version" value="{{ v.version }}">{% endif %}<button class="a-btn a-btn--sm" type="submit">ذخیره <span class="sr">{{ k.code }}</span></button></form>
+            {% if v %}<form method="post" action="/admin/products/{{ p.id }}/values/{{ v.id }}/delete" data-confirm="مقدار {{ k.code }} برای {{ item.designation }} حذف شود؟"><input type="hidden" name="_csrf" value="{{ csrf }}"><input type="hidden" name="version" value="{{ v.version }}"><button class="a-btn a-btn--sm a-btn--link" type="submit">حذف <span class="sr">{{ k.code }}</span></button></form>{% endif %}</div></div>
+          </td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+    </div>
+    <p class="card__note">«تأییدشده» فقط با منبع و تاریخ بررسی پذیرفته می‌شود. مقدار بدون منبع در سایت «در انتظار» نمایش داده می‌شود؛ مقدار خالی هرگز نمایش داده نمی‌شود.</p>
+    {% endif %}
+  </section>
+  {% endfor %}
+
+  {# ---- The one rich-content field of the slice #}
+  <section class="card" aria-labelledby="h-desc">
+    <h2 class="card__h" id="h-desc">توضیح محصول <span class="actions muted">پاراگراف و فهرست · بدون HTML</span></h2>
+    <div class="bi">
+      {% for lang in ['fa', 'en'] %}
+      <form method="post" action="/admin/products/{{ p.id }}/description" data-guard{% if lang == 'en' %} lang="en" dir="ltr"{% endif %}>
+        <input type="hidden" name="_csrf" value="{{ csrf }}"><input type="hidden" name="version" value="{{ p.version }}"><input type="hidden" name="lang" value="{{ lang }}">
+        <label for="desc-{{ lang }}">{{ lang == 'fa' ? 'فارسی · دامنه .ir' : 'English · .com domain' }}</label>
+        {% if p.description[lang].editable %}
+          <textarea class="a-ta" id="desc-{{ lang }}" name="text" dir="{{ lang == 'fa' ? 'rtl' : 'ltr' }}" lang="{{ lang }}">{{ p.description[lang].text }}</textarea>
+          <button class="a-btn" type="submit">{{ lang == 'fa' ? 'ذخیره توضیح فارسی' : 'Save English description' }}</button>
+        {% else %}
+          <p class="muted">این متن بخش‌هایی دارد که این ویرایشگر ساده نشان نمی‌دهد؛ برای جلوگیری از حذف ناخواسته، این‌جا ویرایش نمی‌شود.</p>
+        {% endif %}
+      </form>
+      {% endfor %}
+    </div>
+    <p class="card__note">راهنما: خط خالی پاراگراف تازه می‌سازد · <span class="code">- </span>فهرست · <span class="code">1. </span>فهرست شماره‌دار · <span class="code">**پررنگ**</span> · <span class="code">*مورب*</span> · <span class="code">`6205`</span> برای کد · <span class="code">[متن](product:slug)</span> برای پیوند. هر دو زبان جدا نوشته می‌شوند و هرگز خودکار ترجمه نمی‌شوند.</p>
+  </section>
+
+  <div class="savebar"><span>{% if p.last_editor %}آخرین ویرایش: {{ p.last_editor.at|when }} · {{ p.last_editor.name }}{% else %}آخرین تغییر: {{ p.updated_at|when }}{% endif %}</span><span class="sp"></span><span>قیمت، موجودی و خرید در این مدل وجود ندارد.</span></div>
+</div>
+
+<div class="grid">
+  {# ---- Publication and indexing #}
+  <section class="card" aria-labelledby="h-pub">
+    <h2 class="card__h" id="h-pub">انتشار و نمایه‌سازی</h2>
+    <div class="card__b grid">
+      <fieldset class="radios"><legend>وضعیت</legend>
+        {% for k, label in statuses %}<label class="check"><input type="radio" name="status" value="{{ k }}" form="f-product"{% if p.status == k %} checked{% endif %}> {{ label }}</label>{% endfor %}
+      </fieldset>
+      {% if p.published_once %}<p class="hint muted">این محصول یک بار منتشر شده است: نشانی آن ثابت است و بایگانی، آن را با پاسخ 410 از سایت برمی‌دارد.</p>{% endif %}
+      <label class="check"><input type="checkbox" name="show_in_explorer" value="1" form="f-product"{% if p.explorer %} checked{% endif %}> نمایش در کاوشگر محصول</label>
+      <button class="a-btn a-btn--pri" type="submit" form="f-product">ذخیره</button>
+
+      <div>
+        <p class="lbl"><b>تأییدشده برای نمایه‌سازی</b> <span class="muted">(فقط مالک)</span></p>
+        {% if p.verified %}
+          <p class="good">صفحه تأیید شده است. هر تغییر در داده هسته، تأیید را برمی‌دارد.</p>
+        {% else %}
+          <div class="gate">
+            {% if p.issues is empty %}<span class="good">همه شرط‌ها برقرار است.</span>{% else %}
+            <span class="muted">شرط‌های باقی‌مانده:</span>
+            <ul>{% for issue in p.issues %}{% set code = issue|split(':')|first %}{% set rest = issue|split(': ', 2)|last %}<li>• {{ issue_text[code] ?? code }}{% if code in ['unconfirmed_variant', 'missing_value', 'unverified_value'] %} <span class="code">{{ rest }}</span>{% endif %}</li>{% endfor %}</ul>
+            {% endif %}
+          </div>
+          {% if is_owner %}
+          <form method="post" action="/admin/products/{{ p.id }}/verify" data-confirm="صفحه {{ p.designation }} برای نمایه‌سازی تأیید شود؟ پس از انتشار، این صفحه index می‌شود.">
+            <input type="hidden" name="_csrf" value="{{ csrf }}"><input type="hidden" name="version" value="{{ p.version }}">
+            <button class="a-btn a-btn--ok" type="submit"{% if p.issues is not empty %} disabled{% endif %}>تأیید برای نمایه‌سازی</button>
+          </form>
+          {% endif %}
+        {% endif %}
+      </div>
+      <div class="field"><span class="lbl">نتیجه در سایت پس از انتشار</span>
+        <p class="chips">{% if p.indexable %}<span class="outcome">index, follow</span><span class="outcome">sitemap ✓</span><span class="outcome">ProductGroup (no Offer)</span>{% else %}<span class="outcome pend">noindex</span><span class="outcome pend">sitemap ✕</span>{% endif %}</p></div>
+    </div>
+  </section>
+
+  {% if p.review %}
+  <section class="card" aria-labelledby="h-review">
+    <h2 class="card__h" id="h-review">بررسی رابطه</h2>
+    <div class="card__b grid">
+      <p>رابطه این کد با کدهای دیگر هنوز تأیید نشده است؛ هیچ رابطه‌ای حدس زده نمی‌شود.{% if p.review_note %} <span class="muted" dir="auto">{{ p.review_note }}</span>{% endif %}</p>
+      {% if is_owner %}
+      <form method="post" action="/admin/products/{{ p.id }}/standalone" class="grid" data-confirm="کد {{ p.designation }} محصول مستقل تأیید شود؟">
+        <input type="hidden" name="_csrf" value="{{ csrf }}">
+        <div class="field"><label for="rv-note">دلیل (ثبت در گزارش رویدادها)</label><input class="a-in" id="rv-note" name="note" required maxlength="500"></div>
+        <button class="a-btn" type="submit">تأیید به‌عنوان محصول مستقل</button>
+      </form>
+      {% else %}<p class="muted">تصمیم درباره رابطه با مالک است.</p>{% endif %}
+    </div>
+  </section>
+  {% endif %}
+
+  {# ---- Readout and preview #}
+  <section class="card" aria-labelledby="h-preview">
+    <h2 class="card__h" id="h-preview">پیش‌نمایش</h2>
+    <div class="card__b grid">
+      {% set base = p.items|first %}
+      {% set core = p.keys|filter(k => k.core)|slice(0, 3) %}
+      {% if core is not empty %}
+      <div class="readout">{% for k in core %}<div><small>{{ k.code }} · {{ k.label }}</small><b>{{ base.values[k.id].value ?? '—' }}</b> <small>{{ k.unit }}</small></div>{% endfor %}</div>
+      {% endif %}
+      <p class="muted">نقشه فنی هنگام انتشار از همین ابعاد ساخته می‌شود (فقط وقتی همه ابعاد هسته منبع دارند). پیش‌نمایش پیش‌نویس، صفحه را با همان قالب‌های انتشار نشان می‌دهد؛ noindex است و جایی نوشته نمی‌شود.</p>
+      <p class="chips"><a class="a-btn a-btn--sm" href="/admin/products/{{ p.id }}/preview/fa" target="_blank" rel="noopener">پیش‌نمایش fa ↗</a><a class="a-btn a-btn--sm" href="/admin/products/{{ p.id }}/preview/en" target="_blank" rel="noopener">Preview en ↗</a></p>
+    </div>
+  </section>
+
+  {# ---- Quick source (A3 note 8) #}
+  <section class="card" aria-labelledby="h-source">
+    <h2 class="card__h" id="h-source">منبع سریع</h2>
+    <form class="card__b grid" method="post" action="/admin/sources" data-guard>
+      <input type="hidden" name="_csrf" value="{{ csrf }}"><input type="hidden" name="return" value="/admin/products/{{ p.id }}">
+      <div class="field"><label for="src-title">عنوان</label><input class="a-in" id="src-title" name="title" required maxlength="255" placeholder="مثلاً کاتالوگ عمومی سازنده"></div>
+      <div class="grid g2"><div class="field"><label for="src-pub">ناشر</label><input class="a-in" id="src-pub" name="publisher" maxlength="160"></div><div class="field"><label for="src-ed">ویرایش / سال</label><input class="a-in" id="src-ed" name="edition" maxlength="60"></div></div>
+      <div class="field"><label for="src-url">نشانی</label><input class="a-in" id="src-url" name="url" type="url" dir="ltr" required maxlength="2048" placeholder="https://…"></div>
+      <button class="a-btn" type="submit">افزودن منبع</button>
+    </form>
+  </section>
+</div>
+</div>
+{% endblock %}

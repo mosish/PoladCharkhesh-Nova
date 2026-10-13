@@ -13,12 +13,14 @@ This file is a map, not a source of truth. It points to the authoritative docume
   - **Step 1 is done and verified:** the git repository, AGENTS.md/CLAUDE.md, the Docker dev stack and the toolchain.
   - The local baseline (step 2) is recorded in `nova/docs/local-baseline.md`.
   - The host probe is deferred.
-- **Not yet built:** schema, Admin, Publish Engine, public-site port, import.
 - **Step 1 is committed** as `5c7e33e`.
 - **Step 3 is approved and committed** (owner review 2026-10-06; fullwidth-digit refinement; frozen choices recorded in `00`).
   - Spec: `nova/docs/designation-matching.md`.
   - Executable spec: `nova/tests/fixtures/designation/corpus.json`.
-- **Next:** step 4 (migrations runner, schema v1, fixtures), only on the owner's go-ahead.
+- **Steps 4–8 are implemented, verified and committed** under the owner's standing delegation. They are not separately owner-reviewed. See §14.
+- **Step 8 repairs** (2026-10-12) are verified; see §14 and `nova/docs/release-routing.md`.
+- **Step 9** (Admin sign-in, shell and Product/variant slice) is implemented and verified locally; see §14 and `nova/docs/admin.md`. The Step 8 repairs and Step 9 are uncommitted and await the owner's review.
+- **Next:** step 10 (inquiry endpoint), only on the owner's go-ahead. Not yet built: inquiry endpoint, media, backup, `.htaccess` template, import, deployment dry run.
 
 ## 2. Authoritative documents and precedence (D18)
 
@@ -196,7 +198,7 @@ Rules:
 2. Build the normaliser and the seven-category matcher in PHP and JS from one spec.
 3. Mark unverified suffix/slash semantics (V-1–V-5) as explicitly "unresolved". Never infer them.
 
-Next, after the owner's go-ahead: step 4 (migrations runner, schema v1, fixtures).
+Steps 4–8 followed (see §14). The current next step is in §1 and §14.
 
 **Step 1 (completed):**
 
@@ -238,4 +240,81 @@ Steps committed after verification: 4 `ec96a09` (migrations, schema v1), 5 `97c6
 
 **Resume at step 9** (sign-in, Admin shell from the frozen A1–A9 wireframes / admin-wf.css, Product/variant vertical slice, audit). Then steps 10–16 per `05` §24.
 
-**Open items to handle first:** a background security review of `31237e8` flagged (1) possible information disclosure in `app/src/Publish/PublishFactory.php` and (2) missing authorization on CLI publish/rollback in `app/src/Cli/Application.php`. Neither is yet investigated.
+**Open items to handle first:** a background security review of `31237e8` flagged (1) possible information disclosure in `app/src/Publish/PublishFactory.php` and (2) missing authorization on CLI publish/rollback in `app/src/Cli/Application.php`.
+
+**Investigated 2026-10-12 (read-only, cloud session; nothing changed in code, nothing committed):**
+
+1. **PublishFactory: confirmed, latent (nothing is deployed).**
+   - The factory puts every release inside the docroot (`public_html/_site/`).
+     - Strategy D: the previous release stays at a fixed public address (`/_site/slot-a/` or `/_site/slot-b/`), and `_site/ACTIVE_B` (not a dotfile) names a release id.
+     - Strategy S: the four retained releases are reachable at `/_site/releases/<id>/` by anyone who knows or guesses an id.
+     - Consequence: a withdrawn product or a corrected technical value stays publicly readable until pruned.
+   - The current `public_html/.htaccess` is a skeleton. Nothing in `05` says step 13 must block direct `/_site/` requests (D6 only says "internal folders blocked").
+   - The factory also accepts a `paths.storage` inside the docroot without complaint. Storage holds the journal and the strategy D archive now, and backups and sessions later.
+   - Fix:
+     - (a) Now: outside development, `PublishFactory` refuses a storage path that resolves inside `paths.public`. Add a unit test.
+     - (b) Step 13 requirement: the generated `.htaccess` serves only the live release through internal rewrites. Any direct external request under `/_site/` gets a 404 (`slot-*`, `releases/*`, `ACTIVE_B`, `manifest.json`), for both S and D. Test it on the Apache container.
+2. **CLI publish/rollback: not a vulnerability; two small gaps.**
+   - Running `app/bin/nova` requires the hosting-account shell. That shell already holds `~/config/config.php` (the database password) and write access to the docroot, so a check inside the CLI cannot stop anyone. `05` §14 also relies on the CLI for recovery and first-Owner setup.
+   - Gaps:
+     - (a) `Application::run()` does not refuse a non-CLI SAPI; only `dev:reset` checks.
+     - (b) CLI publishes and rollbacks are audited with a NULL actor, so they look the same as automatic crash recovery.
+   - Fix:
+     - (a) `run()` returns 2 unless the SAPI is `cli`. Add a test with `apache2handler`.
+     - (b) Record the origin (`cli` and the OS user) in the publish and rollback audit entries.
+
+Both fixes are ordinary technical decisions (delegated). Implement them, verify them in Docker and commit before step 9. Commit this note in the same commit.
+
+**Stale status (reported to the owner 2026-10-12):** several places still say step 4 is next:
+- the status line of `00` (authoritative per D18);
+- §1 and §12 of this file;
+- the header of `05`.
+
+Git history shows steps 4–8 committed (`ec96a09` … `31237e8`, with docs in `81a9829`). Update those status lines when the fixes are committed, so a fresh session doesn't stop at step 4. *(Done 2026-10-12: `00`, `05` header, §1 and §12 now name step 9 as next.)*
+
+**Step 8 repairs, implemented and verified locally 2026-10-12 (not committed; the owner withheld commit permission for this session):**
+
+How the findings were confirmed:
+- **Reproduced by running them first:** findings 2, 4, 5 and 6 and the repeated-recovery case. A scratch script ran on temporary directories and a new disposable database (`nova_s8_*`); the Apache test also ran against the original `.htaccess`.
+- **Confirmed by reading the code** (no check existed at all): findings 1 and 3 and the foreign-link part of 7.
+
+All fixes verified; details and the Step 13 requirements are in `nova/docs/release-routing.md`.
+1. **Storage inside the docroot:** reproduced (accepted silently). `PublishFactory::locations()` now refuses it outside development, using resolved paths (symlinks and `..`). Covered by `tests/unit/Publish/PublishFactoryTest.php`.
+2. **Direct `/_site/` access:** reproduced on the dev Apache. An old release and the manifests returned 200, including through `%5f` and `//` spellings. `public_html/.htaccess` now 404s every client request under `/_site`, while internal rewrites still work. Verified with a private Apache in `ApacheReleaseAccessTest` (S, D with slot a live, D with slot b live; it fails against the old file) and with curl on the dev server. The preview hosts are unaffected.
+3. **CLI under a web SAPI:** `Application::run()` now returns 2 for any SAPI other than `cli`. Publish and rollback audit entries record `by` as `admin`, `cli` (with the OS user) or `recovery` (with `started_by`).
+4. **Rollback crash window:** reproduced (the database kept the wrong live release, and `recover()` saw nothing). Rollback is now journalled and finished by recovery.
+5. **Strategy D grace window:** reproduced (a slot that was just live could be reused after 0 s). The grace timestamp is now written before the marker changes, and the writes are durable. Crash tests cover `copied`, `graced` and `marked`.
+6. **Recovery used the current database:** reproduced (it froze a product that wasn't in the live release). Identity and summary are now journalled before the switch.
+7. **Strategies and recovery:**
+   - Both strategies are covered by tests for failed switches (publish and rollback), repeated recovery (a duplicate audit entry was reproduced and fixed) and retention for D as well as S.
+   - Strategy S now refuses a foreign, absolute or dangling `current` link (the 2026-10-11 incident).
+
+Totals after the repairs: 493 PHPUnit / 6,216 assertions, PHPStan max, CS clean, 171 JS. Playwright and `dev:e2e` were not run (they reset the dev database).
+
+**Step 9, implemented and verified locally 2026-10-12 (not committed; awaits the owner's review):**
+
+Details are in `nova/docs/admin.md`.
+- **Sign-in:** schema 0005; Argon2id; Owner TOTP (E-10) with enrolment at first sign-in and replay protection; generic failures; account lockout with back-off; per-address throttling; file sessions outside the docroot (strict, HttpOnly, Secure, SameSite=Strict, path `/admin`); new id at each stage; idle and absolute timeouts; session epoch.
+- **Request rules:** CSRF plus same-origin checks on every POST; role policy in both the Admin and the services.
+- **Accounts:** command line only (`user:create-owner`, `user:create-editor`, `user:reset-password`, `user:reset-totp`, `user:list`), with no default accounts.
+- **Screens:** the Admin shell and A1/A2/A3/A7 ported from the frozen wireframes. The A3 slice covers `base_listed`, variants, spellings, per-designation values with provenance, the description field, publication and the Owner-only verification gate, plus draft preview, publish and rollback. Admin assets are served under `/admin` only.
+- **Recovery:** the journal is recovered at the start of each signed-in Admin request (05 §7).
+- **Security pass:** it found, and fixed, one gap (a lock beginning mid-sign-in did not stop the TOTP step) and an error-display leak on a misconfigured host (`display_errors` is now forced off). No raw output exists in the Admin templates.
+- **Also fixed:** development builds now use the dev stack's real port (`NOVA_HTTP_PORT` passed into the container), so canonical and language-switch URLs no longer assume 8080.
+
+Verification:
+- **PHPUnit:** 556 tests / 6,608 assertions on a new disposable database (never `nova` or `nova_test`). PHPStan max, CS clean, `git diff --check` clean, 171 JS tests.
+- **Playwright on a disposable stack** (its own database, docroot and storage; port 8090):
+  - `admin.spec.js`, 11/11 on Apache with native sessions;
+  - `site.spec.js`, 32/32 (this also covers Codex's uncommitted SEO changes).
+- **Cleanup:** the disposable databases, container and scratch files were removed afterwards.
+- **Untouched:** the dev database `nova` (still at schema 0004), `nova_test` and the live preview release `R-20261012-131225-9d1c`.
+
+Not done, by instruction:
+- no commit, publish, rollback or prune on the real preview;
+- `dev:reset`, `dev:e2e` and migrations not run on `nova`;
+- the web container not recreated.
+
+To use the Admin locally, the owner must OK the steps in `nova/docs/admin.md`: rebuild the web container, `migrate --no-backup` on the dev database, `assets:build`, `user:create-owner`.
+
+**Resume point:** owner review of the Step 8 repairs and Step 9, then commits. Step 10 (inquiry endpoint) only on the owner's go-ahead.

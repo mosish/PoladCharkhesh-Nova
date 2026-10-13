@@ -89,6 +89,28 @@ final class SiteData
     }
 
     /**
+     * The site as it would publish, with one Product's working state in
+     * front, whatever its status: the Admin's draft preview. The other
+     * published Products stay so internal links resolve. Null when absent.
+     */
+    public static function preview(PDO $pdo, int $productId, bool $includeSamples, string $contactFile): ?self
+    {
+        $row = Sql::row($pdo, 'SELECT * FROM product WHERE id = ?', [$productId]);
+        if ($row === null) {
+            return null;
+        }
+        $site = self::load($pdo, $includeSamples, $contactFile);
+        $families = [];
+        foreach ($site->families as $f) {
+            $families[$f['slug']] = $f;
+        }
+        $product = self::product($pdo, $row, $families, $includeSamples || (int) $row['is_sample'] === 1);
+        $others = array_values(array_filter($site->products, static fn(array $p): bool => $p['id'] !== $productId));
+
+        return new self($site->families, [$product, ...$others], $site->index, $site->contact, $site->examples, $site->samples);
+    }
+
+    /**
      * @param array<string, scalar|null> $p
      * @param array<string, Family> $families
      *

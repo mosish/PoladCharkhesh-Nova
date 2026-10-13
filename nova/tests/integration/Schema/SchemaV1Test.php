@@ -77,7 +77,7 @@ final class SchemaV1Test extends TestCase
         $rows = Sql::rows($this->pdo, 'SELECT TABLE_NAME, ENGINE, TABLE_COLLATION FROM information_schema.TABLES WHERE TABLE_SCHEMA = DATABASE()');
         $tables = array_map(static fn(array $r): string => (string) $r['TABLE_NAME'], $rows);
         sort($tables);
-        self::assertSame(['app_user', 'audit_event', 'brand', 'designation_key', 'document', 'document_link', 'family', 'product', 'product_variant', 'publish_record', 'redirect', 'schema_migrations', 'setting', 'source', 'spec_key', 'spec_value', 'spelling'], $tables);
+        self::assertSame(['app_user', 'audit_event', 'brand', 'designation_key', 'document', 'document_link', 'family', 'login_throttle', 'product', 'product_variant', 'publish_record', 'redirect', 'schema_migrations', 'setting', 'source', 'spec_key', 'spec_value', 'spelling'], $tables);
         foreach ($rows as $row) {
             self::assertSame('InnoDB', $row['ENGINE'], (string) $row['TABLE_NAME']);
             self::assertSame('utf8mb4_unicode_520_ci', $row['TABLE_COLLATION'], (string) $row['TABLE_NAME']);

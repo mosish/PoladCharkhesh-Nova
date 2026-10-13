@@ -1,0 +1,6 @@
+{% for f in flash %}
+<div class="flash flash--{{ f.type == 'ok' ? 'ok' : 'error' }}" role="{{ f.type == 'ok' ? 'status' : 'alert' }}">
+  <span>{{ f.text }}</span>
+  {% if f.detail %}<span class="detail" lang="en">{{ f.detail }}</span>{% endif %}
+</div>
+{% endfor %}

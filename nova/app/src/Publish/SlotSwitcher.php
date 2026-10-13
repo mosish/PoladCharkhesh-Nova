@@ -18,6 +18,11 @@ use SplFileInfo;
  * also what rollback restores from), copied into the inactive slot, and made
  * live by creating or deleting the marker (both atomic). A slot is reused only
  * after a grace period, so requests still reading it are never cut off.
+ *
+ * Crash safety: the slot about to go inactive gets its grace timestamp BEFORE
+ * the marker changes (and again after), so a process killed between the two
+ * can never leave a just-live slot open for immediate reuse. Marker and
+ * timestamp writes are flushed to disk (file and directory).
  */
 final readonly class SlotSwitcher implements ReleaseSwitcher
 {
@@ -27,6 +32,8 @@ final readonly class SlotSwitcher implements ReleaseSwitcher
         private string $siteDir,
         private string $archiveDir,
         private Clock $clock = new SystemClock(),
+        /** Tests: called at 'copied', 'graced' and 'marked'; throw SimulatedCrash to stand for a killed process. */
+        private ?\Closure $fault = null,
     ) {}
 
     public function name(): string
@@ -56,20 +63,31 @@ final readonly class SlotSwitcher implements ReleaseSwitcher
         if ($wait > 0) {
             throw new RuntimeException("The inactive slot was live until moments ago; it can be reused in {$wait} s.");
         }
-        $target = $this->activeSlot() === 'a' ? 'b' : 'a';
+        $live = $this->activeSlot();
+        $target = $live === 'a' ? 'b' : 'a';
         $slot = $this->slot($target);
         Files::removeTree($slot);
         self::copyTree($this->archive($id), $slot);
-        file_put_contents($slot . '/.release', $id);
+        Files::writeAtomic($slot . '/.release', $id);
+        $this->tick('copied');
+
+        // The live slot's grace period is recorded before it stops being live …
+        $grace = $this->siteDir . '/.slot-' . $live . '-inactive';
+        Files::writeAtomic($grace, (string) $this->clock->now());
+        $this->tick('graced');
 
         $marker = $this->siteDir . '/ACTIVE_B';
         if ($target === 'b') {
             Files::writeAtomic($marker, $id . "\n");
-        } elseif (is_file($marker) && !unlink($marker)) {
-            throw new RuntimeException('Cannot remove the slot marker.');
+        } elseif (is_file($marker)) {
+            if (!unlink($marker)) {
+                throw new RuntimeException('Cannot remove the slot marker.');
+            }
+            Files::syncDirectory($this->siteDir);
         }
-        // The slot that just went inactive starts its grace period now.
-        Files::writeAtomic($this->siteDir . '/.slot-' . ($target === 'a' ? 'b' : 'a') . '-inactive', (string) $this->clock->now());
+        $this->tick('marked');
+        // … and restarted at the moment it actually went inactive.
+        Files::writeAtomic($grace, (string) $this->clock->now());
     }
 
     public function current(): ?string
@@ -114,6 +132,13 @@ final readonly class SlotSwitcher implements ReleaseSwitcher
     public function activeSlot(): string
     {
         return is_file($this->siteDir . '/ACTIVE_B') ? 'b' : 'a';
+    }
+
+    private function tick(string $step): void
+    {
+        if ($this->fault !== null) {
+            ($this->fault)($step);
+        }
     }
 
     private function slot(string $name): string

@@ -7,7 +7,6 @@ namespace Nova\Publish;
 use Nova\Audit\AuditLog;
 use Nova\Core\Environment;
 use Nova\Core\Sql;
-use Nova\Security\Actor;
 use PDO;
 use RuntimeException;
 use Throwable;
@@ -17,7 +16,14 @@ use Throwable;
  * switch → record → prune to 5 (D13). The journal records every step; an
  * interrupted publish is rolled back (not yet switched) or finished (switched)
  * by recover(), which runs at the start of every publish and Admin request.
- * Rollback is an instant switch back to an earlier release still on disk.
+ * Rollback is an instant switch back to an earlier release still on disk; it
+ * is journalled too, so a crash between its switch and its record is finished.
+ *
+ * Recovery records what the switched release actually contains (its identity
+ * and summary are journalled before the switch), never a fresh read of a
+ * database that may have changed since the build.
+ *
+ * @phpstan-import-type Identity from PublishJournal
  */
 final class PublishEngine
 {
@@ -43,7 +49,7 @@ final class PublishEngine
         $this->fault = $fault;
     }
 
-    public function publish(?Actor $actor): PublishResult
+    public function publish(Initiator $by): PublishResult
     {
         $this->lock();
         try {
@@ -55,13 +61,13 @@ final class PublishEngine
                 return new PublishResult('waiting', null, waitSeconds: $wait);
             }
             $previous = $this->switcher->current();
-            Sql::run($this->pdo, 'INSERT INTO publish_record (release_id, strategy, environment, published_by, previous_release_id) VALUES (?, ?, ?, ?, ?)', [$release, $this->switcher->name(), $this->environment->value, $actor?->userId, $previous]);
+            Sql::run($this->pdo, 'INSERT INTO publish_record (release_id, strategy, environment, published_by, previous_release_id) VALUES (?, ?, ?, ?, ?)', [$release, $this->switcher->name(), $this->environment->value, $by->actor?->userId, $previous]);
             $record = (int) $this->pdo->lastInsertId();
-            $this->journal->write(['release' => $release, 'record' => $record, 'strategy' => $this->switcher->name(), 'previous' => $previous, 'step' => 'started', 'at' => time()]);
+            $this->journal->write(['kind' => 'publish', 'release' => $release, 'record' => $record, 'strategy' => $this->switcher->name(), 'previous' => $previous, 'step' => 'started', 'at' => time(), 'by' => $by->toArray()]);
             $this->tick('started');
 
             try {
-                return $this->run($actor, $release, $record);
+                return $this->run($by, $release, $record);
             } catch (SimulatedCrash $crash) {
                 throw $crash;                       // a killed process does no cleanup; recover() handles it
             } catch (Throwable $e) {
@@ -74,7 +80,7 @@ final class PublishEngine
         }
     }
 
-    /** Finishes or rolls back an interrupted publish. Safe to call at any time. */
+    /** Finishes or rolls back an interrupted publish or rollback. Safe to call at any time, any number of times. */
     public function recover(): ?string
     {
         $this->lock();
@@ -86,17 +92,20 @@ final class PublishEngine
     }
 
     /** Switches back to the most recent earlier release still on disk. */
-    public function rollback(?Actor $actor): string
+    public function rollback(Initiator $by): string
     {
         $this->lock();
         try {
             $this->recoverLocked();
             $current = $this->switcher->current() ?? throw new RuntimeException('Nothing is published yet.');
             $target = null;
+            $targetRecord = 0;
             // Back means back: the newest release that was superseded, never one that was itself rolled back.
-            foreach (Sql::column($this->pdo, "SELECT release_id FROM publish_record WHERE status = 'superseded' AND went_live_at IS NOT NULL ORDER BY went_live_at DESC, id DESC") as $id) {
-                if ($id !== $current && $this->switcher->has((string) $id)) {
-                    $target = (string) $id;
+            foreach (Sql::rows($this->pdo, "SELECT id, release_id FROM publish_record WHERE status = 'superseded' AND went_live_at IS NOT NULL ORDER BY went_live_at DESC, id DESC") as $row) {
+                $id = (string) $row['release_id'];
+                if ($id !== $current && $this->switcher->has($id)) {
+                    $target = $id;
+                    $targetRecord = (int) $row['id'];
                     break;
                 }
             }
@@ -107,12 +116,22 @@ final class PublishEngine
             if ($wait > 0) {
                 throw new RuntimeException("Rollback can run in {$wait} s (slot grace period).");
             }
-            $this->switcher->activate($target);
-            $this->pdo->beginTransaction();
-            Sql::run($this->pdo, "UPDATE publish_record SET status = 'rolled_back' WHERE release_id = ?", [$current]);
-            Sql::run($this->pdo, "UPDATE publish_record SET status = 'live', went_live_at = UTC_TIMESTAMP(6) WHERE release_id = ?", [$target]);
-            (new AuditLog($this->pdo))->record($actor, 'publish.rollback', 'release', null, $target, ['live' => $current], ['live' => $target]);
-            $this->pdo->commit();
+            // Journalled before the switch: a crash after it is finished by recover(), not left half-recorded.
+            $this->journal->write(['kind' => 'rollback', 'release' => $target, 'record' => $targetRecord, 'strategy' => $this->switcher->name(), 'previous' => $current, 'step' => 'started', 'at' => time(), 'by' => $by->toArray()]);
+            $this->tick('rollback-started');
+            try {
+                $this->switcher->activate($target);
+            } catch (SimulatedCrash $crash) {
+                throw $crash;
+            } catch (Throwable $e) {
+                $this->recoverLocked();
+
+                throw $e;
+            }
+            $this->journal->step('switched');
+            $this->tick('rollback-switched');
+            $this->recordRollback($by, $current, $target, $targetRecord, null);
+            $this->journal->clear();
 
             return $target;
         } finally {
@@ -120,13 +139,14 @@ final class PublishEngine
         }
     }
 
-    private function run(?Actor $actor, string $release, int $record): PublishResult
+    private function run(Initiator $by, string $release, int $record): PublishResult
     {
         // Snapshot + validate: one consistent read of the whole catalogue.
         $this->pdo->exec('START TRANSACTION WITH CONSISTENT SNAPSHOT');
         try {
             $data = SiteData::load($this->pdo, $this->config->includeSamples, $this->contactFile);
             $check = (new Validator($this->pdo, $this->environment === Environment::Development))->check($data);
+            $identity = $this->identity($data);
         } finally {
             $this->pdo->exec('COMMIT');
         }
@@ -138,7 +158,7 @@ final class PublishEngine
         }
 
         $dir = $this->switcher->prepare($release);
-        $this->journal->step('prepared');
+        $this->journal->step('prepared', ['identity' => $identity]);
         $this->tick('prepared');
 
         $files = $this->builder->build($data, $dir);
@@ -153,14 +173,15 @@ final class PublishEngine
 
             return new PublishResult('failed', $release, $problems, $check['warnings']);
         }
-        $this->journal->step('verified');
+        $summary = ['products' => \count($data->products), 'files' => \count($files), 'warnings' => $check['warnings']];
+        $this->journal->step('verified', ['summary' => $summary]);
         $this->tick('verified');
 
         $this->switcher->activate($release);
         $this->journal->step('switched');
         $this->tick('switched');
 
-        $this->recordLive($actor, $release, $record, ['products' => \count($data->products), 'files' => \count($files), 'warnings' => $check['warnings']], $data);
+        $this->recordLive($by, $release, $record, $summary, $identity);
         $this->journal->step('recorded');
         $this->tick('recorded');
 
@@ -179,6 +200,16 @@ final class PublishEngine
         $release = $entry['release'];
         // The truth is what is live, not the last journal line: a switch may have happened just before a crash.
         $switched = $this->switcher->current() === $release;
+        $startedBy = $entry['by'] ?? null;
+
+        if (($entry['kind'] ?? 'publish') === 'rollback') {
+            if ($switched && $this->recordStatus($entry['record']) !== 'live') {
+                $this->recordRollback(Initiator::recovery(), (string) $entry['previous'], $release, $entry['record'], $startedBy);
+            }
+            $this->journal->clear();
+
+            return $switched ? "Finished the interrupted rollback to {$release}." : "The interrupted rollback to {$release} never switched; nothing changed.";
+        }
 
         if (!$switched) {
             if ($this->switcher->has($release)) {
@@ -190,14 +221,13 @@ final class PublishEngine
             return "Rolled back the interrupted publish {$release}.";
         }
 
-        if ($entry['step'] !== 'recorded') {
-            $this->pdo->exec('START TRANSACTION WITH CONSISTENT SNAPSHOT');
-            try {
-                $data = SiteData::load($this->pdo, $this->config->includeSamples, $this->contactFile);
-            } finally {
-                $this->pdo->exec('COMMIT');
+        // Idempotent: a recovery that itself died after recording must not record (or audit) twice.
+        if ($this->recordStatus($entry['record']) !== 'live') {
+            $summary = [...($entry['summary'] ?? []), 'recovered' => true];
+            if ($startedBy !== null) {
+                $summary['started_by'] = $startedBy;
             }
-            $this->recordLive(null, $release, $entry['record'], ['recovered' => true], $data);
+            $this->recordLive(Initiator::recovery(), $release, $entry['record'], $summary, $entry['identity'] ?? null);
         }
         $this->prune();
         $this->journal->clear();
@@ -205,30 +235,83 @@ final class PublishEngine
         return "Finished the interrupted publish {$release}.";
     }
 
-    /** @param array<string, mixed> $summary */
-    private function recordLive(?Actor $actor, string $release, int $record, array $summary, SiteData $data): void
+    /**
+     * @param array<string, mixed> $summary
+     * @param Identity|null $identity what the release publishes; null only for a journal written without it
+     */
+    private function recordLive(Initiator $by, string $release, int $record, array $summary, ?array $identity): void
     {
+        if ($identity === null) {
+            $summary['warnings'] = [...(\is_array($summary['warnings'] ?? null) ? $summary['warnings'] : []), 'the release identity was not journalled; first_published_at was not updated'];
+        }
         $this->pdo->beginTransaction();
         try {
             Sql::run($this->pdo, "UPDATE publish_record SET status = 'superseded' WHERE status = 'live' AND id <> ?", [$record]);
             $manifest = @hash_file('sha256', $this->manifestPath($release));
             Sql::run($this->pdo, "UPDATE publish_record SET status = 'live', went_live_at = UTC_TIMESTAMP(6), finished_at = UTC_TIMESTAMP(6), manifest_sha256 = ?, summary_text = ? WHERE id = ?", [$manifest === false ? null : $manifest, json_encode($summary, JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR), $record]);
             // Public identity is frozen from the first publish on (slugs, 410/301 on archive).
-            foreach ($data->products as $p) {
-                Sql::run($this->pdo, 'UPDATE product SET first_published_at = COALESCE(first_published_at, UTC_TIMESTAMP()) WHERE id = ?', [$p['id']]);
-                foreach ($p['items'] as $item) {
-                    if ($item['kind'] === 'variant') {
-                        Sql::run($this->pdo, 'UPDATE product_variant SET first_published_at = COALESCE(first_published_at, UTC_TIMESTAMP()) WHERE slug = ?', [$item['slug']]);
-                    }
-                }
+            foreach ($identity['products'] ?? [] as $id) {
+                Sql::run($this->pdo, 'UPDATE product SET first_published_at = COALESCE(first_published_at, UTC_TIMESTAMP()) WHERE id = ?', [$id]);
             }
-            (new AuditLog($this->pdo))->record($actor, 'publish', 'release', null, $release, null, $summary);
+            foreach ($identity['variants'] ?? [] as $id) {
+                Sql::run($this->pdo, 'UPDATE product_variant SET first_published_at = COALESCE(first_published_at, UTC_TIMESTAMP()) WHERE id = ?', [$id]);
+            }
+            (new AuditLog($this->pdo))->record($by->actor, 'publish', 'release', null, $release, null, [...$summary, 'by' => $by->toArray()]);
             $this->pdo->commit();
         } catch (Throwable $e) {
             $this->pdo->rollBack();
 
             throw $e;
         }
+    }
+
+    /** @param array<string, int|string>|null $startedBy who started a rollback that recovery is finishing */
+    private function recordRollback(Initiator $by, string $from, string $target, int $targetRecord, ?array $startedBy): void
+    {
+        $after = ['live' => $target, 'by' => $by->toArray()];
+        if ($startedBy !== null) {
+            $after['started_by'] = $startedBy;
+        }
+        $this->pdo->beginTransaction();
+        try {
+            Sql::run($this->pdo, "UPDATE publish_record SET status = 'rolled_back' WHERE release_id = ? AND status = 'live'", [$from]);
+            Sql::run($this->pdo, "UPDATE publish_record SET status = 'live', went_live_at = UTC_TIMESTAMP(6) WHERE id = ?", [$targetRecord]);
+            (new AuditLog($this->pdo))->record($by->actor, 'publish.rollback', 'release', null, $target, ['live' => $from], $after);
+            $this->pdo->commit();
+        } catch (Throwable $e) {
+            $this->pdo->rollBack();
+
+            throw $e;
+        }
+    }
+
+    /**
+     * What a release publishes, read inside the snapshot: the internal ids of
+     * its Products and listed variants (never shown publicly).
+     *
+     * @return Identity
+     */
+    private function identity(SiteData $data): array
+    {
+        $products = [];
+        $variants = [];
+        foreach ($data->products as $p) {
+            $products[] = $p['id'];
+            foreach ($p['items'] as $item) {
+                if ($item['kind'] === 'variant') {
+                    $variants[] = Sql::int($this->pdo, 'SELECT id FROM product_variant WHERE slug = ?', [$item['slug']]);
+                }
+            }
+        }
+
+        return ['products' => $products, 'variants' => $variants];
+    }
+
+    private function recordStatus(int $record): ?string
+    {
+        $status = Sql::scalar($this->pdo, 'SELECT status FROM publish_record WHERE id = ?', [$record]);
+
+        return $status === null ? null : (string) $status;
     }
 
     /** Keeps the KEEP most recent releases that went live (D13); never the live one. */
