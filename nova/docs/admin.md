@@ -21,6 +21,11 @@ Built and verified locally on 2026-10-12. It approves nothing and changes no dec
     - draft preview through the publish templates (noindex, labelled, written nowhere).
   - **A7 Publish:** live release, changes since it went live (audit trail, with who made them), a validation dry run, the publish button, retained history and rollback.
 - **Navigation:** shows the full frozen structure; screens built in later steps are listed as "به‌زودی" and are not links.
+- **Several forms on one page:** the Product editor has many forms, and saving one reloads the page. If other forms hold unsaved edits, the save first asks («در N بخش دیگر این صفحه تغییرات ذخیره‌نشده دارید…»). Nothing is discarded silently, and leaving the page with edits still asks too.
+- **Unpublished changes** (top bar, dashboard, A7) are the content changes the live release does not contain, measured against the snapshot that release was built from (migration 0006: `snapshot_audit_id` and `snapshot_audit_gaps`), not against when it went live.
+  - It stays right after a rollback: the changes that are no longer live reappear.
+  - An edit saved while a release was being built counts as unpublished, including one whose transaction was still open at the snapshot.
+- **After a failed publish or rollback,** the message states which release is live now, read from the switch. If the switch had happened, the engine's recovery has finished it and the message names the new release; otherwise it says the live release is unchanged and names it.
 
 ## Security properties (05 §6, §14, §15; E-10)
 
@@ -35,6 +40,14 @@ Built and verified locally on 2026-10-12. It approves nothing and changes no dec
 - **Lockout:** after 5 consecutive failures (password or TOTP) the account locks for 60 s, doubling per further failure up to 1 h. A lock that begins mid-sign-in also stops the code step.
   - Per client address (stored as a SHA-256 of the address): more than 20 failures within 15 min block that address for 15 min.
   - Trade-off: anyone can lock an account by failing on purpose. `user:reset-password` clears a lock.
+- **Concurrency (2026-10-13):** a sign-in completes in one transaction that holds the account row.
+  - It re-checks status, session epoch and lockout, so a lock reached while a password or code was being checked stops that sign-in. Such a sign-in also no longer clears the lock.
+  - It claims the credential with a conditional UPDATE that must change exactly one row. The TOTP step is spent only if it is newer than the last one, and an enrolment is stored only while none exists.
+  - It resets the counters and writes the success audit in the same transaction. The session is created only after the commit.
+  - So of concurrent requests with the same code, or concurrent enrolments, exactly one signs in. A losing enrolment records `enrolment_superseded`, not a success.
+  - Failure counters are incremented under the account row lock, and the address throttle is one atomic upsert, so no failure is lost.
+  - Tests: `tests/integration/Security/AdminAuthConcurrencyTest.php`. It uses independent connections and sessions with a deterministic interleaving point, plus real parallel processes.
+- **Equal cost for unknown accounts (2026-10-13):** an unknown account is verified once against a fixed dummy hash at the current Argon2id/bcrypt parameters. Before, it hashed on the spot first, which cost about twice as long (measured 426 ms vs 230 ms) and revealed that the account did not exist. `PasswordTimingTest` checks the parameters and measures in fresh processes.
 - **Sessions:** PHP file sessions in Nova's own `storage/sessions` (`0700`), outside the docroot.
   - Strict mode, cookies only. The cookie `nova_admin` is HttpOnly, Secure and SameSite=Strict, with Path `/admin`.
   - A new session id at the password step and again when fully signed in.

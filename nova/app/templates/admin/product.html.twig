@@ -42,7 +42,7 @@
       <div class="savebar"><span>ذخیره فقط پیش‌نویس را تغییر می‌دهد؛ سایت زنده با «انتشار» به‌روز می‌شود.</span><span class="sp"></span><button class="a-btn a-btn--pri" type="submit">ذخیره</button></div>
     </form>
 
-    <div class="t-wrap">
+    <div class="t-wrap" tabindex="0" role="region" aria-label="جدول انواع پسوندی">
     <table class="t">
       <caption class="sr">انواع پسوندی (کد متفاوت؛ ProductVariant)</caption>
       <thead><tr><th scope="col">نوع پسوندی</th><th scope="col">فهرست</th><th scope="col">وضعیت</th><th scope="col">رابطه</th><th scope="col">داده فنی</th><th class="w1" scope="col"><span class="sr">عملیات</span></th></tr></thead>
@@ -99,7 +99,7 @@
     {% if p.keys is empty %}
       <p class="empty">برای این خانواده مشخصه‌ای تعریف نشده است.</p>
     {% else %}
-    <div class="t-wrap">
+    <div class="t-wrap" tabindex="0" role="region" aria-label="جدول مقدارهای {{ item.designation }}">
     <table class="t spec">
       <caption class="sr">مقدارهای {{ item.designation }}</caption>
       <thead><tr><th scope="col">نماد</th><th scope="col">مقدار</th><th scope="col">واحد</th><th scope="col">منبع · جای دقیق</th><th scope="col">تاریخ بررسی</th><th scope="col">وضعیت</th></tr></thead>

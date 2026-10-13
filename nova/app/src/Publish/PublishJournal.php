@@ -18,7 +18,8 @@ use Nova\Core\Files;
  * - kind 'rollback': written before the switch back; `release` is the target.
  *
  * @phpstan-type Identity array{products: list<int>, variants: list<int>}
- * @phpstan-type Entry array{kind?: string, release: string, record: int, strategy: string, previous: ?string, step: string, at: int, by?: array<string, int|string>, identity?: Identity, summary?: array<string, mixed>}
+ * @phpstan-type SnapshotPoint array{audit: int, gaps: list<int>}
+ * @phpstan-type Entry array{kind?: string, release: string, record: int, strategy: string, previous: ?string, step: string, at: int, by?: array<string, int|string>, identity?: Identity, snapshot?: SnapshotPoint, summary?: array<string, mixed>}
  */
 final readonly class PublishJournal
 {

@@ -24,10 +24,12 @@ use Throwable;
  * database that may have changed since the build.
  *
  * @phpstan-import-type Identity from PublishJournal
+ * @phpstan-import-type SnapshotPoint from PublishJournal
  */
 final class PublishEngine
 {
     public const int KEEP = 5;
+    private const int SNAPSHOT_LOOKBACK = 1000;
     private const string LOCK = 'nova_publish';
 
     /** @var (\Closure(string): void)|null */
@@ -78,6 +80,12 @@ final class PublishEngine
         } finally {
             $this->unlock();
         }
+    }
+
+    /** The release visitors are served now (what the switch says, not the records), or null before the first publish. */
+    public function live(): ?string
+    {
+        return $this->switcher->current();
     }
 
     /** Finishes or rolls back an interrupted publish or rollback. Safe to call at any time, any number of times. */
@@ -147,6 +155,7 @@ final class PublishEngine
             $data = SiteData::load($this->pdo, $this->config->includeSamples, $this->contactFile);
             $check = (new Validator($this->pdo, $this->environment === Environment::Development))->check($data);
             $identity = $this->identity($data);
+            $point = $this->snapshotPoint();
         } finally {
             $this->pdo->exec('COMMIT');
         }
@@ -158,7 +167,7 @@ final class PublishEngine
         }
 
         $dir = $this->switcher->prepare($release);
-        $this->journal->step('prepared', ['identity' => $identity]);
+        $this->journal->step('prepared', ['identity' => $identity, 'snapshot' => $point]);
         $this->tick('prepared');
 
         $files = $this->builder->build($data, $dir);
@@ -181,7 +190,7 @@ final class PublishEngine
         $this->journal->step('switched');
         $this->tick('switched');
 
-        $this->recordLive($by, $release, $record, $summary, $identity);
+        $this->recordLive($by, $release, $record, $summary, $identity, $point);
         $this->journal->step('recorded');
         $this->tick('recorded');
 
@@ -227,7 +236,7 @@ final class PublishEngine
             if ($startedBy !== null) {
                 $summary['started_by'] = $startedBy;
             }
-            $this->recordLive(Initiator::recovery(), $release, $entry['record'], $summary, $entry['identity'] ?? null);
+            $this->recordLive(Initiator::recovery(), $release, $entry['record'], $summary, $entry['identity'] ?? null, $entry['snapshot'] ?? null);
         }
         $this->prune();
         $this->journal->clear();
@@ -238,8 +247,9 @@ final class PublishEngine
     /**
      * @param array<string, mixed> $summary
      * @param Identity|null $identity what the release publishes; null only for a journal written without it
+     * @param SnapshotPoint|null $point where the release's snapshot stands in the audit trail
      */
-    private function recordLive(Initiator $by, string $release, int $record, array $summary, ?array $identity): void
+    private function recordLive(Initiator $by, string $release, int $record, array $summary, ?array $identity, ?array $point = null): void
     {
         if ($identity === null) {
             $summary['warnings'] = [...(\is_array($summary['warnings'] ?? null) ? $summary['warnings'] : []), 'the release identity was not journalled; first_published_at was not updated'];
@@ -248,7 +258,10 @@ final class PublishEngine
         try {
             Sql::run($this->pdo, "UPDATE publish_record SET status = 'superseded' WHERE status = 'live' AND id <> ?", [$record]);
             $manifest = @hash_file('sha256', $this->manifestPath($release));
-            Sql::run($this->pdo, "UPDATE publish_record SET status = 'live', went_live_at = UTC_TIMESTAMP(6), finished_at = UTC_TIMESTAMP(6), manifest_sha256 = ?, summary_text = ? WHERE id = ?", [$manifest === false ? null : $manifest, json_encode($summary, JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR), $record]);
+            Sql::run($this->pdo, "UPDATE publish_record SET status = 'live', went_live_at = UTC_TIMESTAMP(6), finished_at = UTC_TIMESTAMP(6), manifest_sha256 = ?, summary_text = ?, snapshot_audit_id = ?, snapshot_audit_gaps = ? WHERE id = ?", [
+                $manifest === false ? null : $manifest, json_encode($summary, JSON_UNESCAPED_UNICODE | JSON_THROW_ON_ERROR),
+                $point['audit'] ?? null, $point === null ? null : json_encode($point['gaps'], JSON_THROW_ON_ERROR), $record,
+            ]);
             // Public identity is frozen from the first publish on (slugs, 410/301 on archive).
             foreach ($identity['products'] ?? [] as $id) {
                 Sql::run($this->pdo, 'UPDATE product SET first_published_at = COALESCE(first_published_at, UTC_TIMESTAMP()) WHERE id = ?', [$id]);
@@ -305,6 +318,29 @@ final class PublishEngine
         }
 
         return ['products' => $products, 'variants' => $variants];
+    }
+
+    /**
+     * Where the snapshot stands in the audit trail, read inside it: the newest
+     * audit id it sees, and the lower ids it does not see (transactions still
+     * open at the snapshot; they may commit later and are then unpublished).
+     * The look-back is far wider than any open transaction can be.
+     *
+     * @return SnapshotPoint
+     */
+    private function snapshotPoint(): array
+    {
+        $newest = Sql::int($this->pdo, 'SELECT COALESCE(MAX(id), 0) FROM audit_event');
+        $from = max(0, $newest - self::SNAPSHOT_LOOKBACK);
+        $seen = array_flip(array_map(intval(...), Sql::column($this->pdo, 'SELECT id FROM audit_event WHERE id > ? AND id <= ?', [$from, $newest])));
+        $gaps = [];
+        for ($id = $from + 1; $id <= $newest; ++$id) {
+            if (!isset($seen[$id])) {
+                $gaps[] = $id;
+            }
+        }
+
+        return ['audit' => $newest, 'gaps' => $gaps];
     }
 
     private function recordStatus(int $record): ?string

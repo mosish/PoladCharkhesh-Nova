@@ -132,6 +132,45 @@ test.describe.serial('Owner: first sign-in with TOTP enrolment, then the Product
     await expect(page.locator('[role="status"]')).toContainText('ذخیره شد');
   });
 
+  test('saving one form never silently discards unsaved edits in another', async () => {
+    const valueRow = page.locator('section', { hasText: 'ابعاد و داده‌ها' }).first().locator('tbody tr').nth(1);
+    const value = valueRow.locator('input.val');
+    const original = await value.inputValue();
+    const description = page.locator('#desc-fa');
+    const before = await description.inputValue();
+    await description.fill(`${before}\nمتن آزمایشی ذخیره‌نشده`);
+    await value.fill(`${original}0`);
+
+    // Saving the value row asks first, because the description holds unsaved text.
+    let message = '';
+    page.once('dialog', async d => { message = `${d.type()}: ${d.message()}`; await d.dismiss(); });
+    await valueRow.locator('button[type="submit"]').first().click();
+    await expect.poll(() => message).toContain('confirm: در ۱ بخش دیگر');
+    await expect(page).toHaveURL(/\/admin\/products\/\d+$/);
+    await expect(description).toHaveValue(`${before}\nمتن آزمایشی ذخیره‌نشده`); // nothing was lost
+    await expect(value).toHaveValue(`${original}0`);
+
+    // Accepting is an informed choice: the row is saved, the unsaved description text is not.
+    message = '';
+    page.once('dialog', async d => { message = `${d.type()}: ${d.message()}`; await d.accept(); });
+    await valueRow.locator('button[type="submit"]').first().click();
+    await expect(page.locator('[role="status"]')).toContainText('ذخیره شد');
+    expect(message).toContain('confirm: در ۱ بخش دیگر');
+    await expect(page.locator('#desc-fa')).toHaveValue(before);
+    await expect(valueRow.locator('input.val')).toHaveValue(`${original}0`);
+
+    // With only this row edited, saving asks nothing (restores the sample value).
+    let asked = false;
+    const unexpected = async d => { asked = true; await d.dismiss(); };
+    page.on('dialog', unexpected);
+    await valueRow.locator('input.val').fill(original);
+    await valueRow.locator('button[type="submit"]').first().click();
+    await expect(page.locator('[role="status"]')).toContainText('ذخیره شد');
+    page.off('dialog', unexpected);
+    expect(asked).toBe(false);
+    await expect(valueRow.locator('input.val')).toHaveValue(original);
+  });
+
   test('the draft preview uses the publish templates and is noindex', async () => {
     const [preview] = await Promise.all([context.waitForEvent('page'), page.click('.adm__head a[href$="/preview/fa"]')]);
     await preview.waitForLoadState();

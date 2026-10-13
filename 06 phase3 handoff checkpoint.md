@@ -19,7 +19,7 @@ This file is a map, not a source of truth. It points to the authoritative docume
   - Executable spec: `nova/tests/fixtures/designation/corpus.json`.
 - **Steps 4–8 are implemented, verified and committed** under the owner's standing delegation. They are not separately owner-reviewed. See §14.
 - **Step 8 repairs** (2026-10-12) are verified; see §14 and `nova/docs/release-routing.md`.
-- **Step 9** (Admin sign-in, shell and Product/variant slice) is implemented and verified locally; see §14 and `nova/docs/admin.md`. The Step 8 repairs and Step 9 are uncommitted and await the owner's review.
+- **Step 9** (Admin sign-in, shell and Product/variant slice) is implemented and verified locally; see §14 and `nova/docs/admin.md`. The Step 8 repairs and Step 9, with the 2026-10-13 follow-up fixes, are committed to GitHub `main` and await the owner's review (see the end of §14).
 - **Next:** step 10 (inquiry endpoint), only on the owner's go-ahead. Not yet built: inquiry endpoint, media, backup, `.htaccess` template, import, deployment dry run.
 
 ## 2. Authoritative documents and precedence (D18)
@@ -318,3 +318,54 @@ Not done, by instruction:
 To use the Admin locally, the owner must OK the steps in `nova/docs/admin.md`: rebuild the web container, `migrate --no-backup` on the dev database, `assets:build`, `user:create-owner`.
 
 **Resume point:** owner review of the Step 8 repairs and Step 9, then commits. Step 10 (inquiry endpoint) only on the owner's go-ahead.
+
+**Step 9 concurrency fixes, 2026-10-13 (the code reached GitHub in the checkpoint `b504bc1`; this note and the final test typing fix are in the follow-up commit; awaits the owner's review):**
+
+Owner-reported findings in `AdminAuth.php` and the related counters were reproduced first. Seven new tests failed on the old logic; they use independent database connections and sessions on a new disposable database, interleaved at a test checkpoint, plus real parallel processes:
+1. One TOTP code signed in two concurrent sessions.
+2. A losing concurrent enrolment still signed in and audited `auth.totp_enrolled` and `auth.sign_in`, while the other request's secret was stored.
+3. Concurrent password failures were lost (2 counted as 1). With real processes, 12 audited wrong passwords left the counter at 2.
+4. The same lost update for TOTP failures.
+5. A lock reached while a correct password or code was being checked did not stop that sign-in, and that success then cleared the lock.
+
+Fix: sign-in completion is now one transaction holding the account row.
+- It re-checks status, epoch and lock.
+- It makes a conditional claim that must change exactly one row: the TOTP step must be newer than the last, and an enrolment is stored only while none exists.
+- It resets the counters and writes the success audit in the same transaction; the session is created after the commit.
+- A losing code counts as `totp_replay`; a losing enrolment records `enrolment_superseded`.
+- Failure counters are incremented under the row lock.
+- The address throttle is a single atomic upsert. A first transactional version deadlocked under the parallel test (shared locks from `INSERT IGNORE`); the upsert passed 10 of 10 repeated runs.
+
+Checks: 563 PHPUnit tests / 6,684 assertions, PHPStan max, CS clean, 171 JS. The disposable database was dropped. `nova`, `nova_test` and the preview were untouched, and the Admin was not activated. Docker Desktop had stopped and was restarted; the existing containers were started as they were, not recreated.
+
+**Resume point unchanged:** the owner's review of the Step 8 repairs and Step 9, then commits. Step 10 only on the owner's go-ahead.
+
+**Step 9 follow-up findings, 2026-10-13 (committed and pushed to GitHub `main`; awaits the owner's review, no gate approved):**
+
+Sync before the work: local `main` = `origin/main` = `b504bc1`, with no divergence.
+
+- **Already fixed in `b504bc1` and re-verified:** atomic TOTP consumption, atomic enrolment, and failure counters that lose no updates (`AdminAuthConcurrencyTest`, 7 tests; stable in 5 of 5 repeats).
+
+New findings, each reproduced by a failing test before the fix:
+
+4. **Cross-form edits:** saving one Admin form silently discarded unsaved edits in other forms on the page. The guard cleared every dirty form on any submit. Reproduced in Chrome by substituting the old `admin.js` into a disposable stack.
+   - Fix: a save asks first when other forms hold unsaved edits.
+   - Test: `admin.spec.js`, "saving one form never silently discards unsaved edits in another".
+5. **Unpublished changes:** reported 0 after a rollback, 0 after an edit saved during a build, and 0 for a transaction still open at the snapshot.
+   - Fix: migration 0006 records each release's snapshot point (newest audit id seen, plus unseen lower ids). Unpublished changes are measured against the live release's snapshot point. Releases from before 0006 fall back to `finished_at`.
+   - Tests: `UnpublishedChangesTest` (4 tests).
+6. **Unknown-account timing:** an unknown account cost about twice a known one (426 ms vs 230 ms, measured in fresh processes), because each request hashed on the spot.
+   - Fix: a fixed dummy hash at the current parameters.
+   - Tests: `PasswordTimingTest` (2 tests, including the fresh-process timing).
+7. **Error messages:** publish and rollback errors always said "live site unchanged", even when the engine's recovery had finished the switch.
+   - Fix: the message reads the live release from the switch and names it.
+   - Tests: 3 new `AdminAppTest` tests, using a switcher that switches and then fails (`ThrowAfterActivate`) and one that fails before switching.
+
+Also: the scroll wrappers of the Admin tables are now focusable, labelled regions. axe reported `scrollable-region-focusable` on the Publish history table.
+
+Verification (Docker; a new disposable database plus a disposable stack with its own database, docroot and storage on port 8090; all removed afterwards):
+- PHPUnit 574 tests / 6,732 assertions; PHPStan max; CS clean; 171 JS tests.
+- Playwright: `admin.spec.js` 12/12, `site.spec.js` 32/32, `stack.spec.js` 4/4 (read-only against the dev stack).
+- `nova` (schema 0004), `nova_test` and the live preview `R-20261012-131225-9d1c` were untouched, and the Admin was not activated in the dev stack.
+
+**Resume point:** the owner's review of Step 9, then the go-ahead for Step 10 (inquiry endpoint).

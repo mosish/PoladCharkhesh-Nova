@@ -42,7 +42,7 @@ The existing implementation history through commit `81a9829` records the foundat
 | 3 — Designation matching | Implemented; owner-reviewed |
 | 4–7 — Schema, catalogue/provenance, rich content, public site | Implemented |
 | 8 — Publish Engine | Implemented, with follow-up repairs included; acceptance remains subject to review |
-| 9 — Admin and Product/variant slice | Implemented; follow-up security and behavior verification pending |
+| 9 — Admin and Product/variant slice | Implemented; 2026-10-13 follow-up findings fixed and verified locally; awaits owner acceptance |
 | 10 — Inquiry endpoint | Not implemented |
 | 11 — Media and SVG ingestion | Not implemented |
 | 12 — Backup/restore and restore tests | Not implemented |
@@ -51,7 +51,15 @@ The existing implementation history through commit `81a9829` records the foundat
 | 15 — Deployment dry run | Not implemented |
 | 16 — Phase 3 review package | Pending |
 
-The 2026-10-13 source review identified follow-up work around atomic TOTP consumption/enrollment, concurrent login-failure counters, cross-form unsaved edits, unpublished-change tracking after rollback, password-check timing and publish-error messages. Authentication follow-up tests are being developed. Do not consider these findings resolved until the fixes and regression tests have been reviewed together.
+The 2026-10-13 source review identified follow-up work in seven areas. Each finding was reproduced by a failing test, then fixed:
+- atomic TOTP consumption and enrollment;
+- concurrent login-failure counters;
+- cross-form unsaved edits;
+- unpublished-change tracking after rollbacks and during builds;
+- password-check timing for unknown accounts;
+- publish/rollback error messages after recovery.
+
+The details and tests are in the [Admin runbook](nova/docs/admin.md) and the [handoff checkpoint](06%20phase3%20handoff%20checkpoint.md). These fixes still await the owner's review; no gate is approved by them.
 
 **Next acceptance checkpoint:** finish and reverify Step 9, then obtain the owner's go-ahead for Step 10. Phase 3 completion and production deployment are separate gates.
 
@@ -126,10 +134,16 @@ The JavaScript suite exercises the shared designation corpus. Composer checks PH
 
 Browser testing uses `npm run test:e2e` and requires a prepared local stack. Read the prerequisites in `nova/tests/e2e/` and the Admin runbook first. The `dev:e2e` fixture command changes development data; it is not a read-only check.
 
-Verification evidence at the 2026-10-13 review:
+Verification evidence for the Step 9 follow-up (2026-10-13). Everything ran in Docker on disposable databases and a disposable stack with its own docroot and storage, all removed afterwards:
 
-- Fresh checks: 171 JavaScript tests passed; JavaScript syntax checks and `git diff --check` passed.
-- PHP and browser results recorded in the project documents are historical session evidence. They were not rerun during that review because Docker's Linux engine was unavailable.
+- **PHPUnit:** 574 tests / 6,732 assertions passed; PHPStan at maximum level and PHP style passed.
+- **JavaScript:** 171 tests passed.
+- **Playwright on installed Chrome:**
+  - Admin: 12/12, including the multiple-form case;
+  - public site: 32/32;
+  - stack smoke checks: 4/4.
+- **Concurrency:** the suite (independent connections and sessions, plus real parallel processes) passed in 5 of 5 repeats.
+- **Untouched:** the development database, its live release and its volumes.
 - Passing tests do not replace security review, data reconciliation, restore verification or owner acceptance.
 
 ## Repository map

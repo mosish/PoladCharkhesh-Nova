@@ -17,6 +17,7 @@ use Nova\Publish\AssetBuilder;
 use Nova\Publish\BuildConfig;
 use Nova\Publish\PublishEngine;
 use Nova\Publish\PublishJournal;
+use Nova\Publish\ReleaseSwitcher;
 use Nova\Publish\SiteBuilder;
 use Nova\Publish\SiteData;
 use Nova\Publish\SymlinkSwitcher;
@@ -24,7 +25,9 @@ use Nova\Security\ArraySessionStore;
 use Nova\Security\Totp;
 use Nova\Security\UserAdmin;
 use Nova\Tests\Integration\Catalogue\CatalogueFixture;
+use Nova\Tests\Integration\Publish\FailingActivate;
 use Nova\Tests\Integration\Publish\TestClock;
+use Nova\Tests\Integration\Publish\ThrowAfterActivate;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -45,6 +48,8 @@ final class AdminAppTest extends TestCase
     private TestClock $clock;
     private AdminApp $app;
     private int $product;
+    /** @var (\Closure(string): ReleaseSwitcher)|null tests may wrap the switcher (site dir => switcher) */
+    private ?\Closure $switcher = null;
 
     public static function setUpBeforeClass(): void
     {
@@ -86,13 +91,14 @@ final class AdminAppTest extends TestCase
         $builder = new SiteBuilder($root . '/app', self::$assets . '/assets', $config);
         $pdo = $this->f->pdo;
         $tmp = $this->tmp;
+        $switcher = $this->switcher ?? static fn(string $dir): ReleaseSwitcher => new SymlinkSwitcher($dir);
 
         return new AdminApp(
             $pdo,
             $this->session,
             new AdminView($root . '/app', AdminView::manifest(self::$assets . '/admin')),
             self::HOST,
-            static fn(): PublishEngine => new PublishEngine($pdo, new SymlinkSwitcher($tmp . '/site'), new PublishJournal($tmp . '/journal.json'), $builder, $config, Environment::Production, $contact),
+            static fn(): PublishEngine => new PublishEngine($pdo, $switcher($tmp . '/site'), new PublishJournal($tmp . '/journal.json'), $builder, $config, Environment::Production, $contact),
             new PublishAdmin($pdo, $config, Environment::Production, $contact),
             static function (int $id, string $lang) use ($pdo, $builder, $contact): ?string {
                 $data = SiteData::preview($pdo, $id, false, $contact);
@@ -395,5 +401,65 @@ final class AdminAppTest extends TestCase
         $this->req('POST', '/admin/publish');
         self::assertSame('error', $this->flash()[0]['type'] ?? null);
         self::assertNull((new SymlinkSwitcher($this->tmp . '/site'))->current());
+    }
+
+    // ---- error messages tell the truth about what is live (finding 7)
+
+    public function testAPublishThatFailsAfterItsSwitchSaysTheNewReleaseIsLive(): void
+    {
+        $this->signInEditor();
+        $this->req('POST', '/admin/publish');
+        $first = (string) ($this->flash()[0]['detail'] ?? '');
+        $this->session->remove('flash');
+
+        $this->switcher = static fn(string $dir): ReleaseSwitcher => new ThrowAfterActivate(new SymlinkSwitcher($dir));
+        $this->app = $this->app();
+        $this->req('POST', '/admin/publish');
+
+        $live = (new SymlinkSwitcher($this->tmp . '/site'))->current();
+        self::assertNotSame($first, $live, 'the switch happened and recovery finished it');
+        self::assertSame('live', Sql::scalar($this->f->pdo, 'SELECT status FROM publish_record WHERE release_id = ?', [$live]));
+        $flash = $this->flash()[0] ?? ['type' => '', 'text' => '', 'detail' => null];
+        self::assertSame('error', $flash['type']);
+        self::assertStringNotContainsString('دست‌نخورده', $flash['text'], 'must not claim the live site is unchanged');
+        self::assertStringContainsString((string) $live, $flash['text'] . ' ' . ($flash['detail'] ?? ''), 'names the release that is live now');
+    }
+
+    public function testAPublishThatFailsBeforeItsSwitchSaysTheLiveReleaseIsUnchanged(): void
+    {
+        $this->signInEditor();
+        $this->req('POST', '/admin/publish');
+        $first = (string) ($this->flash()[0]['detail'] ?? '');
+        $this->session->remove('flash');
+
+        $this->switcher = static fn(string $dir): ReleaseSwitcher => new FailingActivate(new SymlinkSwitcher($dir));
+        $this->app = $this->app();
+        $this->req('POST', '/admin/publish');
+
+        self::assertSame($first, (new SymlinkSwitcher($this->tmp . '/site'))->current());
+        $flash = $this->flash()[0] ?? ['type' => '', 'text' => '', 'detail' => null];
+        self::assertStringContainsString('دست‌نخورده', $flash['text']);
+        self::assertStringContainsString($first, $flash['text'] . ' ' . ($flash['detail'] ?? ''));
+    }
+
+    public function testARollbackThatFailsAfterItsSwitchSaysTheEarlierReleaseIsLive(): void
+    {
+        $this->signInEditor();
+        $this->req('POST', '/admin/publish');
+        $first = (string) ($this->flash()[0]['detail'] ?? '');
+        $this->session->remove('flash');
+        $this->req('POST', '/admin/publish');
+        $second = (string) ($this->flash()[0]['detail'] ?? '');
+        $this->session->remove('flash');
+
+        $this->switcher = static fn(string $dir): ReleaseSwitcher => new ThrowAfterActivate(new SymlinkSwitcher($dir));
+        $this->app = $this->app();
+        $this->req('POST', '/admin/publish/rollback');
+
+        self::assertSame($first, (new SymlinkSwitcher($this->tmp . '/site'))->current());
+        self::assertSame(['live', 'rolled_back'], [Sql::scalar($this->f->pdo, 'SELECT status FROM publish_record WHERE release_id = ?', [$first]), Sql::scalar($this->f->pdo, 'SELECT status FROM publish_record WHERE release_id = ?', [$second])]);
+        $flash = $this->flash()[0] ?? ['type' => '', 'text' => '', 'detail' => null];
+        self::assertStringNotContainsString('تغییری نکرد', $flash['text'], 'must not claim the live release is unchanged');
+        self::assertStringContainsString($first, $flash['text'] . ' ' . ($flash['detail'] ?? ''));
     }
 }

@@ -297,10 +297,16 @@ final class AdminApp
 
     private function runPublish(Actor $actor): Response
     {
+        $engine = ($this->engine)();
+        $before = self::liveOf($engine);
         try {
-            $result = ($this->engine)()->publish(Initiator::admin($actor));
+            $result = $engine->publish(Initiator::admin($actor));
         } catch (RuntimeException $e) {
-            $this->flash('error', str_contains($e->getMessage(), 'in progress') ? 'انتشار دیگری در حال اجراست؛ چند لحظه بعد دوباره تلاش کنید.' : 'انتشار انجام نشد؛ سایت زنده دست‌نخورده ماند.', $e->getMessage());
+            if (str_contains($e->getMessage(), 'in progress')) {
+                $this->flash('error', 'انتشار دیگری در حال اجراست؛ چند لحظه بعد دوباره تلاش کنید.', $e->getMessage());
+            } else {
+                $this->flashAfterError('انتشار', $before, self::liveOf($engine), $e);
+            }
 
             return Response::redirect('/admin/publish');
         }
@@ -315,14 +321,40 @@ final class AdminApp
 
     private function runRollback(Actor $actor): Response
     {
+        $engine = ($this->engine)();
+        $before = self::liveOf($engine);
         try {
-            $release = ($this->engine)()->rollback(Initiator::admin($actor));
+            $release = $engine->rollback(Initiator::admin($actor));
             $this->flash('ok', 'سایت به نسخه قبلی برگشت.', $release);
         } catch (RuntimeException $e) {
-            $this->flash('error', 'بازگشت انجام نشد؛ نسخه زنده تغییری نکرد.', $e->getMessage());
+            $this->flashAfterError('بازگشت', $before, self::liveOf($engine), $e);
         }
 
         return Response::redirect('/admin/publish');
+    }
+
+    /**
+     * After a failed publish or rollback the engine has already recovered: a
+     * switch that happened was finished, one that did not was rolled back.
+     * The message states which release is live now, read from the switch.
+     */
+    private function flashAfterError(string $operation, ?string $before, ?string $after, RuntimeException $e): void
+    {
+        $now = $after === null ? 'هنوز نسخه‌ای زنده نیست' : "نسخه زنده: {$after}";
+        $this->flash('error', match (true) {
+            $after !== null && $after !== $before => "{$operation} با خطا روبه‌رو شد، اما جابه‌جایی انجام شده بود و بازیابی خودکار آن را کامل کرد. نسخه {$after} اکنون زنده است.",
+            $operation === 'انتشار' => "انتشار انجام نشد؛ سایت زنده دست‌نخورده ماند ({$now}).",
+            default => "بازگشت انجام نشد؛ نسخه زنده تغییری نکرد ({$now}).",
+        }, $e->getMessage());
+    }
+
+    private static function liveOf(PublishEngine $engine): ?string
+    {
+        try {
+            return $engine->live();
+        } catch (Throwable) {
+            return null;   // a link Nova did not write: the engine's own error says so
+        }
     }
 
     // ---- helpers

@@ -17,8 +17,17 @@ final class PasswordHasher
     public const int MIN_LENGTH = 12;
     public const int MAX_LENGTH = 256;
 
-    /** A real hash of a random password: verified against when the account does not exist, so timing does not tell. */
-    private static ?string $dummy = null;
+    /**
+     * Fixed hashes of random, discarded passwords, at the current default
+     * parameters (Argon2id m=65536,t=4,p=1; bcrypt cost 12). An unknown
+     * account is verified against one of these, so it costs exactly one
+     * verification, like a known account, and never an extra hash computed in
+     * the request (which doubled the time and revealed that the account does
+     * not exist). They protect no account; PasswordTimingTest fails if PHP's
+     * defaults move away from them.
+     */
+    private const string DUMMY_ARGON2ID = '$argon2id$v=19$m=65536,t=4,p=1$N1YzV2NEMXBRRTc0bVZ5SQ$cyLyDts8/9t0XtmEg/1GVJSICJHNupnl5ahZ3VOeXIQ';
+    private const string DUMMY_BCRYPT = '$2y$12$pgR9FWf1Fo/OHGx9lJvHkeXE2g0klQ8LeGk7XW3jjbrFDCN.VN/Ne';
 
     public static function hash(string $password): string
     {
@@ -37,11 +46,15 @@ final class PasswordHasher
         return password_needs_rehash($hash, self::algorithm());
     }
 
-    /** Spends the same work as a real check, for an unknown account. */
+    /** Spends the same work as verify() on a real hash, for an unknown account (including no work for an over-long input). */
     public static function verifyDummy(string $password): void
     {
-        self::$dummy ??= password_hash(bin2hex(random_bytes(16)), self::algorithm());
-        password_verify(substr($password, 0, self::MAX_LENGTH), self::$dummy);
+        self::verify($password, self::dummyHash());
+    }
+
+    public static function dummyHash(): string
+    {
+        return self::algorithm() === PASSWORD_BCRYPT ? self::DUMMY_BCRYPT : self::DUMMY_ARGON2ID;
     }
 
     public static function assertAcceptable(string $password): void

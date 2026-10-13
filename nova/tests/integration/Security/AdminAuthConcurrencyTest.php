@@ -194,18 +194,18 @@ final class AdminAuthConcurrencyTest extends TestCase
         $worker = __DIR__ . '/concurrent-attempts.php';
         $start = microtime(true) + 1.5;
         $processes = [];
-        $spawn = static function (array $args) use ($worker, $start, &$processes): void {
-            $p = proc_open([PHP_BINARY, $worker, (string) $start, ...$args], [1 => ['pipe', 'w'], 2 => ['pipe', 'w']], $pipes);
+        $spawn = static function (string ...$args) use ($worker, $start, &$processes): void {
+            $p = proc_open([PHP_BINARY, $worker, (string) $start, ...array_values($args)], [1 => ['pipe', 'w'], 2 => ['pipe', 'w']], $pipes);
             self::assertIsResource($p);
             $processes[] = [$p, $pipes];
         };
         // Unknown accounts from one address: the address counter alone.
         for ($i = 0; $i < 6; ++$i) {
-            $spawn(["nobody{$i}@test.invalid", 'wrong password!!', '4', '198.51.100.1']);
+            $spawn("nobody{$i}@test.invalid", 'wrong password!!', '4', '198.51.100.1');
         }
         // One account from several addresses: the account counter.
         for ($i = 0; $i < 6; ++$i) {
-            $spawn(['editor@test.invalid', 'wrong password!!', '2', "203.0.113.{$i}"]);
+            $spawn('editor@test.invalid', 'wrong password!!', '2', "203.0.113.{$i}");
         }
         foreach ($processes as [$p, $pipes]) {
             $out = stream_get_contents($pipes[1]) . stream_get_contents($pipes[2]);

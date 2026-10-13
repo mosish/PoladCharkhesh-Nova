@@ -19,7 +19,7 @@
 {% if rows is empty %}
   <div class="card"><p class="empty">{% if q or status %}محصولی با این جستجو پیدا نشد. همان یکسان‌سازی جستجوی سایت (ارقام فارسی، فاصله و خط تیره) به کار می‌رود.{% else %}هنوز محصولی ثبت نشده است. با «محصول جدید» یک پیش‌نویس بسازید.{% endif %}</p></div>
 {% else %}
-<div class="t-wrap">
+<div class="t-wrap" tabindex="0" role="region" aria-label="جدول محصولات">
 <table class="t">
   <caption class="sr">فهرست محصولات</caption>
   <thead><tr><th scope="col">کد</th><th scope="col">خانواده</th><th scope="col">ابعاد اصلی</th><th scope="col">منبع</th><th scope="col">داده فنی</th><th scope="col">وضعیت</th><th scope="col">کاوشگر</th><th scope="col">ترجمه</th><th scope="col">آخرین ویرایش</th></tr></thead>
