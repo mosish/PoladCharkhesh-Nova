@@ -26,7 +26,7 @@ Built and verified locally on 2026-10-14. It approves nothing and changes no dec
 
 ## What the PDF check does not do
 
-`PdfInspector` is a conservative, best-effort byte check. It requires the `%PDF-` header and an `%%EOF` end marker, enforces the size cap, and refuses a file whose bytes contain any of these names: `/JavaScript`, `/JS`, `/Launch`, `/OpenAction`, `/AA`, `/EmbeddedFile`, `/RichMedia`, `/SubmitForm`, `/ImportData`, `/GoToR`, `/GoToE`.
+`PdfInspector` is a conservative, best-effort byte check. It requires the `%PDF-` header and an `%%EOF` end marker, enforces the size cap, and refuses a file whose bytes contain any of these names (PDF names are decoded first, because `#` plus two hex digits can spell any character, so `/J#53` counts as `/JS`): `/JavaScript`, `/JS`, `/Launch`, `/OpenAction`, `/AA`, `/EmbeddedFile`, `/RichMedia`, `/SubmitForm`, `/ImportData`, `/GoToR`, `/GoToE`.
 
 **It does not guarantee a harmless PDF.** A PDF is a container: names can be hidden inside compressed object streams or encoded, a file can be valid and still exploit a bug in a viewer, and no scan of that kind proves otherwise. Nova does not parse, render, repair or rewrite PDFs. The protections that matter are structural: only the Owner and Editor upload; files are served from a folder where PHP is disabled, with `Content-Disposition: attachment`, `nosniff` and a sandbox CSP, so the browser downloads them instead of opening them inside the site; and a document appears on the site only when it is attached to a designation. Visitors still open a downloaded PDF in their own viewer. For a document from an untrusted source, scan it with an up-to-date tool before uploading.
 

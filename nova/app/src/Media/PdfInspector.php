@@ -9,7 +9,9 @@ namespace Nova\Media;
  * conservative and best-effort, since a PDF is a container: it must start
  * with the PDF header, end with an end-of-file marker, stay under the size
  * cap, and not carry active content (JavaScript, launch actions, embedded
- * files, rich media, form submission). Compressed object streams can hide
+ * files, rich media, form submission). Names are decoded before the scan,
+ * because `#` and two hex digits can spell any character of a name. Compressed
+ * object streams can still hide
  * such names from a byte scan, so documents are also always served as
  * downloads with a sandbox CSP and nosniff (public_html/media/.htaccess).
  */
@@ -26,14 +28,28 @@ final class PdfInspector
         if (!str_starts_with($bytes, '%PDF-') || preg_match('/%%EOF\s*$/', substr($bytes, -1024)) !== 1) {
             throw new MediaError('invalid', 'The file is not a complete PDF (header or end marker missing).');
         }
+        $names = self::decodeNames($bytes);
         $found = [];
         foreach (self::ACTIVE as $name) {
-            if (preg_match('/' . preg_quote($name, '/') . '(?![A-Za-z0-9])/', $bytes) === 1) {
+            if (preg_match('/' . preg_quote($name, '/') . '(?![A-Za-z0-9])/', $names) === 1) {
                 $found[] = $name;
             }
         }
         if ($found !== []) {
             throw new MediaError('invalid', 'The PDF contains active content, which is not accepted: ' . implode(', ', $found) . '. Export it again as a plain PDF.', $found);
         }
+    }
+
+    /**
+     * A PDF name may spell any character as `#` and two hex digits, so `/J#53` is `/JS`. Names are decoded before the
+     * scan, otherwise an escaped spelling of a refused name would pass.
+     */
+    private static function decodeNames(string $bytes): string
+    {
+        return (string) preg_replace_callback(
+            '~/[^\x00\t\n\f\r /()<>\[\]{}%]*~',
+            static fn(array $m): string => (string) preg_replace_callback('/#([0-9A-Fa-f]{2})/', static fn(array $h): string => \chr((int) hexdec($h[1])), $m[0]),
+            $bytes,
+        );
     }
 }

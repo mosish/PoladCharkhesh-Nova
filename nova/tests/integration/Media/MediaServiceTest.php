@@ -427,6 +427,11 @@ final class MediaServiceTest extends TestCase
         yield 'launch action' => [self::pdf('/Launch ')];
         yield 'open action' => [self::pdf('/OpenAction 2 0 R ')];
         yield 'embedded file' => [self::pdf('/EmbeddedFile ')];
+        yield 'hex-escaped /JS' => [self::pdf('/J#53 (x) ')];
+        yield 'hex-escaped /JavaScript' => [self::pdf('/Java#53cript (x) ')];
+        yield 'hex-escaped /Launch' => [self::pdf('/#4Caunch ')];
+        yield 'hex-escaped /OpenAction' => [self::pdf('/Open#41ction 2 0 R ')];
+        yield 'fully escaped /JS' => [self::pdf('/#4A#53 (x) ')];
         yield 'executable renamed' => ["MZ\x90\x00" . str_repeat('A', 100)];
     }
 
