@@ -140,6 +140,7 @@
   .g-main { grid-template-columns: minmax(0, 1fr) 380px; align-items: start; }
   .g-ed { grid-template-columns: minmax(0, 1fr) 300px; align-items: start; }
   .mb { margin-bottom: 14px; }
+  .mb-top { margin-top: 14px; }
   .tile { padding: 12px 14px; display: grid; gap: 2px; align-content: start; }
   .tile .k { font-size: 13px; color: var(--ink-2); }
   .tile .v { font-size: 30px; font-weight: 700; line-height: 1.2; }
@@ -260,4 +261,34 @@
   .gatebox .adm__brand { color: var(--ink); }
   .gatebox .adm__brand svg { color: var(--brand); }
   .gatebox .adm__brand small { color: var(--ink-3); border-inline-start-color: var(--rule); }
+}
+
+@layer adm {
+  /* A6 Inquiries (frozen wireframe): status tabs, the list beside the detail, the status flow, the message. */
+  .tabs { display: flex; flex-wrap: wrap; gap: 2px; border-bottom: 1px solid var(--rule); margin-bottom: 14px; }
+  .tabs a { padding: 8px 14px; font-size: 14px; color: var(--ink-2); border-bottom: 2px solid transparent; margin-bottom: -1px; display: flex; gap: 6px; align-items: center; text-decoration: none; }
+  .tabs a[aria-current="page"] { color: var(--brand); border-bottom-color: var(--brand); font-weight: 700; }
+  .tabs .cnt { font-size: 13px; color: var(--ink-3); font-weight: 400; }
+  .kv { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 5px 14px; font-size: 13px; margin: 0; }
+  .kv dt { color: var(--ink-3); }
+  .kv dd { min-width: 0; margin: 0; overflow-wrap: anywhere; }
+  .inq { display: grid; grid-template-columns: 420px minmax(0, 1fr); border: 1px solid var(--rule); background: var(--sheet); border-radius: var(--r); min-height: 420px; }
+  .inq__list { border-inline-end: 1px solid var(--rule); margin: 0; padding: 0; list-style: none; }
+  .inq__item { display: grid; gap: 4px; padding: 10px 14px; border-bottom: 1px solid var(--rule-2); font-size: 13.5px; color: var(--ink); text-decoration: none; }
+  .inq__item[aria-current="true"] { background: var(--tint); box-shadow: inset -3px 0 0 var(--brand); }
+  .inq__item .r1 { display: flex; gap: 8px; align-items: center; }
+  .inq__item .r1 b { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+  .inq__item .r2 { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; color: var(--ink-2); }
+  .inq__empty { padding: 18px 14px; color: var(--ink-3); font-size: 13.5px; }
+  .unread { width: 8px; height: 8px; border-radius: 50%; background: var(--ice); flex: none; }
+  .inq__detail { padding: 16px 18px; display: grid; gap: 14px; align-content: start; min-width: 0; }
+  .msg { background: var(--paper); border: 1px solid var(--rule-2); padding: 12px 14px; line-height: 1.85; border-radius: var(--r); white-space: pre-wrap; overflow-wrap: anywhere; margin: 0; }
+  .flow { display: flex; flex-wrap: wrap; align-items: center; }
+  .flow button { padding: 6px 12px; border: 1px solid var(--rule); font: inherit; font-size: 13px; background: var(--sheet); color: var(--ink); margin-inline-end: -1px; cursor: pointer; }
+  .flow button[aria-pressed="true"] { background: var(--brand); color: #fff; border-color: var(--brand); font-weight: 700; position: relative; z-index: 1; cursor: default; }
+  .inq__notify { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; font-size: 13px; }
+  .adm__nav .n--bad { background: var(--err); display: flex; gap: 2px; align-items: center; }
+  form.inline { display: inline-flex; margin-inline-start: 8px; vertical-align: middle; }
+  .inq__detail h2.code { font-size: 18px; margin: 0; }
+  @media (max-width: 900px) { .inq { grid-template-columns: minmax(0, 1fr); } .inq__list { border-inline-end: 0; border-bottom: 1px solid var(--rule); } }
 }

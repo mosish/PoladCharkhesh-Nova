@@ -10,9 +10,13 @@ use Nova\Core\Environment;
 use Nova\Core\Paths;
 use Nova\Http\Request;
 use Nova\Http\Response;
+use Nova\Inquiry\InquiryConfig;
+use Nova\Inquiry\InquiryNotifier;
+use Nova\Inquiry\SmtpMailer;
 use Nova\Publish\PublishFactory;
 use Nova\Publish\SiteBuilder;
 use Nova\Publish\SiteData;
+use Nova\Publish\SystemClock;
 use Nova\Security\AdminAuth;
 use Nova\Security\NativeSessionStore;
 use Throwable;
@@ -45,6 +49,12 @@ final class AdminKernel
                 return $data === null ? null : $siteBuilder()->previewPage($data, $lang);
             },
             $build->hosts['fa'] . '/',
+            new SystemClock(),
+            static function () use ($config, $pdo, $build): InquiryNotifier {
+                $settings = InquiryConfig::fromConfig($config);
+
+                return new InquiryNotifier($pdo, new SmtpMailer($settings->smtp, $settings->from), $build->hosts['fa']);
+            },
         );
     }
 

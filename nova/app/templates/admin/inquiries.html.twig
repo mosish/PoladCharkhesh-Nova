@@ -1,0 +1,110 @@
+{% extends 'shell.html.twig' %}
+{% block title %}استعلام‌ها{% endblock %}
+{% set type_fa = {
+  exact_product: 'دقیق: محصول',
+  exact_variant: 'دقیق: نوع پسوندی',
+  unlisted_variant: 'نوع شناخته‌شده، اکنون در فهرست نیست',
+  related: 'تطبیق مرتبط؛ کد درخواستی نیاز به تأیید دارد',
+  base_series: 'سری پایه؛ نوع درخواستی نیاز به تأیید دارد',
+  none: 'در کاتالوگ نیست',
+} %}
+{% set status_fa = {new: 'جدید', in_progress: 'در حال پیگیری', answered: 'پاسخ داده شد', closed: 'بسته'} %}
+{% block main %}
+<div class="adm__head"><div><p class="crumbs">ارتباط</p><h1>استعلام‌ها <span class="sub">{{ counts.all|fa }} مورد · ذخیره در پایگاه داده، هرگز منتشر نمی‌شود</span></h1></div>
+  <div class="actions"><a class="a-btn" href="/admin/inquiries/settings">نشانی دریافت اعلان</a></div></div>
+{% if recipient is null %}<p class="flash flash--error" role="note">نشانی دریافت اعلان استعلام هنوز تنظیم نشده است. استعلام‌ها ذخیره می‌شوند و این‌جا دیده می‌شوند، ولی ایمیل اعلانی فرستاده نمی‌شود. {% if is_owner %}<a href="/admin/inquiries/settings">تنظیم نشانی</a>{% else %}فقط مالک می‌تواند آن را تنظیم کند.{% endif %}</p>{% endif %}
+{% if counts.notify_failed > 0 %}
+<div class="flash flash--error" role="note">اعلان ایمیل {{ counts.notify_failed|fa }} استعلام ارسال نشد. خود استعلام‌ها سالم و ذخیره‌اند؛ علت کنار هر مورد آمده است.
+  {% if can_retry %}<form method="post" action="/admin/inquiries/retry" class="inline"><input type="hidden" name="_csrf" value="{{ csrf }}"><button class="a-btn a-btn--sm" type="submit">تلاش دوباره برای همه</button></form>{% endif %}</div>
+{% endif %}
+<form class="toolbar" method="get" action="/admin/inquiries" role="search">
+  <input type="hidden" name="status" value="{{ status }}">
+  <label class="sr" for="iq-q">جستجو</label>
+  <input class="a-in a-in--search" id="iq-q" name="q" type="search" value="{{ q }}" placeholder="نام، تلفن یا کد درخواستی…">
+  <button class="a-btn" type="submit">جستجو</button>
+  {% if q %}<a class="a-btn a-btn--link" href="/admin/inquiries?status={{ status }}">پاک کردن جستجو</a>{% endif %}
+</form>
+<nav class="tabs" aria-label="وضعیت استعلام">
+  {% for s in ['new', 'in_progress', 'answered', 'closed', 'all'] %}
+  <a href="/admin/inquiries?status={{ s }}{% if q %}&amp;q={{ q|url_encode }}{% endif %}"{% if status == s %} aria-current="page"{% endif %}>{{ s == 'all' ? 'همه' : status_fa[s] }} <span class="cnt">{{ (s == 'all' ? counts.all : counts[s])|fa }}</span></a>
+  {% endfor %}
+</nav>
+<div class="inq">
+  <ul class="inq__list" aria-label="فهرست استعلام‌ها">
+    {% for row in rows %}
+    <li><a class="inq__item" href="/admin/inquiries/{{ row.id }}?status={{ status }}{% if q %}&amp;q={{ q|url_encode }}{% endif %}"{% if sel and sel.id == row.id %} aria-current="true"{% endif %}>
+      <span class="r1">{% if row.status == 'new' %}<span class="unread" title="جدید"></span><span class="sr">جدید: </span>{% endif %}<b>{{ row.name }}</b><span class="tag">{{ row.lang|upper }}</span><span class="tm muted">{{ row.received_at|when }}</span></span>
+      <span class="r2"><span class="code">{{ row.ref }}</span>{% for i in row.items %} · <bdi class="code" dir="ltr">{{ i.requested_text }}</bdi>{% if i.match_type == 'none' %} <span class="badge b-pend">خارج از کاتالوگ</span>{% endif %}{% endfor %}{% if row.notify_status == 'failed' %} <span class="badge b-err">اعلان ناموفق</span>{% endif %}</span>
+    </a></li>
+    {% else %}
+    <li class="inq__empty">{% if q %}استعلامی با این جستجو پیدا نشد.{% elseif counts.all == 0 %}هنوز استعلامی نرسیده است؛ استعلام‌ها از فرم سایت می‌رسند.{% else %}در این وضعیت استعلامی نیست.{% endif %}</li>
+    {% endfor %}
+  </ul>
+  <div class="inq__detail">
+  {% if sel %}
+    <div class="chips"><h2 class="code">{{ sel.ref }}</h2><span class="badge {{ sel.status == 'new' ? 'b-new' : 'b-draft' }}">{{ status_fa[sel.status] }}</span><span class="muted">دریافت: {{ sel.received_at|when }} · فرم سایت · {{ sel.lang == 'fa' ? 'فارسی' : 'انگلیسی' }}{% if sel.release_id %} · تطبیق با نسخه <span class="code">{{ sel.release_id }}</span>{% endif %}</span></div>
+    <div class="grid g2">
+      <dl class="kv"><dt>نام</dt><dd>{{ sel.name }}</dd><dt>تلفن</dt><dd><bdi class="num" dir="ltr">{{ sel.phone }}</bdi></dd><dt>تعداد</dt><dd>{% if sel.quantity %}<bdi dir="ltr">{{ sel.quantity }}</bdi>{% else %}<span class="muted">—</span>{% endif %}</dd></dl>
+      <div class="chips">{% if sel.wa %}<a class="a-btn a-btn--ok" href="https://wa.me/{{ sel.wa }}" rel="noopener noreferrer" target="_blank">واتس‌اپ</a>{% endif %}<a class="a-btn" href="tel:{{ sel.tel }}">تماس</a></div>
+    </div>
+    {% if sel.message %}<p class="msg">{{ sel.message }}</p>{% else %}<p class="muted">پیامی نوشته نشده است.</p>{% endif %}
+    <section class="card" aria-labelledby="h-items"><h3 class="card__h" id="h-items">کدهای درخواستی</h3>
+      {% if sel.items is empty %}
+        <p class="empty">کدی وارد نشده است؛ کاربرد در متن پیام آمده است.</p>
+      {% else %}
+      <div class="t-wrap" tabindex="0" role="region" aria-label="کدهای درخواستی و تطبیق">
+      <table class="t"><caption class="sr">کد درخواستی، عیناً همان که بازدیدکننده نوشت، و تطبیق سرور با نسخه زنده</caption>
+        <thead><tr><th scope="col">کد درخواستی (عیناً)</th><th scope="col">نوع تطبیق</th><th scope="col">محصول / مورد</th></tr></thead>
+        <tbody>
+        {% for i in sel.items %}
+          <tr>
+            <td><bdi class="code" dir="ltr">{{ i.requested_text }}</bdi></td>
+            <td>{% if i.match_type %}<span class="tag">{{ i.match_type }}</span> {{ type_fa[i.match_type] }}{% if i.via_spelling %}<br><span class="muted">از راه نگارش هم‌ارز <bdi class="code" dir="ltr">{{ i.spelling }}</bdi></span>{% endif %}{% else %}<span class="badge b-pend">تطبیق انجام نشد</span>{% endif %}</td>
+            <td>
+              {% if i.product_designation %}محصول <bdi class="code" dir="ltr">{{ i.product_designation }}</bdi>{% if i.product_slug %} · <a href="{{ site_url }}p/{{ i.product_slug }}/" target="_blank" rel="noopener noreferrer">صفحه سایت ↗</a>{% endif %}{% endif %}
+              {% if i.variant_designation %}<br>نوع <bdi class="code" dir="ltr">{{ i.variant_designation }}</bdi>{% endif %}
+              {% if i.chosen_designation and i.chosen_designation != i.variant_designation %}<br>مورد انتخاب‌شده <bdi class="code" dir="ltr">{{ i.chosen_designation }}</bdi>{% endif %}
+              {% if i.listed is not empty %}<br><span class="muted">موارد در فهرست: {% for l in i.listed %}<bdi class="code" dir="ltr">{{ l }}</bdi>{{ not loop.last ? '، ' }}{% endfor %}</span>{% elseif i.match_type in ['related', 'base_series'] %}<br><span class="muted">در آن لحظه موردی در فهرست نبود.</span>{% endif %}
+              {% if not i.product_designation and not i.variant_designation %}<span class="muted">—</span>{% endif %}
+              {% if i.context_differs %}<br><span class="badge b-pend">زمینه فرستاده‌شده از صفحه با تطبیق سرور یکی نبود؛ تطبیق سرور ثبت شد</span>{% endif %}
+            </td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+      </div>
+      {% endif %}
+      {% if sel.match_state == 'no_release' %}<p class="card__note">هنگام دریافت، نسخه زنده‌ای نبود؛ کد عیناً ذخیره شد و تطبیق انجام نشد.</p>
+      {% elseif sel.match_state == 'unavailable' %}<p class="card__note">هنگام دریافت، نسخه زنده خوانا نبود؛ کد عیناً ذخیره شد و تطبیق انجام نشد.</p>{% endif %}
+    </section>
+    <form method="post" action="/admin/inquiries/{{ sel.id }}/status" class="field"><input type="hidden" name="_csrf" value="{{ csrf }}">
+      <span class="lbl" id="h-flow">وضعیت</span>
+      <div class="flow" role="group" aria-labelledby="h-flow">{% for s in ['new', 'in_progress', 'answered', 'closed'] %}<button type="submit" name="status" value="{{ s }}" aria-pressed="{{ sel.status == s ? 'true' : 'false' }}">{{ status_fa[s] }}</button>{% endfor %}</div>
+    </form>
+    <form method="post" action="/admin/inquiries/{{ sel.id }}/note" class="field"><input type="hidden" name="_csrf" value="{{ csrf }}">
+      <label for="iq-note">یادداشت داخلی (فقط مدیران)</label>
+      <textarea class="a-ta" id="iq-note" name="note" maxlength="2000" placeholder="مثلاً: با انبار هماهنگ شد…">{{ sel.note }}</textarea>
+      <div><button class="a-btn" type="submit">ذخیره یادداشت</button></div>
+    </form>
+    <div class="inq__notify muted">
+      <span>اعلان ایمیل:
+      {% if sel.notify_status == 'sent' %}<span class="good">ارسال شد ✓</span> ({{ sel.notified_at|when }})
+      {% elseif sel.notify_status == 'failed' %}<span class="bad">ارسال نشد</span> — <bdi dir="ltr">{{ sel.notify_error }}</bdi>
+      {% elseif sel.notify_status == 'sending' %}در حال ارسال
+      {% else %}در انتظار ارسال{% endif %}
+      {% if sel.notify_attempts > 0 %} · {{ sel.notify_attempts|fa }} تلاش{% endif %}</span>
+      {% if can_retry and sel.notify_status in ['failed', 'pending'] %}<form method="post" action="/admin/inquiries/{{ sel.id }}/retry" class="inline"><input type="hidden" name="_csrf" value="{{ csrf }}"><button class="a-btn a-btn--sm" type="submit">تلاش دوباره</button></form>{% endif %}
+    </div>
+    {% if is_owner %}
+    <form method="post" action="/admin/inquiries/{{ sel.id }}/delete" class="chips"><input type="hidden" name="_csrf" value="{{ csrf }}">
+      <label><input type="checkbox" name="confirm" value="1"> حذف این استعلام به درخواست فرستنده (برگشت‌ناپذیر)</label>
+      <button class="a-btn a-btn--danger a-btn--sm" type="submit">حذف استعلام</button>
+    </form>
+    {% endif %}
+    <p class="card__note">نگهداری: ۲۴ ماه پس از دریافت، سپس حذف خودکار (E-12).</p>
+  {% else %}
+    <p class="muted">یک استعلام را از فهرست انتخاب کنید.</p>
+  {% endif %}
+  </div>
+</div>
+{% endblock %}

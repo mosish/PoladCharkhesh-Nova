@@ -32,6 +32,12 @@
   /* Inquiry form: honeypot is never shown; failures read as errors (05 §13) */
   .hp { position: absolute; inline-size: 1px; block-size: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
   .form__err { grid-column: 1 / -1; color: var(--danger); border-inline-start: 3px solid var(--danger); padding: 8px 12px; background: var(--sheet); font-size: var(--fs--1); }
+  /* The inquiry endpoint's page (05 §13): the contact sheet's own heading and actions, without inline styles */
+  .iq__h { font-size: var(--fs-5); line-height: var(--lh-d); }
+  .iq__notice.form__note { color: var(--ink); border-inline-start: 3px solid var(--ice); padding: 8px 12px; background: var(--sheet); font-size: var(--fs--1); }
+  /* Field errors on the navy contact sheet use the design system's dark-theme red (the light one is 2.5:1 on navy) */
+  .navy .field .err { color: #ff8a80; }
+  .iq__send { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
 }
 
 @layer sect {

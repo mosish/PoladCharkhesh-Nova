@@ -22,11 +22,13 @@ use PDO;
  *   other changes committed in between.
  * - After a rollback the live release is an earlier one, and the changes
  *   recorded by later releases count as unpublished again.
+ * - Sign-in, account, publish, migration and inquiry events are not content:
+ *   inquiries are never published (05 §13).
  */
 final class ChangeTracking
 {
     /** Audit events that change published content (alias `a`): not sign-ins, accounts, publishing or migrations. */
-    public const string CONTENT = "a.action NOT LIKE 'auth.%' AND a.action NOT LIKE 'user.%' AND a.action NOT LIKE 'publish%' AND a.action NOT LIKE 'migration.%'";
+    public const string CONTENT = "a.action NOT LIKE 'auth.%' AND a.action NOT LIKE 'user.%' AND a.action NOT LIKE 'publish%' AND a.action NOT LIKE 'migration.%' AND a.action NOT LIKE 'inquiry.%'";
 
     private const int CHUNK = 500;
 

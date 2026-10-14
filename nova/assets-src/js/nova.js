@@ -448,8 +448,13 @@ addEventListener('hashchange', fromHash);
 if (location.hash.startsWith('#p-')) fromHash();
 
 /* 6 · Inquiry: the form receives the exact requested designation plus the identity the server re-matches on (E-21) */
-const form = $('#inquiry'), fCode = $('#f-code'), fProduct = $('#f-product'), fItem = $('#f-item'), fMatch = $('#f-match'), fCtx = $('#f-ctx');
-$('#f-started').value = String(Date.now());
+const form = $('#inquiry'), fCode = $('#f-code'), fProduct = $('#f-product'), fItem = $('#f-item'), fMatch = $('#f-match'), fCtx = $('#f-ctx'), fToken = $('#f-token');
+// Minimum fill time (05 §13): the endpoint signs the start time when the form is first used; no request before that
+let tokenAsk = null;
+const getToken = () => tokenAsk ??= fetch(form.action + '?token=1', { headers: { Accept: 'application/json' } })
+  .then(r => r.ok ? r.json() : Promise.reject(new Error('HTTP ' + r.status))).then(j => { fToken.value = j.token; })
+  .catch(() => { tokenAsk = null; });
+form.addEventListener('focusin', () => { if (!fToken.value) getToken(); });
 function inquiryContext(a) {
   switch (a.type) {
     case 'unlisted_variant': return fill(T.f_ctx_unlisted, { product: iso(a.product) });
@@ -498,27 +503,55 @@ if (track && !SDA && !RM) {
   addEventListener('scroll', () => { if (on && !raf) raf = requestAnimationFrame(tick); }, { passive: true });
 }
 
-/* 8 · Inquiry form: validated here, sent to the inquiry endpoint, which validates again and stores before notifying */
+/* 8 · Inquiry form: validated here, sent to the inquiry endpoint, which validates again and stores before notifying.
+   Any failure keeps every value in the form; the server's reasons are shown beside the fields. */
+const formOk = $('#form-ok'), formErr = $('#form-err'), formErrText = formErr.textContent;
+function markFields(errs) {
+  let first = null;
+  for (const name of ['name', 'phone', 'code', 'qty', 'msg']) {
+    const inp = form.elements[name], f = inp.closest('.field'), code = errs[name];
+    let m = $('.err', f);
+    f.classList.toggle('is-err', !!code);
+    inp.setAttribute('aria-invalid', String(!!code));
+    if (code) {
+      if (!m) { m = d.createElement('span'); m.className = 'err'; m.id = inp.id + '-err'; f.append(m); inp.setAttribute('aria-describedby', m.id); }
+      m.textContent = T['err_' + code] || T.req;
+      first ??= inp;
+    } else if (m) { m.remove(); inp.removeAttribute('aria-describedby'); }
+  }
+  if (first) first.focus();
+  return !!first;
+}
 form.addEventListener('submit', async e => {
   e.preventDefault();
-  let first = null;
-  $$('[required]', form).forEach(inp => {
-    const f = inp.closest('.field'), bad = !inp.value.trim();
-    let m = $('.err', f);
-    f.classList.toggle('is-err', bad);
-    inp.setAttribute('aria-invalid', String(bad));
-    if (bad && !m) { m = d.createElement('span'); m.className = 'err'; m.id = inp.id + '-err'; m.textContent = T.req; f.append(m); inp.setAttribute('aria-describedby', m.id); }
-    if (!bad && m) { m.remove(); inp.removeAttribute('aria-describedby'); }
-    if (bad && !first) first = inp;
-  });
-  if (first) { first.focus(); return; }
-  const ok = $('#form-ok'), err = $('#form-err'), btn = $('button[type="submit"]', form);
-  ok.hidden = err.hidden = true; btn.disabled = true;
+  const errs = {};
+  $$('[required]', form).forEach(inp => { if (!inp.value.trim()) errs[inp.name] = 'required'; });
+  if (!fCode.value.trim() && !form.elements.msg.value.trim()) errs.msg = 'code_or_message';
+  if (markFields(errs)) return;
+  const btn = $('button[type="submit"]', form);
+  formOk.hidden = formErr.hidden = true; btn.disabled = true;
+  const fail = text => { formErr.textContent = text; formErr.hidden = false; };
   try {
-    const r = await fetch(form.action, { method: 'POST', body: new FormData(form), headers: { Accept: 'application/json' } });
-    if (!r.ok) throw new Error('HTTP ' + r.status);
-    ok.hidden = false; form.reset(); fCtx.hidden = true; $('#f-started').value = String(Date.now());
-  } catch { err.hidden = false; }
+    // A missing, expired or too-new token is answered with a fresh one and a wait; then the same values are sent again
+    for (let attempt = 0; attempt < 3; attempt++) {
+      if (!fToken.value) await getToken();
+      const r = await fetch(form.action, { method: 'POST', body: new FormData(form), headers: { Accept: 'application/json' } });
+      const j = await r.json().catch(() => ({}));
+      if (r.ok && j.ok) {
+        formOk.hidden = false; form.reset(); fCtx.hidden = true; fToken.value = ''; tokenAsk = null;
+        return;
+      }
+      if (r.status === 409 && j.token) {
+        fToken.value = j.token;
+        await new Promise(res => setTimeout(res, Math.min(30, j.retry_after || 0) * 1000 + 300));
+        continue;
+      }
+      if (r.status === 422 && j.fields) { markFields(j.fields); fail(T.f_err_invalid); return; }
+      fail(j.error === 'throttled' ? T.f_err_throttled : j.error === 'unavailable' ? T.f_err_unavailable : formErrText);
+      return;
+    }
+    fail(formErrText);
+  } catch { fail(formErrText); }
   finally { btn.disabled = false; }
 });
 

@@ -1,0 +1,54 @@
+{% extends 'base.html.twig' %}
+{% import 'macros.twig' as m %}
+{#- The inquiry endpoint's own page (05 §13), for visitors without JavaScript and for a recoverable failure:
+    the frozen contact sheet with the form refilled exactly as entered, the reasons beside each field, and
+    the WhatsApp and phone channels. Rendered per request by InquiryView; never part of a release. -#}
+{% block sheet_now %}10{% endblock %}
+{% block main %}
+<main id="main">
+<section class="sheet navy" aria-labelledby="iq-h">
+  <div class="wrap">
+    {{ m.sheethead(10, t.s10) }}
+    <div class="contact__grid">
+      <div class="contact__side">
+        <h1 id="iq-h" class="iq__h">{{ sent ? t.inq_sent_h : t.inq_h }}</h1>
+        {% if sent %}
+        <p class="form__ok" role="status">{{ t.f_ok }}</p>
+        {% elseif notice %}
+        <p class="{{ notice == 'confirm' ? 'form__note iq__notice' : 'form__err iq__notice' }}" role="{{ notice == 'confirm' ? 'status' : 'alert' }}" id="iq-notice">{{ attribute(t, 'inq_' ~ notice) }}</p>
+        {% endif %}
+        <a class="wa-big" href="{{ m.wa(t.wa_hello, c.wa) }}" rel="noopener"><svg class="ico" aria-hidden="true"><use href="#i-chat"/></svg><b>{{ t.wa_big }}</b><span>{{ c.tel1_show }}</span></a>
+        <div class="channels">
+          <a href="tel:{{ c.tel2 }}"><svg class="ico"><use href="#i-phone"/></svg><span><small>{{ t.tb_mobile }}</small><span class="num">{{ c.tel2_show }}</span></span><svg class="ico ico--dir"><use href="#i-chev"/></svg></a>
+          <a href="tel:{{ c.land1 }}"><svg class="ico"><use href="#i-phone"/></svg><span><small>{{ t.tb_phone }}</small><span class="num">{{ c.land1_show }}</span></span><svg class="ico ico--dir"><use href="#i-chev"/></svg></a>
+          <a href="tel:{{ c.land2 }}"><svg class="ico"><use href="#i-phone"/></svg><span><small>{{ t.tb_phone }}</small><span class="num">{{ c.land2_show }}</span></span><svg class="ico ico--dir"><use href="#i-chev"/></svg></a>
+        </div>
+        <p><a class="btn btn--line" href="/">{{ t.inq_back }}</a></p>
+      </div>
+      {% if form %}
+      {% set v = form.values %}{% set e = form.errors %}
+      <form class="contact__form form" id="inquiry" action="/api/inquiry.php" method="post" novalidate{% if notice %} aria-describedby="iq-notice"{% endif %}>
+        <input type="hidden" name="lang" value="{{ lang }}">
+        <input type="hidden" name="product" value="{{ form.claimed.product }}"><input type="hidden" name="item" value="{{ form.claimed.item }}"><input type="hidden" name="match" value="{{ form.claimed.match }}">
+        <input type="hidden" name="token" value="{{ form.token }}">
+        <div class="hp" aria-hidden="true"><label for="f-website">Website</label><input id="f-website" name="website" tabindex="-1" autocomplete="off"></div>
+        {% for f in [
+          {id: 'name', label: t.f_name, attrs: {autocomplete: 'name', required: true}},
+          {id: 'phone', label: t.f_phone, attrs: {type: 'tel', inputmode: 'tel', autocomplete: 'tel', required: true, placeholder: t.f_phone_ph}, ltr: true},
+          {id: 'code', label: t.f_code, attrs: {autocomplete: 'off', spellcheck: 'false', placeholder: '6205-2RS'}, ltr: true, hint: t.f_code_hint},
+          {id: 'qty', label: t.f_qty, attrs: {inputmode: 'numeric'}, ltr: true},
+        ] %}
+        {% set err = e[f.id] ?? null %}
+        <div class="field{% if err %} is-err{% endif %}"><label for="f-{{ f.id }}">{{ f.label }}</label><input class="input{% if f.ltr ?? false %} ltr{% endif %}" id="f-{{ f.id }}" name="{{ f.id }}" value="{{ v[f.id] }}" maxlength="{{ form.limits[f.id] }}"{% for k, a in f.attrs %}{% if a is same as(true) %} {{ k }}{% else %} {{ k }}="{{ a }}"{% endif %}{% endfor %}{% if err %} aria-invalid="true" aria-describedby="f-{{ f.id }}-err"{% endif %}>{% if f.hint ?? false %}<span class="hint">{{ f.hint }}</span>{% endif %}{% if err %}<span class="err" id="f-{{ f.id }}-err">{{ attribute(js, 'err_' ~ err)|fill({n: form.limits[f.id]}) }}</span>{% endif %}</div>
+        {% endfor %}
+        {% set err = e.msg ?? null %}
+        <div class="field field--full{% if err %} is-err{% endif %}"><label for="f-msg">{{ t.f_msg }}</label><textarea class="input" id="f-msg" name="msg" rows="4" maxlength="{{ form.limits.msg }}"{% if err %} aria-invalid="true" aria-describedby="f-msg-err"{% endif %}>{{ v.msg }}</textarea>{% if err %}<span class="err" id="f-msg-err">{{ attribute(js, 'err_' ~ err)|fill({n: form.limits.msg}) }}</span>{% endif %}</div>
+        <div class="field--full iq__send"><button class="btn btn--lg" type="submit"><svg class="ico ico--dir"><use href="#i-send"/></svg>{{ t.f_submit }}</button></div>
+        <p class="form__note">{{ t.f_note }}</p>
+      </form>
+      {% endif %}
+    </div>
+  </div>
+</section>
+</main>
+{% endblock %}

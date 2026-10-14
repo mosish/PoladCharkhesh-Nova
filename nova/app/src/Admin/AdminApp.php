@@ -7,6 +7,9 @@ namespace Nova\Admin;
 use Nova\Catalogue\CatalogueError;
 use Nova\Http\Request;
 use Nova\Http\Response;
+use Nova\Inquiry\InquiryNotifier;
+use Nova\Inquiry\InquiryRecipient;
+use Nova\Inquiry\InquiryRetention;
 use Nova\Publish\Clock;
 use Nova\Publish\Initiator;
 use Nova\Publish\PublishEngine;
@@ -34,10 +37,12 @@ final class AdminApp
     private readonly AdminAuth $auth;
     private readonly Csrf $csrf;
     private readonly ProductAdmin $products;
+    private readonly InquiryAdmin $inquiries;
 
     /**
      * @param \Closure(): PublishEngine $engine
      * @param \Closure(int, string): ?string $preview renders a draft Product page (id, language) or null
+     * @param (\Closure(): InquiryNotifier)|null $notifier sends inquiry notifications (Retry); null = not configured
      */
     public function __construct(
         private readonly PDO $pdo,
@@ -49,10 +54,12 @@ final class AdminApp
         private readonly \Closure $preview,
         private readonly string $siteUrl,
         Clock $clock = new SystemClock(),
+        private readonly ?\Closure $notifier = null,
     ) {
         $this->auth = new AdminAuth($pdo, $session, $clock);
         $this->csrf = new Csrf($session);
         $this->products = new ProductAdmin($pdo);
+        $this->inquiries = new InquiryAdmin($pdo);
     }
 
     public function handle(Request $r): Response
@@ -144,6 +151,9 @@ final class AdminApp
         }
         if ($path === '/publish/rollback' && !$get) {
             return $this->runRollback($actor);
+        }
+        if (str_starts_with($path, '/inquiries')) {
+            return $this->inquiryRoute($r, $path, $actor);
         }
         if (preg_match('#^/products/(\d+)(?:/(.+))?$#', $path, $m) !== 1) {
             return null;
@@ -261,6 +271,8 @@ final class AdminApp
         $noEnglish = (int) \Nova\Core\Sql::scalar($this->pdo, "SELECT COUNT(*) FROM product WHERE status <> 'archived' AND description_fa IS NOT NULL AND description_en IS NULL");
 
         return $this->page('dashboard.html.twig', $this->shell($actor, 'dash') + [
+            'inq' => $this->inquiries->counts(), 'recent_inq' => $this->inquiries->list('all', '', 4), 'demand' => $this->inquiries->notInCatalogue(),
+            'recipient' => (new InquiryRecipient($this->pdo))->get(),
             'counts' => $counts, 'pending' => $pending, 'unsourced' => $unsourced, 'no_english' => $noEnglish,
             'recent' => Activity::recent($this->pdo), 'samples' => (int) \Nova\Core\Sql::scalar($this->pdo, 'SELECT COUNT(*) FROM product WHERE is_sample = 1'),
         ]);
@@ -284,6 +296,110 @@ final class AdminApp
         }
 
         return $this->page('product.html.twig', $this->shell($actor, 'products') + ['p' => $p, 'today' => gmdate('Y-m-d')]);
+    }
+
+    // ---- inquiries (A6; 05 §13)
+
+    private function inquiryRoute(Request $r, string $path, Actor $actor): ?Response
+    {
+        $get = !$r->isPost();
+        if ($path === '/inquiries') {
+            return $get ? $this->inquiryPage($r, $actor, null) : null;
+        }
+        if ($path === '/inquiries/settings') {
+            if ($get) {
+                return $this->page('inquiry_settings.html.twig', $this->shell($actor, 'inq') + ['recipient' => (new InquiryRecipient($this->pdo))->get()]);
+            }
+            (new InquiryRecipient($this->pdo))->set($actor, $r->input('notify_to'));
+            $this->flash('ok', 'نشانی دریافت اعلان استعلام ذخیره شد.');
+
+            return Response::redirect('/admin/inquiries/settings');
+        }
+        if ($path === '/inquiries/retry' && !$get) {
+            $result = $this->notifier()->retryAll();
+            $this->flashRetry($result['sent'], $result['failed']);
+
+            return Response::redirect('/admin/inquiries');
+        }
+        if (preg_match('#^/inquiries/(\d+)(?:/(status|note|retry|delete))?$#', $path, $m) !== 1) {
+            return null;
+        }
+        $id = (int) $m[1];
+        $action = $m[2] ?? '';
+        if ($get) {
+            return $action === '' ? $this->inquiryPage($r, $actor, $id) : null;
+        }
+        switch ($action) {
+            case 'status':
+                $this->inquiries->setStatus($actor, $id, $r->input('status'));
+                $this->flash('ok', 'وضعیت استعلام تغییر کرد.');
+                break;
+            case 'note':
+                $this->inquiries->saveNote($actor, $id, $r->input('note'));
+                $this->flash('ok', 'یادداشت داخلی ذخیره شد.');
+                break;
+            case 'retry':
+                $outcome = $this->notifier()->deliver($id);
+                $this->flashRetry($outcome === 'sent' ? 1 : 0, $outcome === 'failed' ? 1 : 0);
+                break;
+            case 'delete':
+                if (!$actor->isOwner()) {
+                    return $this->page('error.html.twig', ['code' => 403, 'reason' => 'role'] + $this->shell($actor, ''), 403);
+                }
+                if ($r->input('confirm') !== '1') {
+                    $this->flash('error', 'برای حذف، تأیید را علامت بزنید. حذف برگشت‌پذیر نیست.');
+                    break;
+                }
+                (new InquiryRetention($this->pdo))->delete($actor, $id);
+                $this->flash('ok', 'استعلام و مشخصات آن حذف شد.');
+
+                return Response::redirect('/admin/inquiries');
+            default:
+                return null;
+        }
+
+        return Response::redirect("/admin/inquiries/{$id}");
+    }
+
+    private function inquiryPage(Request $r, Actor $actor, ?int $id): Response
+    {
+        $status = $r->queryString('status');
+        $status = \in_array($status, [...InquiryAdmin::STATUSES, 'all'], true) ? $status : ($id === null ? 'new' : 'all');
+        $q = mb_substr(trim($r->queryString('q')), 0, 64);
+        $selected = $id === null ? null : $this->inquiries->detail($id);
+        if ($id !== null && $selected === null) {
+            return $this->page('error.html.twig', ['code' => 404] + $this->shell($actor, 'inq'), 404);
+        }
+
+        return $this->page('inquiries.html.twig', $this->shell($actor, 'inq') + [
+            'rows' => $this->inquiries->list($status, $q), 'sel' => $selected, 'status' => $status, 'q' => $q,
+            'counts' => $this->inquiries->counts(), 'recipient' => (new InquiryRecipient($this->pdo))->get(), 'can_retry' => $this->notifier !== null,
+        ]);
+    }
+
+    private function notifier(): InquiryNotifier
+    {
+        if ($this->notifier === null) {
+            throw new RuntimeException('Inquiry notifications are not configured for this Admin.');
+        }
+
+        return ($this->notifier)();
+    }
+
+    private function flashRetry(int $sent, int $failed): void
+    {
+        if ($failed > 0) {
+            $this->flash('error', "ارسال اعلان برای {$this->fa($failed)} استعلام دوباره ناموفق بود. علت کنار هر استعلام آمده است؛ استعلام‌ها سالم و ذخیره‌اند.");
+        } elseif ($sent > 0) {
+            $this->flash('ok', "اعلان {$this->fa($sent)} استعلام ارسال شد.");
+        } else {
+            $this->flash('ok', 'اعلانی در انتظار ارسال نبود.');
+        }
+    }
+
+    private function fa(int $n): string
+    {
+        return AdminView::digits($n);
     }
 
     private function publishPage(Actor $actor): Response
@@ -383,7 +499,9 @@ final class AdminApp
     /** @return array<string, mixed> */
     private function shell(Actor $actor, string $active): array
     {
-        return ['user' => $this->auth->profile($actor), 'is_owner' => $actor->isOwner(), 'active' => $active, 'unpublished' => $this->publish->unpublishedCount(), 'site_url' => $this->siteUrl];
+        return ['user' => $this->auth->profile($actor), 'is_owner' => $actor->isOwner(), 'active' => $active, 'unpublished' => $this->publish->unpublishedCount(), 'site_url' => $this->siteUrl,
+            'inq_new' => \Nova\Core\Sql::int($this->pdo, "SELECT COUNT(*) FROM inquiry WHERE status = 'new'"),
+            'inq_failed' => \Nova\Core\Sql::int($this->pdo, "SELECT COUNT(*) FROM inquiry WHERE notify_status = 'failed'")];
     }
 
     /** @param array<string, mixed> $context */
@@ -395,7 +513,7 @@ final class AdminApp
         return Response::html($this->view->render($template, $context + [
             'csrf' => $this->csrf->token(),
             'flash' => \is_array($flash) ? $flash : [],
-            'user' => null, 'is_owner' => false, 'active' => '', 'unpublished' => 0, 'site_url' => $this->siteUrl,
+            'user' => null, 'is_owner' => false, 'active' => '', 'unpublished' => 0, 'site_url' => $this->siteUrl, 'inq_new' => 0, 'inq_failed' => 0,
         ]), $status);
     }
 
@@ -427,6 +545,8 @@ final class AdminApp
         return match (true) {
             str_starts_with($path, '/products') => '/admin/products',
             str_starts_with($path, '/publish') => '/admin/publish',
+            preg_match('#^/inquiries/(\d+)#', $path, $m) === 1 => "/admin/inquiries/{$m[1]}",
+            str_starts_with($path, '/inquiries') => '/admin/inquiries',
             default => '/admin/',
         };
     }

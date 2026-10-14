@@ -25,22 +25,29 @@ final class PublishFactory
     public static function engine(Config $config, Paths $paths, PDO $pdo): PublishEngine
     {
         [$public, $storage] = self::locations($config, $paths);
-        $switcher = match ($config->get('release_strategy', 'symlink')) {
-            'symlink' => new SymlinkSwitcher($public . '/_site'),
-            'slots' => new SlotSwitcher($public . '/_site', $storage . '/releases'),
-            default => throw new RuntimeException('release_strategy must be "symlink" or "slots".'),
-        };
         $build = self::buildConfig($config);
 
         return new PublishEngine(
             $pdo,
-            $switcher,
+            self::switcher($config, $paths),
             new PublishJournal($storage . '/publish/journal.json'),
             new SiteBuilder($paths->root . '/app', $public . '/assets', $build),
             $build,
             $config->environment,
             $paths->root . '/app/i18n/contact.php',
         );
+    }
+
+    /** The configured release switcher (also read by the inquiry endpoint to find the live release). */
+    public static function switcher(Config $config, Paths $paths): ReleaseSwitcher
+    {
+        [$public, $storage] = self::locations($config, $paths);
+
+        return match ($config->get('release_strategy', 'symlink')) {
+            'symlink' => new SymlinkSwitcher($public . '/_site'),
+            'slots' => new SlotSwitcher($public . '/_site', $storage . '/releases'),
+            default => throw new RuntimeException('release_strategy must be "symlink" or "slots".'),
+        };
     }
 
     public static function buildConfig(Config $config): BuildConfig

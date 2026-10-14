@@ -47,6 +47,7 @@ docker compose exec web php app/bin/nova publish:rollback      # instant switch 
 docker compose exec web php app/bin/nova dev:e2e               # dev DB = SAMPLE + SYNTHETIC QZ fixtures, then assets + publish (run before npm run test:e2e)
 docker compose exec web php app/bin/nova user:create-owner <email> <name>   # first Owner (once); password asked, never an argument; TOTP enrolled at first sign-in
                                                                # Admin: http://fa.nova.localhost:8080/admin/ (setup and recovery: nova/docs/admin.md)
+docker compose exec web php app/bin/nova inquiry:notify        # retry failed inquiry emails; inquiry:purge applies the 24-month retention (nova/docs/inquiry.md)
 npm ci && npm run test:js                      # JS copy of the designation matcher vs the shared corpus
 npm run test:e2e                               # Playwright on the installed Chrome
 docker compose down                             # add -v to wipe the dev database

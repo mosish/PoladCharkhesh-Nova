@@ -391,3 +391,17 @@ Verification (Docker; new disposable databases plus a disposable stack with its 
 - `nova` (schema 0004), `nova_test` and the preview `R-20261012-131225-9d1c` were untouched.
 
 **Resume point:** the owner's review of Step 9, then the go-ahead for Step 10.
+
+**Step 10 (inquiry endpoint), 2026-10-14, owner-requested (committed and pushed to GitHub `main`; awaits the owner's review, no gate approved):**
+
+- Implemented per `05` §10 and §13 (details, configuration and verification: `nova/docs/inquiry.md`): migration 0008 (`inquiry`, `inquiry_item`, `inquiry_attempt`), `public_html/api/inquiry.php`, `app/src/Inquiry/`, `Nova\Admin\InquiryAdmin` and the A6 inbox, dashboard tiles and the Owner-only notification address (decision D), CLI `inquiry:notify` and `inquiry:purge`, PHPMailer 7.1.1 (E-3; `composer audit` clean).
+- Each publish now writes `designation-index.json` (with the release id) into the release, and the endpoint matches only against the verified live release; older releases fall back to the embedded index.
+- Notification failure never loses an inquiry; it is visible and retryable. The email carries no name, phone or message (E-12).
+- Deliberate consequence of static pages for review: without JavaScript the first submission returns the filled form with a token to confirm (minimum fill time).
+- Two defects found by the verification and fixed: the default sender was invalid for PHPMailer; error text contrast on the navy sheet was 2.5:1.
+
+Verification (Docker; disposable databases and a disposable stack on port 8090; removed afterwards): PHPUnit 608 tests; PHPStan max; CS clean; 171 JS tests; Playwright `inquiry.spec.js` fa and en (JS and no-JS), `site.spec.js` 32/32; Mailpit delivery checked. `nova` (schema 0004), `nova_test` and the preview `R-20261012-131225-9d1c` were untouched.
+
+**Limits:** the real notification address and the production SMTP mailbox (with SPF/DKIM) are launch inputs; `.htaccess` routing for `/api` is Step 13.
+
+**Resume point:** the owner's review of Steps 9–10, then Step 11 (media core and SVG ingestion).

@@ -13,6 +13,7 @@ use Nova\Core\Paths;
 use Nova\Core\Sql;
 use Nova\Http\Request;
 use Nova\Http\Response;
+use Nova\Inquiry\InquiryNotifier;
 use Nova\Publish\AssetBuilder;
 use Nova\Publish\BuildConfig;
 use Nova\Publish\PublishEngine;
@@ -25,10 +26,12 @@ use Nova\Security\ArraySessionStore;
 use Nova\Security\Totp;
 use Nova\Security\UserAdmin;
 use Nova\Tests\Integration\Catalogue\CatalogueFixture;
+use Nova\Tests\Integration\Inquiry\RecordingMailer;
 use Nova\Tests\Integration\Publish\BrokenAfterActivate;
 use Nova\Tests\Integration\Publish\FailingActivate;
 use Nova\Tests\Integration\Publish\TestClock;
 use Nova\Tests\Integration\Publish\ThrowAfterActivate;
+use Nova\Tests\Integration\TestDatabase;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -47,6 +50,7 @@ final class AdminAppTest extends TestCase
     private CatalogueFixture $f;
     private ArraySessionStore $session;
     private TestClock $clock;
+    private RecordingMailer $mailer;
     private AdminApp $app;
     private int $product;
     /** @var (\Closure(string): ReleaseSwitcher)|null tests may wrap the switcher (site dir => switcher) */
@@ -75,6 +79,7 @@ final class AdminAppTest extends TestCase
         $this->product = $this->f->products->createProduct($this->f->owner, $this->f->family, 'QZ 1');
         Sql::run($this->f->pdo, "UPDATE product SET status = 'published', base_listed = 1 WHERE id = ?", [$this->product]);
         $this->clock = new TestClock(1_800_000_000);
+        $this->mailer = new RecordingMailer();
         $this->session = new ArraySessionStore();
         $this->app = $this->app();
     }
@@ -108,6 +113,7 @@ final class AdminAppTest extends TestCase
             },
             'https://fa.example.test/',
             $this->clock,
+            fn(): InquiryNotifier => new InquiryNotifier($pdo, $this->mailer, 'https://fa.example.test'),
         );
     }
 
@@ -544,5 +550,82 @@ final class AdminAppTest extends TestCase
         self::assertStringContainsString('قابل تأیید نیست', $flash['text']);
         self::assertStringNotContainsString('تغییری نکرد', $flash['text']);
         self::assertStringNotContainsString('کامل کرد', $flash['text']);
+    }
+
+    // ---- inquiries (A6)
+
+    private function receiveInquiry(string $name = 'Test Visitor', string $code = 'QZ 77'): int
+    {
+        $id = TestDatabase::insert($this->f->pdo, 'inquiry', ['lang' => 'fa', 'name' => $name, 'phone' => '۰۹۱۲ ۰۰۰ ۰۰۰۰', 'message' => "سلام\nپیام <b>آزمایشی</b>", 'match_state' => 'no_release', 'notify_status' => 'failed', 'notify_attempts' => 1, 'notify_error' => 'SMTP: connect() failed']);
+        TestDatabase::insert($this->f->pdo, 'inquiry_item', ['inquiry_id' => $id, 'position' => 1, 'requested_text' => $code, 'requested_key' => strtolower(str_replace(' ', '', $code)), 'match_type' => 'none']);
+
+        return $id;
+    }
+
+    public function testTheInquiryInboxShowsTheStoredRecordAndEscapesVisitorText(): void
+    {
+        $id = $this->receiveInquiry();
+        $this->signInEditor();
+        $list = $this->req('GET', '/admin/inquiries');
+        self::assertSame(200, $list->status);
+        self::assertStringContainsString("/admin/inquiries/{$id}", $list->body);
+        self::assertStringContainsString('اعلان ایمیل ۱ استعلام ارسال نشد', $list->body, 'a failed notification is visible');
+
+        $detail = $this->req('GET', "/admin/inquiries/{$id}");
+        self::assertStringContainsString('QZ 77', $detail->body);
+        self::assertStringContainsString('در کاتالوگ نیست', $detail->body);
+        self::assertStringContainsString('&lt;b&gt;آزمایشی&lt;/b&gt;', $detail->body, 'visitor text is escaped');
+        self::assertStringNotContainsString('<b>آزمایشی</b>', $detail->body);
+        self::assertStringContainsString('https://wa.me/989120000000', $detail->body, 'Persian digits become a wa.me number');
+        self::assertStringContainsString('tel:09120000000', $detail->body);
+        self::assertStringContainsString('SMTP: connect() failed', $detail->body);
+        self::assertStringNotContainsString('action="/admin/inquiries/' . $id . '/delete"', $detail->body, 'an Editor is not offered deletion');
+        self::assertSame(404, $this->req('GET', '/admin/inquiries/99999')->status);
+        $dash = $this->req('GET', '/admin/');
+        self::assertStringContainsString('QZ 77', $dash->body, 'the demand list names codes that matched nothing');
+    }
+
+    public function testStatusNoteAndRetryAreAuditedWithoutVisitorContent(): void
+    {
+        $id = $this->receiveInquiry();
+        (new \Nova\Inquiry\InquiryRecipient($this->f->pdo))->set($this->f->owner, 'inbox@test.invalid');
+        $this->signInEditor();
+
+        self::assertSame("/admin/inquiries/{$id}", $this->req('POST', "/admin/inquiries/{$id}/status", ['status' => 'in_progress'])->headers['Location'] ?? null);
+        self::assertSame('in_progress', Sql::scalar($this->f->pdo, 'SELECT status FROM inquiry'));
+        $this->req('POST', "/admin/inquiries/{$id}/status", ['status' => 'nonsense']);
+        self::assertSame('in_progress', Sql::scalar($this->f->pdo, 'SELECT status FROM inquiry'), 'unknown statuses are refused');
+        $this->req('POST', "/admin/inquiries/{$id}/note", ['note' => 'call back after 5 pm']);
+        self::assertSame('call back after 5 pm', Sql::scalar($this->f->pdo, 'SELECT note FROM inquiry'));
+
+        self::assertSame([], $this->mailer->sent);
+        $this->req('POST', "/admin/inquiries/{$id}/retry");
+        self::assertCount(1, $this->mailer->sent);
+        self::assertSame('sent', Sql::scalar($this->f->pdo, 'SELECT notify_status FROM inquiry'));
+
+        $audit = implode(' ', array_map(strval(...), Sql::column($this->f->pdo, "SELECT CONCAT(action, ' ', COALESCE(before_text, ''), COALESCE(after_text, '')) FROM audit_event WHERE entity_type = 'inquiry'")));
+        self::assertStringContainsString('inquiry.status', $audit);
+        self::assertStringContainsString('inquiry.note', $audit);
+        self::assertStringNotContainsString('call back', $audit);
+        self::assertStringNotContainsString('Test Visitor', $audit);
+    }
+
+    public function testOnlyTheOwnerDeletesAnInquiryOrSetsTheRecipient(): void
+    {
+        $id = $this->receiveInquiry();
+        $this->signInEditor();
+        self::assertSame(403, $this->req('POST', "/admin/inquiries/{$id}/delete", ['confirm' => '1'])->status);
+        $this->req('POST', '/admin/inquiries/settings', ['notify_to' => 'editor@test.invalid']);
+        self::assertNull(Sql::scalar($this->f->pdo, "SELECT value_text FROM setting WHERE setting_key = 'inquiry.notify_to'"), 'an Editor cannot set it');
+        self::assertSame(1, Sql::int($this->f->pdo, 'SELECT COUNT(*) FROM inquiry'));
+
+        $this->req('POST', '/admin/logout');
+        $this->signInOwner();
+        $this->req('POST', '/admin/inquiries/settings', ['notify_to' => 'owner-inbox@test.invalid']);
+        self::assertSame('owner-inbox@test.invalid', Sql::scalar($this->f->pdo, "SELECT value_text FROM setting WHERE setting_key = 'inquiry.notify_to'"));
+        $this->req('POST', "/admin/inquiries/{$id}/delete", []);
+        self::assertSame(1, Sql::int($this->f->pdo, 'SELECT COUNT(*) FROM inquiry'), 'deletion needs the explicit confirmation');
+        $this->req('POST', "/admin/inquiries/{$id}/delete", ['confirm' => '1']);
+        self::assertSame([0, 0], [Sql::int($this->f->pdo, 'SELECT COUNT(*) FROM inquiry'), Sql::int($this->f->pdo, 'SELECT COUNT(*) FROM inquiry_item')]);
     }
 }

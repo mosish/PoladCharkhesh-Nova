@@ -61,7 +61,7 @@ The 2026-10-13 source review identified follow-up work in seven areas. Each find
 
 The details and tests are in the [Admin runbook](nova/docs/admin.md) and the [handoff checkpoint](06%20phase3%20handoff%20checkpoint.md). These fixes still await the owner's review; no gate is approved by them.
 
-**Next acceptance checkpoint:** finish and reverify Step 9, then obtain the owner's go-ahead for Step 10. Phase 3 completion and production deployment are separate gates.
+**Next acceptance checkpoint:** Step 10 (the inquiry endpoint) is implemented and verified locally (see [inquiry.md](nova/docs/inquiry.md)); Steps 9 and 10 await the owner's review. Phase 3 completion and production deployment are separate gates.
 
 The earlier governance/handoff documents contain dated statements such as “uncommitted” and historical test results. These describe their original sessions. A GitHub checkpoint commit does not itself approve those changes or prove that the running database and published release match the source.
 
@@ -103,7 +103,7 @@ After successful initialization and publication:
 | Admin, after setup | <http://fa.nova.localhost:8080/admin/> |
 | Local mail viewer | <http://localhost:8025/> |
 
-These are local addresses, not public deployments. The public inquiry form cannot complete delivery until Step 10 is implemented.
+These are local addresses, not public deployments. The public inquiry form posts to `/api/inquiry.php` on both hosts and is verified on a disposable stack; delivery to the real notification address needs the production SMTP mailbox, a launch input.
 
 Create the first Owner only after applying the Admin migration and following the [Admin runbook](nova/docs/admin.md). There are no default credentials; the command prompts for a password, and the Owner enrolls TOTP at first sign-in.
 
@@ -143,6 +143,14 @@ Verification evidence for the Step 9 follow-up (2026-10-13), latest run after th
   - public site: 32/32;
   - stack smoke checks: 4/4.
 - **Untouched:** the development database, its live release and its volumes.
+Verification evidence for Step 10 (2026-10-14), on disposable databases and a disposable stack (own docroot and storage, port 8090), all removed afterwards:
+
+- **PHPUnit:** 608 tests / 7,084 assertions passed; PHPStan at maximum level, PHP style and `composer audit` passed.
+- **JavaScript:** 171 tests passed.
+- **Playwright on installed Chrome:** `inquiry.spec.js` (fa and en, with and without JavaScript, axe-clean, cross-site and honeypot refusals) and `site.spec.js` 32/32.
+- **Mailpit:** a retried notification arrived with no personal data. Real delivery needs the production SMTP mailbox and notification address (launch inputs).
+- **Untouched:** the development database, its live release and volumes.
+
 - Passing tests do not replace security review, data reconciliation, restore verification or owner acceptance.
 
 ## Repository map
@@ -179,6 +187,7 @@ Useful runbooks:
 - [Local baseline and environment](nova/docs/local-baseline.md)
 - [Admin setup and recovery](nova/docs/admin.md)
 - [Publish storage and routing](nova/docs/release-routing.md)
+- [Inquiry endpoint](nova/docs/inquiry.md)
 - [Website and SEO readiness](nova/docs/website-readiness.md)
 - [Designation matching](nova/docs/designation-matching.md)
 

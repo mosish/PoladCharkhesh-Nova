@@ -3,8 +3,11 @@
 {% block main %}
 <div class="adm__head"><div><p class="crumbs">مرکز کنترل</p><h1>پیشخوان</h1></div></div>
 {% if samples > 0 %}<p class="flash flash--error" role="note">این پایگاه داده {{ samples|fa }} محصول <b>نمونه</b> (فیکسچر توسعه) دارد؛ این‌ها داده واقعی نیستند و در محیط تولید منتشر نمی‌شوند.</p>{% endif %}
-<div class="grid g3 mb">
-  <div class="card tile tile--pri"><span class="k">تغییرات منتشرنشده</span><span class="v">{{ unpublished|fa }}</span><span class="s">سایت زنده فقط با «انتشار» تغییر می‌کند.</span><a href="/admin/publish">بررسی و انتشار ←</a></div>
+{% if inq.notify_failed > 0 %}<p class="flash flash--error" role="note">اعلان ایمیل {{ inq.notify_failed|fa }} استعلام ارسال نشد. استعلام‌ها سالم و ذخیره‌اند. <a href="/admin/inquiries?status=all">بررسی و تلاش دوباره</a></p>{% endif %}
+{% if recipient is null %}<p class="flash flash--error" role="note">نشانی دریافت اعلان استعلام تنظیم نشده است؛ استعلام‌ها ذخیره می‌شوند ولی ایمیلی فرستاده نمی‌شود. <a href="/admin/inquiries/settings">نشانی دریافت اعلان</a></p>{% endif %}
+<div class="grid g4 mb">
+  <div class="card tile tile--pri"><span class="k">استعلام‌های جدید</span><span class="v">{{ inq.new|fa }}</span><span class="s">{% if inq.oldest_new %}قدیمی‌ترین پاسخ‌داده‌نشده: {{ inq.oldest_new|when }}{% else %}استعلام جدیدی نیست.{% endif %}</span><a href="/admin/inquiries">صندوق استعلام ←</a></div>
+  <div class="card tile"><span class="k">تغییرات منتشرنشده</span><span class="v">{{ unpublished|fa }}</span><span class="s">سایت زنده فقط با «انتشار» تغییر می‌کند.</span><a href="/admin/publish">بررسی و انتشار ←</a></div>
   <div class="card tile tile--warn"><span class="k">داده فنی در انتظار تأیید</span><span class="v">{{ pending|fa }}</span><span class="s">از {{ (counts.published ?? 0)|fa }} محصول منتشرشده · noindex تا تأیید مالک</span><a href="/admin/products?status=published">فهرست محصولات ←</a></div>
   <div class="card tile"><span class="k">کاتالوگ</span><span class="v">{{ ((counts.published ?? 0) + (counts.draft ?? 0) + (counts.archived ?? 0))|fa }}</span><span class="s">{{ (counts.published ?? 0)|fa }} منتشرشده · {{ (counts.draft ?? 0)|fa }} پیش‌نویس · {{ (counts.archived ?? 0)|fa }} بایگانی</span><a href="/admin/products">محصولات ←</a></div>
 </div>
@@ -16,7 +19,24 @@
       <li>{% if unsourced > 0 %}<span class="bad-i" aria-hidden="true">!</span>{% else %}<span class="ok-i" aria-hidden="true">✓</span>{% endif %}<span class="grow">{{ unsourced|fa }} مقدار هسته بدون منبع</span></li>
       <li>{% if no_english > 0 %}<span class="warn-i" aria-hidden="true">!</span>{% else %}<span class="ok-i" aria-hidden="true">✓</span>{% endif %}<span class="grow">توضیح انگلیسی ناقص: {{ no_english|fa }} محصول</span></li>
     </ul>
-    <p class="card__note">استعلام‌ها، رسانه و پشتیبان‌گیری در گام‌های بعدی ساخته می‌شوند و این‌جا اضافه خواهند شد.</p>
+    <p class="card__note">رسانه و پشتیبان‌گیری در گام‌های بعدی ساخته می‌شوند و این‌جا اضافه خواهند شد.</p>
+  </section>
+</div>
+<div class="grid g2 mb-top">
+  <section class="card" aria-labelledby="h-recent-inq"><h2 class="card__h" id="h-recent-inq">استعلام‌های اخیر</h2>
+    {% if recent_inq is empty %}<p class="empty">هنوز استعلامی نرسیده است؛ استعلام‌ها از فرم سایت می‌رسند.</p>{% else %}
+    <ul class="list">{% for q in recent_inq %}<li>{% if q.status == 'new' %}<span class="unread" title="جدید"></span>{% endif %}<span class="grow"><a href="/admin/inquiries/{{ q.id }}"><b>{{ q.name }}</b></a> <span class="code">{{ q.ref }}</span><br>{% for i in q.items %}<bdi class="code" dir="ltr">{{ i.requested_text }}</bdi>{% if i.match_type == 'none' %} <span class="badge b-pend">در کاتالوگ نیست</span>{% endif %}{{ not loop.last ? ' · ' }}{% endfor %}</span><span class="tag">{{ q.lang|upper }}</span><span class="tm">{{ q.received_at|when }}</span></li>{% endfor %}</ul>
+    {% endif %}
+  </section>
+  <section class="card" aria-labelledby="h-demand"><h2 class="card__h" id="h-demand">کدهای درخواستی که در کاتالوگ نیستند</h2>
+    {% if demand is empty %}<p class="empty">هنوز کدی بی‌تطبیق در استعلام‌ها نیامده است.</p>{% else %}
+    <div class="t-wrap" tabindex="0" role="region" aria-label="کدهای درخواستی خارج از کاتالوگ">
+    <table class="t"><caption class="sr">از متن استعلام‌ها، نه از رفتار بازدیدکنندگان</caption>
+      <thead><tr><th scope="col">کد</th><th scope="col">تعداد استعلام</th><th scope="col">آخرین درخواست</th></tr></thead>
+      <tbody>{% for d in demand %}<tr><td><bdi class="code" dir="ltr">{{ d.code }}</bdi></td><td>{{ d.count|fa }}</td><td class="muted nw">{{ d.last|when }}</td></tr>{% endfor %}</tbody>
+    </table></div>
+    <p class="card__note">از متن استعلام‌ها، نه از رفتار بازدیدکنندگان (C4).</p>
+    {% endif %}
   </section>
 </div>
 {% endblock %}

@@ -34,6 +34,12 @@ final class Activity
         'user.create' => 'حساب {label} را ساخت',
         'user.password_reset' => 'گذرواژه حساب {label} را بازنشانی کرد',
         'user.totp_reset' => 'ورود دومرحله‌ای حساب {label} را بازنشانی کرد',
+        'inquiry.received' => 'استعلام {label} از فرم سایت رسید',
+        'inquiry.status' => 'وضعیت استعلام {label} را تغییر داد',
+        'inquiry.note' => 'یادداشت داخلی استعلام {label} را ویرایش کرد',
+        'inquiry.deleted' => 'استعلام {label} را به درخواست فرستنده حذف کرد',
+        'inquiry.purged' => '{label} استعلام پس از پایان مدت نگهداری حذف شد',
+        'inquiry.recipient' => 'نشانی دریافت اعلان استعلام را تغییر داد',
         'migration.no_backup' => 'مهاجرت توسعه بدون پشتیبان اجرا شد ({label})',
     ];
 

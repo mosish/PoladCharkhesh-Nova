@@ -175,7 +175,7 @@ final class PublishEngine
         $this->journal->step('prepared', ['identity' => $identity, 'snapshot' => $point]);
         $this->tick('prepared');
 
-        $files = $this->builder->build($data, $dir);
+        $files = $this->builder->build($data, $dir, $release);
         $this->journal->step('built');
         $this->tick('built');
 

@@ -19,6 +19,7 @@ use Twig\TwigFunction;
  *   <out>/fa|en/p/<slug>/index.html   one page per published Product
  *   <out>/fa|en/privacy/index.html, 404.html, sitemap.xml, robots.txt
  *   <out>/data/p/<slug>.json          per-Product workspace data (both languages)
+ *   <out>/designation-index.json      the matcher's index with the release id (not served; inquiry endpoint)
  *   <out>/manifest.json               every file with its size and sha256
  *
  * Content is in the HTML (works without JavaScript); Twig escapes by default.
@@ -48,8 +49,13 @@ final class SiteBuilder
         $this->twig->addFilter(new TwigFilter('iso', static fn(string $s): string => "\u{2066}{$s}\u{2069}"));
     }
 
-    /** @return list<string> files written, relative to `$out` */
-    public function build(SiteData $data, string $out): array
+    /**
+     * @param ?string $release the release id; when given, `designation-index.json` records the index
+     *                         with it for the inquiry endpoint (E-21, `Nova\Inquiry\LiveIndex`)
+     *
+     * @return list<string> files written, relative to `$out`
+     */
+    public function build(SiteData $data, string $out, ?string $release = null): array
     {
         if (is_dir($out) && (scandir($out) ?: []) !== ['.', '..']) {
             throw new RuntimeException("The release directory {$out} is not empty.");
@@ -79,6 +85,10 @@ final class SiteBuilder
             $files[] = $this->write($out, "{$lang}/sitemap.xml", $this->sitemap($data, $lang));
             $files[] = $this->write($out, "{$lang}/robots.txt", $this->robotsTxt($lang));
             $files[] = $this->write($out, "{$lang}/llms.txt", Seo::llms($data, $this->config, $lang));
+        }
+        if ($release !== null) {
+            // Not served (only fa/, en/ and data/ are); the endpoint reads it from the release directory.
+            $files[] = $this->write($out, 'designation-index.json', json_encode(['release' => $release, 'index' => ['suffix_rules' => (object) $data->index['suffix_rules']] + $data->index], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR));
         }
         foreach ($data->products as $p) {
             $files[] = $this->write($out, "data/p/{$p['slug']}.json", json_encode($this->productJson($p, $slugs), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR));

@@ -1,0 +1,15 @@
+# Nova inquiry endpoint (05 §13): inquiry.php is the only PHP that runs here,
+# and nothing else in this folder is served.
+Options -Indexes -MultiViews
+
+<FilesMatch ".*">
+    Require all denied
+</FilesMatch>
+<Files "inquiry.php">
+    Require all granted
+</Files>
+
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-Robots-Tag "noindex, nofollow"
+</IfModule>

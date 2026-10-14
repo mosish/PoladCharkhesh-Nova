@@ -3,7 +3,7 @@
   ['', [['dash', 'پیشخوان', '/admin/']]],
   ['کاتالوگ', [['products', 'محصولات', '/admin/products'], ['fam', 'خانواده‌ها', null], ['src', 'منابع', null], ['brand', 'برندها', null]]],
   ['محتوا', [['sections', 'بخش‌های صفحه', null], ['media', 'رسانه', null], ['docs', 'مستندات', null], ['seo', 'سئو', null]]],
-  ['ارتباط', [['inq', 'استعلام‌ها', null], ['company', 'شرکت و تماس', null]]],
+  ['ارتباط', [['inq', 'استعلام‌ها', '/admin/inquiries'], ['company', 'شرکت و تماس', null]]],
   ['انتشار', [['publish', 'انتشار', '/admin/publish']]],
   ['سیستم', [['users', 'کاربران و نقش‌ها', null], ['audit', 'گزارش رویدادها', null], ['backup', 'پشتیبان‌گیری', null]]],
 ] %}
@@ -24,7 +24,7 @@
         {% if group[0] %}<p class="navh">{{ group[0] }}</p>{% endif %}
         {% for item in group[1] %}
           {% if item[2] %}
-            <a href="{{ item[2] }}"{% if item[0] == active %} aria-current="page"{% endif %}><i></i>{{ item[1] }}{% if item[0] == 'publish' and unpublished > 0 %}<span class="n">{{ unpublished|fa }}</span>{% endif %}</a>
+            <a href="{{ item[2] }}"{% if item[0] == active %} aria-current="page"{% endif %}><i></i>{{ item[1] }}{% if item[0] == 'publish' and unpublished > 0 %}<span class="n">{{ unpublished|fa }}</span>{% endif %}{% if item[0] == 'inq' and (inq_new > 0 or inq_failed > 0) %}<span class="n{{ inq_failed > 0 ? ' n--bad' : '' }}"{% if inq_failed > 0 %} title="اعلان ناموفق: {{ inq_failed|fa }}"{% endif %}>{{ inq_new|fa }}{% if inq_failed > 0 %}<span class="sr"> استعلام جدید؛ {{ inq_failed|fa }} اعلان ناموفق</span> !{% endif %}</span>{% endif %}</a>
           {% else %}
             <span class="off" title="در فازهای بعدی ساخته می‌شود"><i></i>{{ item[1] }}<small>به‌زودی</small></span>
           {% endif %}

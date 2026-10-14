@@ -65,6 +65,8 @@ final class Application
                 'user:reset-password' => $this->resetPassword($options),
                 'user:reset-totp' => $this->resetTotp($options),
                 'user:list' => $this->listUsers(),
+                'inquiry:notify' => $this->inquiryNotify(),
+                'inquiry:purge' => $this->inquiryPurge(),
                 default => $this->help(),
             };
         } catch (MigrationError $e) {
@@ -305,6 +307,40 @@ final class Application
         return 0;
     }
 
+    /** Retries every pending or failed inquiry notification (05 §13); the scheduler of step 12 runs it too. */
+    private function inquiryNotify(): int
+    {
+        $settings = \Nova\Inquiry\InquiryConfig::fromConfig($this->config);
+        $build = \Nova\Publish\PublishFactory::buildConfig($this->config);
+        $notifier = new \Nova\Inquiry\InquiryNotifier($this->pdo(), new \Nova\Inquiry\SmtpMailer($settings->smtp, $settings->from), $build->hosts['fa']);
+        $result = $notifier->retryAll();
+        $this->output->line("Notifications sent: {$result['sent']}, failed: {$result['failed']}.");
+        foreach (\Nova\Core\Sql::rows($this->pdo(), "SELECT id, notify_error FROM inquiry WHERE notify_status = 'failed' ORDER BY id LIMIT 20") as $row) {
+            $this->output->line(\sprintf('  IQ-%d  %s', (int) $row['id'], (string) $row['notify_error']));
+        }
+
+        return $result['failed'] === 0 ? 0 : 3;
+    }
+
+    /** Retention (E-12): deletes inquiries older than 24 months and address hashes older than 24 hours. */
+    private function inquiryPurge(): int
+    {
+        $retention = new \Nova\Inquiry\InquiryRetention($this->pdo());
+        $total = 0;
+        while (($n = $retention->purgeExpired()) > 0) {
+            $total += $n;
+        }
+        $settings = \Nova\Inquiry\InquiryConfig::fromConfig($this->config);
+        $throttle = new \Nova\Inquiry\Throttle($this->pdo(), $settings->key, $settings->perHour, $settings->perDay);
+        $hashes = 0;
+        while (($n = $throttle->purge()) > 0) {
+            $hashes += $n;
+        }
+        $this->output->line("Deleted {$total} inquiries past " . \Nova\Inquiry\InquiryRetention::MONTHS . " months and {$hashes} address hashes past 24 hours.");
+
+        return 0;
+    }
+
     /** DEVELOPMENT ONLY: the browser-test site: dev:reset + synthetic QZ fixtures + assets + publish. */
     private function devE2e(): int
     {
@@ -355,6 +391,8 @@ final class Application
         $this->output->line('  user:reset-password <email>        set a new password (ends that account\'s sessions, clears a lockout)');
         $this->output->line('  user:reset-totp <email>            reset the Owner\'s two-factor sign-in (re-enrolled at the next sign-in)');
         $this->output->line('  user:list                          accounts, roles and status');
+        $this->output->line('  inquiry:notify          retry pending or failed inquiry notifications');
+        $this->output->line('  inquiry:purge           delete inquiries past retention (24 months) and old address hashes');
 
         return 0;
     }

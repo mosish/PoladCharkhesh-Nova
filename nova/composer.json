@@ -5,6 +5,7 @@
     "license": "proprietary",
     "require": {
         "php": "^8.4",
+        "phpmailer/phpmailer": "^7.1",
         "twig/twig": "^3"
     },
     "require-dev": {

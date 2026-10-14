@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Nova\Http;
 
-/** The parts of an HTTP request the Admin uses. Built from the PHP globals on a server, directly in tests. */
+/** The parts of an HTTP request the Admin and the inquiry endpoint use. Built from the PHP globals on a server, directly in tests. */
 final readonly class Request
 {
     /**
@@ -20,6 +20,7 @@ final readonly class Request
         public string $clientAddress = '',
         public ?string $origin = null,
         public ?string $fetchSite = null,
+        public string $accept = '',
     ) {}
 
     public static function fromGlobals(): self
@@ -41,6 +42,7 @@ final readonly class Request
             \is_string($_SERVER['REMOTE_ADDR'] ?? null) ? $_SERVER['REMOTE_ADDR'] : '',
             \is_string($_SERVER['HTTP_ORIGIN'] ?? null) ? $_SERVER['HTTP_ORIGIN'] : null,
             \is_string($_SERVER['HTTP_SEC_FETCH_SITE'] ?? null) ? $_SERVER['HTTP_SEC_FETCH_SITE'] : null,
+            \is_string($_SERVER['HTTP_ACCEPT'] ?? null) ? $_SERVER['HTTP_ACCEPT'] : '',
         );
     }
 

@@ -1,0 +1,28 @@
+{% extends 'shell.html.twig' %}
+{% block title %}نشانی دریافت اعلان استعلام{% endblock %}
+{% block main %}
+<div class="adm__head"><div><p class="crumbs">ارتباط · <a href="/admin/inquiries">استعلام‌ها</a></p><h1>نشانی دریافت اعلان استعلام</h1></div></div>
+<div class="grid g-main">
+  <section class="card" aria-labelledby="h-notify"><h2 class="card__h" id="h-notify">ایمیل دریافت اعلان استعلام</h2>
+    <div class="card__b">
+    {% if is_owner %}
+      <form method="post" action="/admin/inquiries/settings" class="field"><input type="hidden" name="_csrf" value="{{ csrf }}">
+        <label for="notify-to">نشانی ایمیل</label>
+        <input class="a-in" id="notify-to" name="notify_to" type="email" dir="ltr" maxlength="254" autocomplete="email" value="{{ recipient ?? '' }}" aria-describedby="notify-hint">
+        <span class="muted" id="notify-hint">پیش از راه‌اندازی لازم است. از همین‌جا تنظیم می‌شود، نه در کد. خالی گذاشتن، ارسال اعلان را متوقف می‌کند؛ استعلام‌ها همچنان ذخیره می‌شوند.</span>
+        <div><button class="a-btn a-btn--pri" type="submit">ذخیره</button></div>
+      </form>
+    {% else %}
+      <p>{% if recipient %}اعلان‌ها به <bdi dir="ltr" class="mono">{{ recipient }}</bdi> فرستاده می‌شوند.{% else %}نشانی هنوز تنظیم نشده است.{% endif %} فقط مالک می‌تواند این نشانی را تغییر دهد.</p>
+    {% endif %}
+    </div>
+  </section>
+  <section class="card" aria-labelledby="h-notify-how"><h2 class="card__h" id="h-notify-how">اعلان چگونه کار می‌کند</h2>
+    <ul class="list">
+      <li><span class="grow">هر استعلام اول در پایگاه داده ذخیره می‌شود و بعد اعلان فرستاده می‌شود؛ خطای ایمیل هرگز استعلامی را از بین نمی‌برد.</span></li>
+      <li><span class="grow">ایمیل اعلان فقط شماره پیگیری، زبان، زمان و کدهای درخواستی را دارد. نام، تلفن و پیام فقط در همین پنل دیده می‌شوند.</span></li>
+      <li><span class="grow">اعلانِ ناموفق در پیشخوان و فهرست استعلام‌ها نشان داده می‌شود و با «تلاش دوباره» یا فرمان <span class="mono" dir="ltr">inquiry:notify</span> دوباره فرستاده می‌شود.</span></li>
+    </ul>
+  </section>
+</div>
+{% endblock %}
