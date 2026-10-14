@@ -1,0 +1,36 @@
+# Nova media folder (05 §12, §26): content-hash file names, never executable, never listed.
+# Uploaded SVG is shown only through <img>, and is served so that opening it directly cannot run anything.
+Options -Indexes -MultiViews -ExecCGI
+DirectoryIndex disabled
+
+<IfModule mod_php.c>
+    php_flag engine off
+</IfModule>
+<IfModule mod_php7.c>
+    php_flag engine off
+</IfModule>
+RemoveHandler .php .phtml .phar .php3 .php4 .php5 .php7 .php8 .inc
+RemoveType .php .phtml .phar .php3 .php4 .php5 .php7 .php8 .inc
+
+# Only the file types Nova writes are served; anything else in this folder is refused.
+<FilesMatch "^(?!\.htaccess$)(?![0-9a-f]{64}(-[0-9]+)?\.(jpg|png|webp|svg|pdf)$)">
+    Require all denied
+</FilesMatch>
+
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-Robots-Tag "noindex"
+    <FilesMatch "\.svg$">
+        Header set Content-Type "image/svg+xml"
+        Header set Content-Security-Policy "default-src 'none'; style-src 'unsafe-inline'; sandbox"
+    </FilesMatch>
+    <FilesMatch "\.pdf$">
+        Header set Content-Type "application/pdf"
+        Header set Content-Security-Policy "default-src 'none'; sandbox"
+        Header set Content-Disposition "attachment"
+    </FilesMatch>
+</IfModule>
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresDefault "access plus 1 year"
+</IfModule>

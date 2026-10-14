@@ -1,0 +1,38 @@
+{% extends 'shell.html.twig' %}
+{% block title %}{{ d.original_name }}{% endblock %}
+{% block main %}
+<div class="adm__head"><div><p class="crumbs">محتوا · <a href="/admin/documents">مستندات</a></p><h1 class="mono" dir="ltr">{{ d.original_name }}</h1></div>
+  <div class="actions"><a class="a-btn" href="{{ d.url }}" target="_blank" rel="noopener noreferrer">باز کردن PDF ↗</a></div></div>
+<div class="grid g-main">
+  <section class="card" aria-labelledby="h-links"><h2 class="card__h" id="h-links">اتصال به کد</h2>
+    <div class="card__b">
+    {% if d.links is empty %}<p class="muted">به هیچ کدی وصل نیست؛ تا وصل نشود در سایت نمایش داده نمی‌شود.</p>{% else %}
+    <ul class="list">{% for l in d.links %}<li><span class="grow"><bdi class="code" dir="ltr">{{ l.designation }}</bdi> <span class="tag">{{ l.language }}</span> <span class="muted">{{ l.variant_id ? 'نوع پسوندی' : 'محصول' }}</span></span>
+      <form method="post" action="/admin/documents/{{ d.id }}/unlink" class="inline"><input type="hidden" name="_csrf" value="{{ csrf }}"><input type="hidden" name="link" value="{{ l.id }}"><button class="a-btn a-btn--sm" type="submit">برداشتن</button></form></li>{% endfor %}</ul>{% endif %}
+    </div>
+    <form class="card__b field" method="post" action="/admin/documents/{{ d.id }}/link"><input type="hidden" name="_csrf" value="{{ csrf }}">
+      <label for="l-des">کد (محصول یا نوع پسوندی، دقیقاً همان که در سایت است)</label><input class="a-in code-in" id="l-des" name="designation" dir="ltr" maxlength="64" required aria-describedby="l-hint">
+      <label for="l-lang">زبان</label><select class="a-sel" id="l-lang" name="language"><option value="both">هر دو زبان</option><option value="fa">فارسی</option><option value="en">English</option></select>
+      <span class="muted" id="l-hint">هر اتصال فقط به یک کد است؛ هیچ سندی به‌طور ضمنی میان کدها مشترک نمی‌شود.</span>
+      <div><button class="a-btn a-btn--pri" type="submit">وصل کن</button></div>
+    </form>
+  </section>
+  <div class="grid">
+    <section class="card" aria-labelledby="h-tt"><h2 class="card__h" id="h-tt">عنوان‌ها و مشخصات</h2>
+      <form class="card__b field" method="post" action="/admin/documents/{{ d.id }}/update"><input type="hidden" name="_csrf" value="{{ csrf }}"><input type="hidden" name="version" value="{{ d.row_version }}">
+        <label for="t-fa">عنوان فارسی</label><input class="a-in" id="t-fa" name="title_fa" maxlength="200" value="{{ d.title_fa ?? '' }}">
+        <label for="t-en">Title (English)</label><input class="a-in" id="t-en" name="title_en" maxlength="200" dir="ltr" value="{{ d.title_en ?? '' }}">
+        <dl class="kv"><dt>اندازه</dt><dd><bdi dir="ltr">{{ d.byte_size|size }}</bdi></dd><dt>هش محتوا</dt><dd><bdi class="mono" dir="ltr">{{ d.sha256 }}</bdi></dd></dl>
+        <div><button class="a-btn a-btn--pri" type="submit">ذخیره</button></div>
+      </form>
+    </section>
+    <section class="card" aria-labelledby="h-dtr"><h2 class="card__h" id="h-dtr">حذف</h2>
+      <div class="card__b">
+      {% if d.trashed_at %}<form method="post" action="/admin/documents/{{ d.id }}/restore"><input type="hidden" name="_csrf" value="{{ csrf }}"><button class="a-btn" type="submit">بازگردانی از سطل بازیافت</button></form>
+      {% else %}<form method="post" action="/admin/documents/{{ d.id }}/trash"><input type="hidden" name="_csrf" value="{{ csrf }}"><button class="a-btn a-btn--danger" type="submit"{% if d.references %} disabled{% endif %}>انتقال به سطل بازیافت (۳۰ روز)</button></form>
+      {% if d.references %}<p class="muted">تا وقتی وصل یا استفاده‌شده است، حذف نمی‌شود.</p>{% endif %}{% endif %}
+      </div>
+    </section>
+  </div>
+</div>
+{% endblock %}

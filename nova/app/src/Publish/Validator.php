@@ -63,7 +63,7 @@ final readonly class Validator
                     continue;
                 }
                 try {
-                    Renderer::render($doc, ContentService::PRODUCT_DESCRIPTION, new SiteRenderContext($lang, $slugs));
+                    Renderer::render($doc, ContentService::PRODUCT_DESCRIPTION, new SiteRenderContext($lang, $slugs, 3, $data->media, $data->documents));
                 } catch (BrokenReferences $e) {
                     $blockers[] = "{$label}: {$lang} description has broken references (" . implode(', ', $e->references) . ')';
                 }
@@ -82,6 +82,11 @@ final readonly class Validator
             if ($p['items'] === []) {
                 $warnings[] = "{$label}: no listed item; published for reference and noindex";
             }
+        }
+
+        // ALT-INF: an informative image without alt text in both languages blocks the pages that use it (G2-15).
+        foreach (\Nova\Media\AltCheck::problems($this->pdo) as $problem) {
+            $blockers[] = $problem;
         }
 
         // Relationship claims must be verified (05 §7): a published variant or spelling needs its confirmation.

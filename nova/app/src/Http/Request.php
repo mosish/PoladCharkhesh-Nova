@@ -10,6 +10,7 @@ final readonly class Request
     /**
      * @param array<string, mixed> $query
      * @param array<string, mixed> $post
+     * @param array<string, UploadedFile> $files
      */
     public function __construct(
         public string $method,
@@ -21,6 +22,7 @@ final readonly class Request
         public ?string $origin = null,
         public ?string $fetchSite = null,
         public string $accept = '',
+        public array $files = [],
     ) {}
 
     public static function fromGlobals(): self
@@ -43,6 +45,7 @@ final readonly class Request
             \is_string($_SERVER['HTTP_ORIGIN'] ?? null) ? $_SERVER['HTTP_ORIGIN'] : null,
             \is_string($_SERVER['HTTP_SEC_FETCH_SITE'] ?? null) ? $_SERVER['HTTP_SEC_FETCH_SITE'] : null,
             \is_string($_SERVER['HTTP_ACCEPT'] ?? null) ? $_SERVER['HTTP_ACCEPT'] : '',
+            UploadedFile::fromGlobals($_FILES),
         );
     }
 
@@ -72,6 +75,11 @@ final readonly class Request
         $value = $this->post[$key] ?? null;
 
         return \is_array($value) ? $value : [];
+    }
+
+    public function file(string $field): ?UploadedFile
+    {
+        return $this->files[$field] ?? null;
     }
 
     public function isPost(): bool

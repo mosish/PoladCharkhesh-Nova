@@ -53,6 +53,10 @@
           {% else %}
           <p class="note">{{ js.no_values|fill({code: item.designation|iso}) }}</p>
           {% endif %}
+          {% set docs = item.documents|filter(d => d.lang == 'both' or d.lang == lang) %}
+          {% if docs %}
+          <div class="pp__docs"><b>{{ t.pp_docs_h }}</b><ul>{% for d in docs %}<li><a href="{{ d.url }}" download>{{ (lang == 'fa' ? d.title_fa : d.title_en) ?: d.name }}</a> <span class="note"><bdi dir="ltr">PDF · {{ (d.bytes < 1048576 ? (max(1, (d.bytes / 1024)|round)) ~ ' KB' : ((d.bytes / 1048576)|round(1)) ~ ' MB') }}</bdi></span></li>{% endfor %}</ul></div>
+          {% endif %}
           {% if keys %}
           <div class="prov-legend"><b>{{ js.prov_h }}</b><ol>{% for k in keys %}{% set s = srcmap[k] %}<li><span class="pv" aria-hidden="true">{{ k }}</span><span class="sr">{{ js.col_src }} {{ k }}:</span>{% if s.url %}<a href="{{ s.url }}" target="_blank" rel="noopener" lang="en" dir="ltr">{{ s.label }} <svg class="ico" aria-hidden="true"><use href="#i-ext"/></svg></a>{% else %}<span lang="en" dir="ltr">{{ s.label }}</span>{% endif %}{% if s.checked %}<span>{{ js.checked_t|fill({date: s.checked}) }}</span>{% endif %}</li>{% endfor %}</ol><p class="note">{{ js.prov_note }}</p></div>
           {% endif %}

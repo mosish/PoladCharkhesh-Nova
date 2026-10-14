@@ -32,6 +32,7 @@ return [
         'pp_title' => '{code} — {family} | Polad Charkhesh',
         'pp_desc' => '{code} ({family}): review the listing and technical-data status. Ask a specialist about availability and specifications.',
         'pp_desc_items' => '{code} ({family}), listed items: {items}. Review each item’s technical-data status; availability is confirmed by consultation.',
+        'pp_docs_h' => 'Documents',
         'f_sending' => 'Sending…',
         'f_ok' => 'Your inquiry was received. A specialist will reply by phone or WhatsApp.',
         'f_err' => 'The inquiry could not be sent. Please try again, or use WhatsApp or the phone numbers on this page.',

@@ -37,6 +37,9 @@
   .iq__notice.form__note { color: var(--ink); border-inline-start: 3px solid var(--ice); padding: 8px 12px; background: var(--sheet); font-size: var(--fs--1); }
   /* Field errors on the navy contact sheet use the design system's dark-theme red (the light one is 2.5:1 on navy) */
   .navy .field .err { color: #ff8a80; }
+  /* Documents attached to a listed item: a plain list, the size shown before download */
+  .pp__docs { display: grid; gap: var(--s2); }
+  .pp__docs ul, .pp__docs-list { margin: 0; padding-inline-start: 1.2em; display: grid; gap: var(--s1); }
   .iq__send { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
 }
 

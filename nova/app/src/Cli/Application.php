@@ -67,6 +67,7 @@ final class Application
                 'user:list' => $this->listUsers(),
                 'inquiry:notify' => $this->inquiryNotify(),
                 'inquiry:purge' => $this->inquiryPurge(),
+                'media:purge' => $this->mediaPurge(),
                 default => $this->help(),
             };
         } catch (MigrationError $e) {
@@ -322,6 +323,24 @@ final class Application
         return $result['failed'] === 0 ? 0 : 3;
     }
 
+    /** Permanently removes media and documents trashed for 30 days, then files no record names (05 §12). */
+    private function mediaPurge(): int
+    {
+        [$public] = \Nova\Publish\PublishFactory::locations($this->config, $this->paths);
+        $audit = new \Nova\Audit\AuditLog($this->pdo());
+        $storage = new \Nova\Media\MediaStorage($public);
+        $limits = \Nova\Media\MediaLimits::fromConfig($this->config);
+        $clock = new \Nova\Publish\SystemClock();
+        $documents = (new \Nova\Media\DocumentService($this->pdo(), $storage, $limits, $clock, $audit))->purgeTrash();
+        $switcher = \Nova\Publish\PublishFactory::switcher($this->config, $this->paths);
+        $pdo = $this->pdo();
+        $retained = static fn(): array => \Nova\Media\ReleaseMedia::referenced($pdo, $switcher);
+        $media = (new \Nova\Media\MediaService($this->pdo(), $storage, $limits, $clock, $audit, $retained))->purgeTrash();
+        $this->output->line("Purged {$media['items']} images, {$documents} documents and {$media['files']} unreferenced files.");
+
+        return 0;
+    }
+
     /** Retention (E-12): deletes inquiries older than 24 months and address hashes older than 24 hours. */
     private function inquiryPurge(): int
     {
@@ -392,6 +411,7 @@ final class Application
         $this->output->line('  user:reset-totp <email>            reset the Owner\'s two-factor sign-in (re-enrolled at the next sign-in)');
         $this->output->line('  user:list                          accounts, roles and status');
         $this->output->line('  inquiry:notify          retry pending or failed inquiry notifications');
+        $this->output->line('  media:purge             delete media and documents trashed for 30 days and unreferenced files');
         $this->output->line('  inquiry:purge           delete inquiries past retention (24 months) and old address hashes');
 
         return 0;

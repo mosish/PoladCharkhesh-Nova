@@ -1,0 +1,28 @@
+{% extends 'shell.html.twig' %}
+{% block title %}مستندات{% endblock %}
+{% block main %}
+<div class="adm__head"><div><p class="crumbs">محتوا</p><h1>مستندات <span class="sub">{{ rows|length|fa }} مورد{% if trash %} در سطل بازیافت{% endif %}</span></h1></div></div>
+{% if not trash %}
+<section class="card mb" aria-labelledby="h-dup"><h2 class="card__h" id="h-dup">بارگذاری سند (PDF)</h2>
+  <form class="card__b field" method="post" action="/admin/documents" enctype="multipart/form-data"><input type="hidden" name="_csrf" value="{{ csrf }}">
+    <label for="d-file">فایل PDF</label><input class="a-in" id="d-file" name="file" type="file" accept="application/pdf,.pdf" required aria-describedby="d-hint">
+    <label for="d-tfa">عنوان فارسی</label><input class="a-in" id="d-tfa" name="title_fa" maxlength="200">
+    <label for="d-ten">Title (English)</label><input class="a-in" id="d-ten" name="title_en" maxlength="200" dir="ltr">
+    <span class="muted" id="d-hint">محتوای فایل بررسی می‌شود. PDF دارای محتوای فعال (جاوااسکریپت، اجرای برنامه، فایل جاسازی‌شده) پذیرفته نمی‌شود. اندازه فایل پیش از دانلود به بازدیدکننده نشان داده می‌شود.</span>
+    <div><button class="a-btn a-btn--pri" type="submit">بارگذاری</button></div>
+  </form>
+</section>
+{% endif %}
+<form class="toolbar" method="get" action="/admin/documents" role="search">
+  <label class="sr" for="dq">جستجو</label><input class="a-in a-in--search" id="dq" name="q" type="search" value="{{ q }}" placeholder="نام فایل یا عنوان…">
+  <label><input type="checkbox" name="trash" value="1"{% if trash %} checked{% endif %}> سطل بازیافت</label>
+  <button class="a-btn" type="submit">اعمال</button>
+</form>
+{% if rows is empty %}<div class="card"><p class="empty">{% if trash %}سطل بازیافت خالی است.{% else %}هنوز سندی بارگذاری نشده است.{% endif %}</p></div>
+{% else %}
+<div class="t-wrap" tabindex="0" role="region" aria-label="جدول مستندات"><table class="t"><caption class="sr">فهرست مستندات</caption>
+  <thead><tr><th scope="col">فایل</th><th scope="col">عنوان</th><th scope="col">اندازه</th><th scope="col">اتصال‌ها</th><th scope="col">بارگذاری</th></tr></thead>
+  <tbody>{% for d in rows %}<tr><td><a class="code" href="/admin/documents/{{ d.id }}">{{ d.original_name }}</a></td><td>{{ d.title_fa ?? '—' }}{% if d.title_en %}<br><span class="muted" dir="ltr">{{ d.title_en }}</span>{% endif %}</td><td class="n">{{ d.byte_size|size }}</td><td>{{ d.links|fa }}{% if d.links == 0 %} <span class="badge b-pend">وصل نیست</span>{% endif %}</td><td class="muted nw">{{ d.created_at|when }}</td></tr>{% endfor %}</tbody>
+</table></div>
+{% endif %}
+{% endblock %}

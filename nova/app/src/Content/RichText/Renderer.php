@@ -171,7 +171,7 @@ final class Renderer
             return '';
         }
         $alt = $block['decorative'] === true ? '' : self::scalar($block['alt']);
-        $html = '<figure class="rc-figure"><img src="' . self::e($media['src']) . '" alt="' . self::e($alt) . '" width="' . $media['width'] . '" height="' . $media['height'] . '" loading="lazy" decoding="async">';
+        $html = '<figure class="rc-figure"><img src="' . self::e($media['src']) . '" alt="' . self::e($alt) . '" width="' . $media['width'] . '" height="' . $media['height'] . '"' . (isset($media['srcset']) ? ' srcset="' . self::e($media['srcset']) . '" sizes="(min-width: 900px) 72ch, 100vw"' : '') . ' loading="lazy" decoding="async">';
         if (isset($block['caption'])) {
             $html .= '<figcaption>' . $this->inline($block['caption']) . '</figcaption>';
         }

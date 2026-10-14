@@ -10,6 +10,11 @@ use Nova\Http\Response;
 use Nova\Inquiry\InquiryNotifier;
 use Nova\Inquiry\InquiryRecipient;
 use Nova\Inquiry\InquiryRetention;
+use Nova\Media\DocumentService;
+use Nova\Media\MediaError;
+use Nova\Media\MediaLimits;
+use Nova\Media\MediaService;
+use Nova\Media\MediaStorage;
 use Nova\Publish\Clock;
 use Nova\Publish\Initiator;
 use Nova\Publish\PublishEngine;
@@ -38,6 +43,8 @@ final class AdminApp
     private readonly Csrf $csrf;
     private readonly ProductAdmin $products;
     private readonly InquiryAdmin $inquiries;
+    private readonly MediaService $media;
+    private readonly DocumentService $documents;
 
     /**
      * @param \Closure(): PublishEngine $engine
@@ -55,11 +62,17 @@ final class AdminApp
         private readonly string $siteUrl,
         Clock $clock = new SystemClock(),
         private readonly ?\Closure $notifier = null,
+        ?MediaStorage $mediaStorage = null,
+        MediaLimits $mediaLimits = new MediaLimits(),
     ) {
         $this->auth = new AdminAuth($pdo, $session, $clock);
         $this->csrf = new Csrf($session);
         $this->products = new ProductAdmin($pdo);
         $this->inquiries = new InquiryAdmin($pdo);
+        $storage = $mediaStorage ?? new MediaStorage(\dirname(__DIR__, 3) . '/public_html');
+        $audit = new \Nova\Audit\AuditLog($pdo);
+        $this->media = new MediaService($pdo, $storage, $mediaLimits, $clock, $audit);
+        $this->documents = new DocumentService($pdo, $storage, $mediaLimits, $clock, $audit);
     }
 
     public function handle(Request $r): Response
@@ -112,6 +125,13 @@ final class AdminApp
             $this->flash('error', Messages::catalogue($e->reason), $e->getMessage());
 
             return Response::redirect($this->back($path));
+        } catch (MediaError $e) {
+            if ($e->reason === 'not_found' && !$r->isPost()) {
+                return $this->page('error.html.twig', ['code' => 404] + $this->shell($actor, ''), 404);
+            }
+            $this->flash('error', Messages::media($e->reason), $e->getMessage());
+
+            return Response::redirect($this->back($path));
         } catch (Throwable $e) {
             // Logged privately; the page stays generic (05 §15).
             error_log('Nova Admin: ' . $e::class . ': ' . $e->getMessage() . ' at ' . $e->getFile() . ':' . $e->getLine());
@@ -154,6 +174,12 @@ final class AdminApp
         }
         if (str_starts_with($path, '/inquiries')) {
             return $this->inquiryRoute($r, $path, $actor);
+        }
+        if (str_starts_with($path, '/media')) {
+            return $this->mediaRoute($r, $path, $actor);
+        }
+        if (str_starts_with($path, '/documents')) {
+            return $this->documentRoute($r, $path, $actor);
         }
         if (preg_match('#^/products/(\d+)(?:/(.+))?$#', $path, $m) !== 1) {
             return null;
@@ -296,6 +322,127 @@ final class AdminApp
         }
 
         return $this->page('product.html.twig', $this->shell($actor, 'products') + ['p' => $p, 'today' => gmdate('Y-m-d')]);
+    }
+
+    // ---- media library and documents (A4; 05 §12, §26)
+
+    private function mediaRoute(Request $r, string $path, Actor $actor): ?Response
+    {
+        $get = !$r->isPost();
+        if ($path === '/media') {
+            if ($get) {
+                $trash = $r->queryString('trash') === '1';
+                $kind = $r->queryString('kind');
+                $q = mb_substr(trim($r->queryString('q')), 0, 64);
+
+                return $this->page('media.html.twig', $this->shell($actor, 'media') + [
+                    'rows' => $this->media->list($kind, $q, $trash), 'trash' => $trash, 'kind' => $kind, 'q' => $q,
+                ]);
+            }
+            $file = $r->file('file');
+            if ($file === null || !$file->ok()) {
+                throw new MediaError('invalid', 'No file was received (PHP upload error ' . ($file->error ?? UPLOAD_ERR_NO_FILE) . ').');
+            }
+            $result = $this->media->upload($actor, $file->name, $file->bytes);
+            $this->flash('ok', $result['existing'] ? 'این فایل از پیش در کتابخانه بود؛ همان مورد باز شد.' : 'فایل بارگذاری شد. متن جایگزین فارسی و انگلیسی را وارد کنید.', $result['removed'] === [] ? null : 'Removed from the SVG: ' . implode('; ', $result['removed']));
+
+            return Response::redirect("/admin/media/{$result['id']}");
+        }
+        if (preg_match('#^/media/(\d+)(?:/(update|replace|trash|restore))?$#', $path, $m) !== 1) {
+            return null;
+        }
+        $id = (int) $m[1];
+        $action = $m[2] ?? '';
+        if ($get) {
+            $item = $action === '' ? $this->media->find($id) : null;
+
+            return $item === null ? null : $this->page('media_detail.html.twig', $this->shell($actor, 'media') + ['m' => $item]);
+        }
+        switch ($action) {
+            case 'update':
+                $this->media->updateDescription($actor, $id, (int) $r->input('version'), $r->input('alt_fa'), $r->input('alt_en'), $r->input('role'));
+                $this->flash('ok', 'مشخصات ذخیره شد.');
+                break;
+            case 'replace':
+                $file = $r->file('file');
+                if ($file === null || !$file->ok()) {
+                    throw new MediaError('invalid', 'No file was received.');
+                }
+                $removed = $this->media->replace($actor, $id, $file->name, $file->bytes);
+                $this->flash('ok', 'فایل جایگزین شد؛ شناسه، متن جایگزین و ارجاع‌ها حفظ شدند. سایت زنده با «انتشار» به‌روز می‌شود.', $removed === [] ? null : 'Removed from the SVG: ' . implode('; ', $removed));
+                break;
+            case 'trash':
+                $this->media->trash($actor, $id);
+                $this->flash('ok', 'به سطل بازیافت رفت و ۳۰ روز قابل بازگردانی است.');
+
+                return Response::redirect('/admin/media');
+            case 'restore':
+                $this->media->restore($actor, $id);
+                $this->flash('ok', 'بازگردانده شد.');
+                break;
+            default:
+                return null;
+        }
+
+        return Response::redirect("/admin/media/{$id}");
+    }
+
+    private function documentRoute(Request $r, string $path, Actor $actor): ?Response
+    {
+        $get = !$r->isPost();
+        if ($path === '/documents') {
+            if ($get) {
+                $trash = $r->queryString('trash') === '1';
+                $q = mb_substr(trim($r->queryString('q')), 0, 64);
+
+                return $this->page('documents.html.twig', $this->shell($actor, 'docs') + ['rows' => $this->documents->list($trash, $q), 'trash' => $trash, 'q' => $q]);
+            }
+            $file = $r->file('file');
+            if ($file === null || !$file->ok()) {
+                throw new MediaError('invalid', 'No file was received (PHP upload error ' . ($file->error ?? UPLOAD_ERR_NO_FILE) . ').');
+            }
+            $result = $this->documents->upload($actor, $file->name, $file->bytes, $r->input('title_fa'), $r->input('title_en'));
+            $this->flash('ok', $result['existing'] ? 'این سند از پیش در کتابخانه بود؛ همان مورد باز شد.' : 'سند بارگذاری شد. آن را به یک کد وصل کنید تا در سایت نمایش داده شود.');
+
+            return Response::redirect("/admin/documents/{$result['id']}");
+        }
+        if (preg_match('#^/documents/(\d+)(?:/(update|link|unlink|trash|restore))?$#', $path, $m) !== 1) {
+            return null;
+        }
+        $id = (int) $m[1];
+        $action = $m[2] ?? '';
+        if ($get) {
+            $doc = $action === '' ? $this->documents->find($id) : null;
+
+            return $doc === null ? null : $this->page('document_detail.html.twig', $this->shell($actor, 'docs') + ['d' => $doc]);
+        }
+        switch ($action) {
+            case 'update':
+                $this->documents->setTitles($actor, $id, (int) $r->input('version'), $r->input('title_fa'), $r->input('title_en'));
+                $this->flash('ok', 'عنوان‌ها ذخیره شد.');
+                break;
+            case 'link':
+                $this->documents->link($actor, $id, $r->input('designation'), $r->input('language'), 'document');
+                $this->flash('ok', 'سند به این کد وصل شد. سایت زنده با «انتشار» به‌روز می‌شود.');
+                break;
+            case 'unlink':
+                $this->documents->unlink($actor, (int) $r->input('link'));
+                $this->flash('ok', 'اتصال سند برداشته شد.');
+                break;
+            case 'trash':
+                $this->documents->trash($actor, $id);
+                $this->flash('ok', 'سند به سطل بازیافت رفت و ۳۰ روز قابل بازگردانی است.');
+
+                return Response::redirect('/admin/documents');
+            case 'restore':
+                $this->documents->restore($actor, $id);
+                $this->flash('ok', 'سند بازگردانده شد.');
+                break;
+            default:
+                return null;
+        }
+
+        return Response::redirect("/admin/documents/{$id}");
     }
 
     // ---- inquiries (A6; 05 §13)
@@ -546,6 +693,10 @@ final class AdminApp
             str_starts_with($path, '/products') => '/admin/products',
             str_starts_with($path, '/publish') => '/admin/publish',
             preg_match('#^/inquiries/(\d+)#', $path, $m) === 1 => "/admin/inquiries/{$m[1]}",
+            preg_match('#^/media/(\d+)#', $path, $m) === 1 => "/admin/media/{$m[1]}",
+            preg_match('#^/documents/(\d+)#', $path, $m) === 1 => "/admin/documents/{$m[1]}",
+            str_starts_with($path, '/media') => '/admin/media',
+            str_starts_with($path, '/documents') => '/admin/documents',
             str_starts_with($path, '/inquiries') => '/admin/inquiries',
             default => '/admin/',
         };

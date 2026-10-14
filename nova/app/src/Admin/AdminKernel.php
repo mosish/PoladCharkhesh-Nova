@@ -13,6 +13,8 @@ use Nova\Http\Response;
 use Nova\Inquiry\InquiryConfig;
 use Nova\Inquiry\InquiryNotifier;
 use Nova\Inquiry\SmtpMailer;
+use Nova\Media\MediaLimits;
+use Nova\Media\MediaStorage;
 use Nova\Publish\PublishFactory;
 use Nova\Publish\SiteBuilder;
 use Nova\Publish\SiteData;
@@ -55,6 +57,8 @@ final class AdminKernel
 
                 return new InquiryNotifier($pdo, new SmtpMailer($settings->smtp, $settings->from), $build->hosts['fa']);
             },
+            new MediaStorage($public),
+            MediaLimits::fromConfig($config),
         );
     }
 

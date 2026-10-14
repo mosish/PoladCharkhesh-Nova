@@ -5,6 +5,7 @@
     "license": "proprietary",
     "require": {
         "php": "^8.4",
+        "enshrined/svg-sanitize": "^1.0",
         "phpmailer/phpmailer": "^7.1",
         "twig/twig": "^3"
     },

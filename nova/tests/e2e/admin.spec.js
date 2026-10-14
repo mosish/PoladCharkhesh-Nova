@@ -195,11 +195,41 @@ test.describe.serial('Owner: first sign-in with TOTP enrolment, then the Product
     await expect(page.locator('form[action="/admin/publish/rollback"]')).toHaveCount(1);
   });
 
+  test('the media library: an upload, alt text, a sanitised SVG, and the documents and inquiries screens are axe-clean', async () => {
+    const png = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==', 'base64');
+    await page.goto(`${BASE}/admin/media`);
+    await page.setInputFiles('#m-file', { name: 'part.png', mimeType: 'image/png', buffer: png });
+    await page.click('main button[type="submit"]');
+    await expect(page).toHaveURL(/\/admin\/media\/\d+$/);
+    await expect(page.locator('.flash--ok')).toBeVisible();
+    await page.fill('#alt-fa', 'نمای آزمایشی');
+    await page.fill('#alt-en', 'Test view');
+    await page.click('form[action$="/update"] button[type="submit"]');
+    await expect(page.locator('.flash--ok')).toBeVisible();
+    await axeClean(page);
+
+    // The Owner uploads SVG; the sanitiser reports what it removed and the library shows the item.
+    const svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10" onload="alert(1)"><script>alert(2)</script><rect width="5" height="5"/></svg>';
+    await page.goto(`${BASE}/admin/media`);
+    await page.setInputFiles('#m-file', { name: 'drawing.svg', mimeType: 'image/svg+xml', buffer: Buffer.from(svg) });
+    await page.click('main button[type="submit"]');
+    await expect(page).toHaveURL(/\/admin\/media\/\d+$/);
+    await expect(page.locator('.flash .detail')).toContainText('element <script>');
+    await expect(page.locator('.flash .detail')).toContainText('attribute onload');
+    await page.goto(`${BASE}/admin/media`);
+    await expect(page.locator('.media-grid li')).toHaveCount(2);
+    for (const path of ['/admin/media', '/admin/documents', '/admin/inquiries']) {
+      await page.goto(`${BASE}${path}`);
+      await axeClean(page);
+    }
+    expect(errors).toEqual([]);
+  });
+
   test('narrow screens reflow to one column without horizontal scrolling', async () => {
     await page.setViewportSize({ width: 375, height: 800 });
     await page.goto(`${BASE}/admin/products`);
     const editor = await page.locator('table.t a.code').first().getAttribute('href');
-    for (const path of ['/admin/', '/admin/products', editor, '/admin/publish']) {
+    for (const path of ['/admin/', '/admin/products', editor, '/admin/publish', '/admin/media', '/admin/documents', '/admin/inquiries']) {
       await page.goto(`${BASE}${path}`);
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1), path).toBe(true);
     }
@@ -227,5 +257,10 @@ test('an Editor signs in with a password and is refused Owner-only actions', asy
   const productUrl = page.url();
   const refused = await page.request.post(`${productUrl}/verify`, { form: { _csrf: token, version: '1' }, maxRedirects: 0 });
   expect(refused.status()).toBe(403);
+  await page.goto(`${BASE}/admin/media`);
+  await expect(page.locator('#m-file')).not.toHaveAttribute('accept', /svg/);
+  await page.setInputFiles('#m-file', { name: 'd.svg', mimeType: 'image/svg+xml', buffer: Buffer.from('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1"/>') });
+  await page.click('main button[type="submit"]');
+  await expect(page.locator('.flash--error')).toBeVisible();
   expect(errors).toEqual([]);
 });

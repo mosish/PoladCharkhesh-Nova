@@ -25,7 +25,10 @@ use RuntimeException;
  *   when any is missing.
  *
  * @phpstan-type Value array{s: string, fa: string, en: string, v: string, n: ?float, u: string, st: string, src: ?string, core: bool, loc: ?string}
- * @phpstan-type Item array{kind: string, slug: string, anchor: string, designation: string, values: list<Value>, drawing: ?string}
+ * @phpstan-type Document array{url: string, bytes: int, title_fa: string, title_en: string, name: string, lang: string}
+ * @phpstan-type Item array{kind: string, slug: string, anchor: string, designation: string, values: list<Value>, drawing: ?string, documents: list<Document>}
+ * @phpstan-type MediaRef array{src: string, width: int, height: int, srcset: ?string}
+ * @phpstan-type DocRef array{url: string, bytes: int, title_fa: string, title_en: string}
  * @phpstan-type CoreKey array{code: string, fa: string, en: string}
  * @phpstan-type Family array{id: int, slug: string, glyph: string, fa: string, en: string, short_fa: string, short_en: string, def_fa: string, def_en: string, count: int, core: list<CoreKey>}
  * @phpstan-type Source array{key: string, label: string, url: string, checked: string}
@@ -43,6 +46,8 @@ final class SiteData
      * @param Index $index
      * @param array<string, string> $contact
      * @param list<string> $examples
+     * @param array<int, MediaRef> $media library images by id (not trashed), for rich-content figures
+     * @param array<int, DocRef> $documents library documents by id (not trashed), for rich-content document blocks
      */
     public function __construct(
         public readonly array $families,
@@ -51,6 +56,8 @@ final class SiteData
         public readonly array $contact,
         public readonly array $examples,
         public readonly bool $samples,
+        public readonly array $media = [],
+        public readonly array $documents = [],
     ) {}
 
     public static function load(PDO $pdo, bool $includeSamples, string $contactFile): self
@@ -85,7 +92,7 @@ final class SiteData
             }
         }
 
-        return new self(array_values($families), $products, $index, self::contact($pdo, $contactFile), array_values(array_intersect(self::EXAMPLES, $designations)), $includeSamples);
+        return new self(array_values($families), $products, $index, self::contact($pdo, $contactFile), array_values(array_intersect(self::EXAMPLES, $designations)), $includeSamples, self::mediaRefs($pdo), self::documentRefs($pdo));
     }
 
     /**
@@ -107,7 +114,7 @@ final class SiteData
         $product = self::product($pdo, $row, $families, $includeSamples || (int) $row['is_sample'] === 1);
         $others = array_values(array_filter($site->products, static fn(array $p): bool => $p['id'] !== $productId));
 
-        return new self($site->families, [$product, ...$others], $site->index, $site->contact, $site->examples, $site->samples);
+        return new self($site->families, [$product, ...$others], $site->index, $site->contact, $site->examples, $site->samples, $site->media, $site->documents);
     }
 
     /**
@@ -205,7 +212,45 @@ final class SiteData
         // Generated drawings use sourced dimensions only (05 §26).
         $drawing = $allSourced && $dims !== [] ? Drawing::svg($family['slug'], $dims, $designation . ' — ' . $family['en']) : null;
 
-        return ['kind' => $kind, 'slug' => $slug, 'anchor' => $kind === 'base' ? 'base' : 'v-' . $slug, 'designation' => $designation, 'values' => $values, 'drawing' => $drawing];
+        $documents = [];
+        foreach (Sql::rows($pdo, "SELECT d.sha256, d.year, d.byte_size, d.original_name, d.title_fa, d.title_en, l.language FROM document_link l JOIN document d ON d.id = l.document_id WHERE l.{$column} = ? AND d.trashed_at IS NULL ORDER BY l.sort, l.id", [$id]) as $d) {
+            $documents[] = [
+                'url' => '/media/' . (int) $d['year'] . '/' . self::s($d['sha256']) . '.pdf', 'bytes' => (int) $d['byte_size'],
+                'title_fa' => self::s($d['title_fa'] ?? ''), 'title_en' => self::s($d['title_en'] ?? ''), 'name' => self::s($d['original_name']), 'lang' => self::s($d['language']),
+            ];
+        }
+
+        return ['kind' => $kind, 'slug' => $slug, 'anchor' => $kind === 'base' ? 'base' : 'v-' . $slug, 'designation' => $designation, 'values' => $values, 'drawing' => $drawing, 'documents' => $documents];
+    }
+
+    /** @return array<int, MediaRef> */
+    private static function mediaRefs(PDO $pdo): array
+    {
+        $out = [];
+        foreach (Sql::rows($pdo, 'SELECT id, sha256, ext, year, width, height, derivatives FROM media WHERE trashed_at IS NULL ORDER BY id') as $m) {
+            $base = '/media/' . (int) $m['year'] . '/' . self::s($m['sha256']);
+            $set = [];
+            foreach (array_filter(explode(',', self::s($m['derivatives'] ?? ''))) as $w) {
+                $set[] = "{$base}-{$w}.webp {$w}w";
+            }
+            $out[(int) $m['id']] = [
+                'src' => $base . '.' . self::s($m['ext']), 'width' => (int) $m['width'], 'height' => (int) $m['height'],
+                'srcset' => $set === [] ? null : implode(', ', [...$set, "{$base}.{$m['ext']} {$m['width']}w"]),
+            ];
+        }
+
+        return $out;
+    }
+
+    /** @return array<int, DocRef> */
+    private static function documentRefs(PDO $pdo): array
+    {
+        $out = [];
+        foreach (Sql::rows($pdo, 'SELECT id, sha256, year, byte_size, title_fa, title_en FROM document WHERE trashed_at IS NULL ORDER BY id') as $d) {
+            $out[(int) $d['id']] = ['url' => '/media/' . (int) $d['year'] . '/' . self::s($d['sha256']) . '.pdf', 'bytes' => (int) $d['byte_size'], 'title_fa' => self::s($d['title_fa'] ?? ''), 'title_en' => self::s($d['title_en'] ?? '')];
+        }
+
+        return $out;
     }
 
     /**

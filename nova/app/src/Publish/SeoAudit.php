@@ -184,6 +184,10 @@ final class SeoAudit
             return "{$file}: malformed link";
         }
         $path = rawurldecode($parts['path'] ?? '');
+        // Uploaded media lives outside the releases (05 §12): content-hash names only, so nothing else can hide behind this path.
+        if (preg_match('#^/media/[0-9]{4}/[0-9a-f]{64}(?:-[0-9]+)?\.(?:jpg|png|webp|svg|pdf)$#', $path) === 1) {
+            return null;
+        }
         if ($path === '') {
             $target = $file;
         } else {

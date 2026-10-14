@@ -13,7 +13,9 @@ use Nova\Core\Paths;
 use Nova\Core\Sql;
 use Nova\Http\Request;
 use Nova\Http\Response;
+use Nova\Http\UploadedFile;
 use Nova\Inquiry\InquiryNotifier;
+use Nova\Media\MediaStorage;
 use Nova\Publish\AssetBuilder;
 use Nova\Publish\BuildConfig;
 use Nova\Publish\PublishEngine;
@@ -114,17 +116,21 @@ final class AdminAppTest extends TestCase
             'https://fa.example.test/',
             $this->clock,
             fn(): InquiryNotifier => new InquiryNotifier($pdo, $this->mailer, 'https://fa.example.test'),
+            new MediaStorage($tmp . '/public'),
         );
     }
 
-    /** @param array<string, mixed> $post */
-    private function req(string $method, string $path, array $post = [], string $host = self::HOST, ?string $fetchSite = 'same-origin', bool $token = true): Response
+    /**
+     * @param array<string, mixed> $post
+     * @param array<string, UploadedFile> $files
+     */
+    private function req(string $method, string $path, array $post = [], string $host = self::HOST, ?string $fetchSite = 'same-origin', bool $token = true, array $files = []): Response
     {
         if ($method === 'POST' && $token && !isset($post['_csrf'])) {
             $post['_csrf'] = $this->sessionString('csrf');
         }
 
-        return $this->app->handle(new Request($method, $path, $host, [], $post, '192.0.2.10', null, $method === 'POST' ? $fetchSite : null));
+        return $this->app->handle(new Request($method, $path, $host, [], $post, '192.0.2.10', null, $method === 'POST' ? $fetchSite : null, '', $files));
     }
 
     private function signInEditor(): void
@@ -627,5 +633,72 @@ final class AdminAppTest extends TestCase
         self::assertSame(1, Sql::int($this->f->pdo, 'SELECT COUNT(*) FROM inquiry'), 'deletion needs the explicit confirmation');
         $this->req('POST', "/admin/inquiries/{$id}/delete", ['confirm' => '1']);
         self::assertSame([0, 0], [Sql::int($this->f->pdo, 'SELECT COUNT(*) FROM inquiry'), Sql::int($this->f->pdo, 'SELECT COUNT(*) FROM inquiry_item')]);
+    }
+
+    // ---- media library and documents (A4)
+
+    private static function pngBytes(): string
+    {
+        $im = imagecreatetruecolor(40, 30);
+        ob_start();
+        imagepng($im);
+
+        return (string) ob_get_clean();
+    }
+
+    public function testAnEditorUploadsAnImageButNotSvgAndTheOwnerDoes(): void
+    {
+        $this->signInEditor();
+        $r = $this->req('POST', '/admin/media', [], files: ['file' => new UploadedFile('part.png', self::pngBytes())]);
+        self::assertMatchesRegularExpression('#^/admin/media/\d+$#', $r->headers['Location'] ?? '');
+        self::assertSame(1, Sql::int($this->f->pdo, "SELECT COUNT(*) FROM media WHERE kind = 'raster'"));
+        $page = $this->req('GET', $r->headers['Location'] ?? '');
+        self::assertSame(200, $page->status);
+        self::assertStringContainsString('ALT-INF', $page->body);
+        self::assertStringNotContainsString('<script>', $page->body);
+
+        $svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10"><script>alert(1)</script><rect width="5" height="5" onclick="x()"/></svg>';
+        $refused = $this->req('POST', '/admin/media', [], files: ['file' => new UploadedFile('d.svg', $svg)]);
+        self::assertSame('/admin/media', $refused->headers['Location'] ?? null);
+        self::assertSame('error', $this->flash()[0]['type'] ?? null);
+        self::assertSame(0, Sql::int($this->f->pdo, "SELECT COUNT(*) FROM media WHERE kind = 'svg'"));
+        $this->session->remove('flash');
+        $this->req('POST', '/admin/media', [], files: []);
+        self::assertSame('error', $this->flash()[0]['type'] ?? null, 'no file received');
+
+        $this->req('POST', '/admin/logout');
+        $this->signInOwner();
+        $ok = $this->req('POST', '/admin/media', [], files: ['file' => new UploadedFile('d.svg', $svg)]);
+        self::assertMatchesRegularExpression('#^/admin/media/\d+$#', $ok->headers['Location'] ?? '');
+        self::assertStringContainsString('element &lt;script&gt;', $this->req('GET', $ok->headers['Location'] ?? '')->body . implode(' ', array_map(static fn(array $f): string => (string) $f['detail'], $this->flash())) ?: 'element <script>');
+        $stored = (string) Sql::scalar($this->f->pdo, "SELECT sha256 FROM media WHERE kind = 'svg'");
+        $file = $this->tmp . '/public/media/' . gmdate('Y', $this->clock->now()) . "/{$stored}.svg";
+        self::assertFileExists($file);
+        self::assertStringNotContainsString('script', (string) file_get_contents($file));
+        self::assertStringNotContainsString('onclick', (string) file_get_contents($file));
+    }
+
+    public function testADocumentIsUploadedLinkedAndPublishedWithItsSize(): void
+    {
+        $this->signInEditor();
+        $pdf = "%PDF-1.4\n1 0 obj\n<< /Type /Catalog >>\nendobj\ntrailer\n<< /Root 1 0 R >>\n%%EOF\n";
+        $r = $this->req('POST', '/admin/documents', ['title_fa' => 'برگه داده', 'title_en' => 'Datasheet'], files: ['file' => new UploadedFile('ds.pdf', $pdf)]);
+        $url = $r->headers['Location'] ?? '';
+        self::assertMatchesRegularExpression('#^/admin/documents/\d+$#', $url);
+        $this->req('POST', $url . '/link', ['designation' => 'QZ 1', 'language' => 'both']);
+        self::assertSame(1, Sql::int($this->f->pdo, 'SELECT COUNT(*) FROM document_link WHERE product_id = ?', [$this->product]));
+        $this->req('POST', $url . '/trash');
+        self::assertSame(1, Sql::int($this->f->pdo, 'SELECT COUNT(*) FROM document WHERE trashed_at IS NULL'), 'a linked document cannot be deleted');
+
+        $this->session->remove('flash');
+        $this->req('POST', '/admin/publish');
+        self::assertSame('ok', $this->flash()[0]['type'] ?? null, (string) ($this->flash()[0]['text'] ?? '') . ' ' . (string) ($this->flash()[0]['detail'] ?? ''));
+        $live = (string) (new SymlinkSwitcher($this->tmp . '/site'))->current();
+        $html = (string) file_get_contents($this->tmp . "/site/releases/{$live}/en/p/qz-1/index.html");
+        self::assertStringContainsString('Datasheet', $html);
+        self::assertStringContainsString('PDF · 1 KB', $html);
+        self::assertStringContainsString('/media/' . gmdate('Y', $this->clock->now()) . '/', $html);
+        $json = (string) file_get_contents($this->tmp . "/site/releases/{$live}/data/p/qz-1.json");
+        self::assertStringContainsString('"documents":[{"url"', $json);
     }
 }

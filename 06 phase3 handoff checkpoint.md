@@ -404,4 +404,17 @@ Verification (Docker; disposable databases and a disposable stack on port 8090; 
 
 **Limits:** the real notification address and the production SMTP mailbox (with SPF/DKIM) are launch inputs; `.htaccess` routing for `/api` is Step 13.
 
-**Resume point:** the owner's review of Steps 9–10, then Step 11 (media core and SVG ingestion).
+**Resume point (superseded below):** the owner's review of Steps 9–10, then Step 11.
+
+**Step 11 (media core and SVG ingestion), 2026-10-14, owner-requested (committed and pushed to GitHub `main`; awaits the owner's review, no gate approved):**
+
+- Implemented per `05` §12 and §26 (details, limits and verification: `nova/docs/media.md`): migration 0009, `Nova\Media\*` (SVG sanitiser with an allow-list rebuild plus `enshrined/svg-sanitize` as a second layer, image re-encoding with EXIF removal and orientation, a PDF check, content-hash storage, library services, documents and links, a retention-aware purge), the Admin Media and Documents screens, `public_html/media/.htaccess`, `app/bin/nova media:purge`, documents on Product pages and in the workspace Documents tab, the ALT-INF publish blocker, and `ReleaseMedia` so a purge never deletes a file a live or rollback release links to.
+- Dependency added with the written justification of `05` §26 (D16): `enshrined/svg-sanitize`.
+- Findings from verification, fixed: the browser regression suite caught a `ws.js` reference error that stopped the workspace rendering (6 failures); the publish SEO audit flagged `/media/...` links as broken (now accepted for hash-named media paths only); the file sweep could have deleted a file only a retained rollback release linked to (now protected, with a mutation check that the tests catch it).
+- Not suppressed: an ignore rule added to PHPStan for the new test file was removed; the test code was fixed instead.
+
+Verification (Docker; one disposable database and one disposable Apache stack on port 8091; removed afterwards): PHPUnit 667 tests / 7,333 assertions; PHPStan max with no errors; CS clean; `composer audit` clean; 171 JS tests; 35 real-Apache HTTP checks; Playwright `media.spec.js` 6/6, `admin.spec.js` 13/13, `site.spec.js` 32/32. `nova` (schema 0004), `nova_test` and the preview `R-20261012-131225-9d1c` were untouched.
+
+**Limits:** the PDF check is best-effort and does not guarantee a harmless PDF; no page can use an image until Phase 4b adds Article-profile sections, so ALT-INF is tested at service level; `MediaReferences` must also read section content then; the production `.htaccess`, PHP upload limits and the real-host headers are Step 13 / Step 15 items.
+
+**Resume point:** the owner's review of Steps 9–11, then Step 12 (backup and restore with scheduler).

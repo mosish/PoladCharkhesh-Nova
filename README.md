@@ -61,7 +61,7 @@ The 2026-10-13 source review identified follow-up work in seven areas. Each find
 
 The details and tests are in the [Admin runbook](nova/docs/admin.md) and the [handoff checkpoint](06%20phase3%20handoff%20checkpoint.md). These fixes still await the owner's review; no gate is approved by them.
 
-**Next acceptance checkpoint:** Step 10 (the inquiry endpoint) is implemented and verified locally (see [inquiry.md](nova/docs/inquiry.md)); Steps 9 and 10 await the owner's review. Phase 3 completion and production deployment are separate gates.
+**Next acceptance checkpoint:** Step 11 (media core and SVG ingestion) is implemented and verified locally (see [media.md](nova/docs/media.md)); Steps 9, 10 and 11 await the owner's review. Steps 12–16 have not started. Phase 3 completion and production deployment are separate gates.
 
 The earlier governance/handoff documents contain dated statements such as “uncommitted” and historical test results. These describe their original sessions. A GitHub checkpoint commit does not itself approve those changes or prove that the running database and published release match the source.
 
@@ -151,6 +151,15 @@ Verification evidence for Step 10 (2026-10-14), on disposable databases and a di
 - **Mailpit:** a retried notification arrived with no personal data. Real delivery needs the production SMTP mailbox and notification address (launch inputs).
 - **Untouched:** the development database, its live release and volumes.
 
+Verification evidence for Step 11 (2026-10-14), on a disposable database and a disposable Apache stack (own docroot and storage, port 8091), removed afterwards:
+
+- **PHPUnit:** 667 tests / 7,333 assertions passed; PHPStan at maximum level reports no errors (no ignore rules were added); PHP style and `composer audit` passed.
+- **JavaScript:** 171 tests passed.
+- **Real Apache over HTTP:** 35 checks with real multipart uploads: content types and security headers for JPEG, PDF and SVG, EXIF and orientation, Editor and signed-out refusals, disguised files, a hostile SVG, and planted `.php`, `.phtml` and `x.php.jpg` files refused (403) while a hash-named `.jpg` holding PHP code is served only as an image.
+- **Playwright on installed Chrome:** `media.spec.js` 6/6, `admin.spec.js` 13/13 (includes the media library flow), `site.spec.js` 32/32. The Admin spec ran against `localhost` because Node's resolver could not resolve `*.nova.localhost` in this session.
+- **Limits:** the PDF check is a best-effort byte scan and does not guarantee a harmless PDF (see [media.md](nova/docs/media.md)); real-host `.htaccess` behaviour is checked at step 15.
+- **Untouched:** the development database, its live release and volumes.
+
 - Passing tests do not replace security review, data reconciliation, restore verification or owner acceptance.
 
 ## Repository map
@@ -188,6 +197,7 @@ Useful runbooks:
 - [Admin setup and recovery](nova/docs/admin.md)
 - [Publish storage and routing](nova/docs/release-routing.md)
 - [Inquiry endpoint](nova/docs/inquiry.md)
+- [Media core and SVG ingestion](nova/docs/media.md)
 - [Website and SEO readiness](nova/docs/website-readiness.md)
 - [Designation matching](nova/docs/designation-matching.md)
 

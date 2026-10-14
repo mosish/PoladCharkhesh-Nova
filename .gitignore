@@ -23,3 +23,6 @@
 Thumbs.db
 desktop.ini
 .DS_Store
+
+# Uploaded media (content-hash named) stays out of history; the folder's .htaccess is tracked.
+/nova/public_html/media/*/

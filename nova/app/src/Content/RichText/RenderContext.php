@@ -23,6 +23,6 @@ interface RenderContext
     /** @return array{url: string, label: string}|null */
     public function document(int $id): ?array;
 
-    /** @return array{src: string, width: int, height: int}|null */
+    /** @return array{src: string, width: int, height: int, srcset?: ?string}|null */
     public function media(int $id): ?array;
 }

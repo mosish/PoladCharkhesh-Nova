@@ -25,6 +25,8 @@ use Twig\TwigFunction;
  * Content is in the HTML (works without JavaScript); Twig escapes by default.
  *
  * @phpstan-import-type Product from SiteData
+ * @phpstan-import-type MediaRef from SiteData
+ * @phpstan-import-type DocRef from SiteData
  */
 final class SiteBuilder
 {
@@ -91,7 +93,7 @@ final class SiteBuilder
             $files[] = $this->write($out, 'designation-index.json', json_encode(['release' => $release, 'index' => ['suffix_rules' => (object) $data->index['suffix_rules']] + $data->index], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR));
         }
         foreach ($data->products as $p) {
-            $files[] = $this->write($out, "data/p/{$p['slug']}.json", json_encode($this->productJson($p, $slugs), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR));
+            $files[] = $this->write($out, "data/p/{$p['slug']}.json", json_encode($this->productJson($p, $slugs, $data->media, $data->documents), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR));
         }
 
         $manifest = [];
@@ -152,9 +154,14 @@ final class SiteBuilder
         $desc = $items === [] ? self::fill(self::str($t['pp_desc'] ?? ''), ['code' => $code, 'family' => $family])
             : self::fill(self::str($t['pp_desc_items'] ?? ''), ['code' => $code, 'family' => $family, 'items' => implode($lang === 'fa' ? '، ' : ', ', $items)]);
 
+        /** @var array<int, MediaRef> $media */
+        $media = $context['media'] ?? [];
+        /** @var array<int, DocRef> $documents */
+        $documents = $context['documents'] ?? [];
+
         return $this->twig->render('product.html.twig', $context + [
             'p' => $p,
-            'description_html' => $this->description($p, $lang, $slugs),
+            'description_html' => $this->description($p, $lang, $slugs, $media, $documents),
             'canonical' => "/p/{$p['slug']}/",
             'robots' => $preview ? 'noindex' : $this->robots(self::indexable($p)),
             'page_title' => self::fill(self::str($t['pp_title'] ?? ''), ['code' => $titleCode, 'family' => $family]),
@@ -174,12 +181,14 @@ final class SiteBuilder
     /**
      * @param Product $p
      * @param array<string, true> $slugs
+     * @param array<int, MediaRef> $media
+     * @param array<int, DocRef> $documents
      */
-    private function description(array $p, string $lang, array $slugs): ?string
+    private function description(array $p, string $lang, array $slugs, array $media, array $documents): ?string
     {
         $doc = $lang === 'fa' ? $p['description']['fa'] : $p['description']['en'];
 
-        return $doc === null ? null : Renderer::render($doc, ContentService::PRODUCT_DESCRIPTION, new SiteRenderContext($lang, $slugs));
+        return $doc === null ? null : Renderer::render($doc, ContentService::PRODUCT_DESCRIPTION, new SiteRenderContext($lang, $slugs, 3, $media, $documents));
     }
 
     /** @return array<string, mixed> */
@@ -207,6 +216,8 @@ final class SiteBuilder
             'fam' => $families,
             'products' => array_values(array_filter($data->products, static fn(array $p): bool => $p['show_in_explorer'])),
             'examples' => $data->examples,
+            'media' => $data->media,
+            'documents' => $data->documents,
             'dev_banner' => $data->samples,
             'self_url' => $this->config->hosts[$lang === 'fa' ? 'fa' : 'en'],
             'other_url' => $this->config->hosts[$other === 'fa' ? 'fa' : 'en'],
@@ -223,10 +234,12 @@ final class SiteBuilder
     /**
      * @param Product $p
      * @param array<string, true> $slugs
+     * @param array<int, MediaRef> $media
+     * @param array<int, DocRef> $documents
      *
      * @return array<string, mixed>
      */
-    private function productJson(array $p, array $slugs): array
+    private function productJson(array $p, array $slugs, array $media, array $documents): array
     {
         $f = $p['family'];
 
@@ -240,7 +253,7 @@ final class SiteBuilder
             'sources' => $p['sources'],
             'known_variants' => $p['known_variants'],
             'spellings' => $p['spellings'],
-            'description' => ['fa' => $this->description($p, 'fa', $slugs), 'en' => $this->description($p, 'en', $slugs)],
+            'description' => ['fa' => $this->description($p, 'fa', $slugs, $media, $documents), 'en' => $this->description($p, 'en', $slugs, $media, $documents)],
         ];
     }
 

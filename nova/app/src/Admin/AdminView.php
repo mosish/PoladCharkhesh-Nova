@@ -32,6 +32,7 @@ final class AdminView
         $this->twig->addFunction(new TwigFunction('asset', fn(string $name): string => $this->assets[$name] ?? throw new RuntimeException("Unknown Admin asset {$name}")));
         $this->twig->addFilter(new TwigFilter('fa', self::digits(...)));
         $this->twig->addFilter(new TwigFilter('when', self::when(...)));
+        $this->twig->addFilter(new TwigFilter('size', self::size(...)));
     }
 
     /** @param array<string, mixed> $context */
@@ -54,6 +55,20 @@ final class AdminView
     public static function digits(int|string|null $value): string
     {
         return strtr((string) $value, ['0' => '۰', '1' => '۱', '2' => '۲', '3' => '۳', '4' => '۴', '5' => '۵', '6' => '۶', '7' => '۷', '8' => '۸', '9' => '۹']);
+    }
+
+    /** A byte count for people; units stay Latin (Q2). */
+    public static function size(int|string|null $bytes): string
+    {
+        $n = (float) $bytes;
+        if ($n < 1024) {
+            return (int) $n . ' B';
+        }
+        if ($n < 1_048_576) {
+            return round($n / 1024, 1) . ' KB';
+        }
+
+        return round($n / 1_048_576, 1) . ' MB';
     }
 
     /** A stored UTC DATETIME as a Tehran time on the Persian calendar, e.g. «۱۲ مهر ۱۴۰۵، ۱۵:۴۲». */

@@ -1,0 +1,40 @@
+{% extends 'shell.html.twig' %}
+{% block title %}{{ m.original_name }}{% endblock %}
+{% block main %}
+<div class="adm__head"><div><p class="crumbs">محتوا · <a href="/admin/media">رسانه</a></p><h1 class="mono" dir="ltr">{{ m.original_name }}</h1></div></div>
+<div class="grid g-main">
+  <section class="card" aria-labelledby="h-prev"><h2 class="card__h" id="h-prev">پیش‌نمایش</h2>
+    <div class="card__b media-prev"><img src="{{ m.url }}" alt="{{ m.alt_fa ?? '' }}" width="{{ m.width }}" height="{{ m.height }}"></div>
+    <dl class="kv card__b"><dt>نوع</dt><dd>{{ m.kind == 'svg' ? 'SVG پالایش‌شده' : m.mime }}</dd><dt>ابعاد</dt><dd><bdi dir="ltr">{{ m.width }}×{{ m.height }}</bdi></dd><dt>اندازه</dt><dd><bdi dir="ltr">{{ m.byte_size|size }}</bdi></dd><dt>هش محتوا</dt><dd><bdi class="mono" dir="ltr">{{ m.sha256 }}</bdi></dd><dt>نشانی</dt><dd><bdi class="mono" dir="ltr">{{ m.url }}</bdi></dd>{% if m.derivatives %}<dt>نسخه‌های WebP</dt><dd><bdi dir="ltr">{{ m.derivatives }}</bdi></dd>{% endif %}</dl>
+  </section>
+  <div class="grid">
+    <section class="card" aria-labelledby="h-alt"><h2 class="card__h" id="h-alt">متن جایگزین (ALT-INF)</h2>
+      <form class="card__b field" method="post" action="/admin/media/{{ m.id }}/update"><input type="hidden" name="_csrf" value="{{ csrf }}"><input type="hidden" name="version" value="{{ m.row_version }}">
+        <label for="alt-fa">متن جایگزین فارسی</label><input class="a-in" id="alt-fa" name="alt_fa" maxlength="300" value="{{ m.alt_fa ?? '' }}">
+        <label for="alt-en">Alt text (English)</label><input class="a-in" id="alt-en" name="alt_en" maxlength="300" dir="ltr" value="{{ m.alt_en ?? '' }}">
+        <fieldset class="chips"><legend class="sr">نقش</legend><label><input type="radio" name="role" value="informative"{% if m.role == 'informative' %} checked{% endif %}> اطلاع‌رسان</label> <label><input type="radio" name="role" value="decorative"{% if m.role == 'decorative' %} checked{% endif %}> تزئینی (بدون متن جایگزین)</label></fieldset>
+        <span class="muted">تصویر اطلاع‌رسان بدون متن جایگزین فارسی و انگلیسی، تا وقتی در صفحه‌ای منتشرشده به کار رفته باشد، انتشار را متوقف می‌کند.</span>
+        <div><button class="a-btn a-btn--pri" type="submit">ذخیره</button></div>
+      </form>
+    </section>
+    <section class="card" aria-labelledby="h-rep"><h2 class="card__h" id="h-rep">جایگزینی فایل</h2>
+      <form class="card__b field" method="post" action="/admin/media/{{ m.id }}/replace" enctype="multipart/form-data"><input type="hidden" name="_csrf" value="{{ csrf }}">
+        <label for="rep-file">فایل جدید ({{ m.kind == 'svg' ? 'SVG' : 'تصویر' }})</label><input class="a-in" id="rep-file" name="file" type="file" required>
+        <span class="muted">شناسه، متن جایگزین و ارجاع‌ها می‌مانند. فایل قبلی تا ۳۰ روز روی دیسک می‌ماند، چون نسخه‌های منتشرشده هنوز به آن اشاره دارند.</span>
+        <div><button class="a-btn" type="submit">جایگزین کن</button></div>
+      </form>
+    </section>
+    <section class="card" aria-labelledby="h-use"><h2 class="card__h" id="h-use">کاربردها</h2>
+      <div class="card__b">
+      {% if m.references %}<ul class="list">{% for ref in m.references %}<li><a href="/admin/products/{{ ref.id }}"><bdi class="code" dir="ltr">{{ ref.label }}</bdi></a></li>{% endfor %}</ul><p class="muted">تا وقتی در جایی به کار رفته، حذف نمی‌شود.</p>
+      {% else %}<p class="muted">در جایی به کار نرفته است.</p>{% endif %}
+      {% if m.trashed_at %}
+        <form method="post" action="/admin/media/{{ m.id }}/restore"><input type="hidden" name="_csrf" value="{{ csrf }}"><button class="a-btn" type="submit">بازگردانی از سطل بازیافت</button></form>
+      {% else %}
+        <form method="post" action="/admin/media/{{ m.id }}/trash"><input type="hidden" name="_csrf" value="{{ csrf }}"><button class="a-btn a-btn--danger" type="submit"{% if m.references %} disabled{% endif %}>انتقال به سطل بازیافت (۳۰ روز)</button></form>
+      {% endif %}
+      </div>
+    </section>
+  </div>
+</div>
+{% endblock %}
