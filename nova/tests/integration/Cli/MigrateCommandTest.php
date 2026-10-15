@@ -23,9 +23,10 @@ use PHPUnit\Framework\TestCase;
  */
 final class MigrateCommandTest extends TestCase
 {
-    private function app(Environment $environment, Output $output, string $sapi = 'cli'): Application
+    /** @param array<string, mixed> $values */
+    private function app(Environment $environment, Output $output, string $sapi = 'cli', array $values = []): Application
     {
-        return new Application(new Config($environment, TestDatabase::config()), Paths::fromHere(), $output, $sapi);
+        return new Application(new Config($environment, TestDatabase::config(), $values), Paths::fromHere(), $output, $sapi);
     }
 
     private function nonEmptyDatabase(): PDO
@@ -63,13 +64,40 @@ final class MigrateCommandTest extends TestCase
         new NoBackupGuard(Environment::Development, static function (string $line): void {}, 'apache2handler');
     }
 
-    public function testWithoutTheBypassANonEmptyDatabaseIsNeverMigrated(): void
+    public function testANonEmptyDatabaseIsBackedUpAndVerifiedBeforeItIsMigrated(): void
     {
-        $this->nonEmptyDatabase();
+        $pdo = $this->nonEmptyDatabase();
+        $tmp = sys_get_temp_dir() . '/nova-migrate-' . bin2hex(random_bytes(4));
+        mkdir($tmp . '/public', 0775, true);
         $output = new Output(false);
+        try {
+            self::assertSame(0, $this->app(Environment::Development, $output, 'cli', ['paths' => ['public' => $tmp . '/public', 'storage' => $tmp . '/storage']])->run(['nova', 'migrate']), implode("\n", $output->errors));
+            $sets = glob($tmp . '/storage/backups/sets/B-*.json') ?: [];
+            self::assertCount(1, $sets, 'a pre_migration set was written first');
+            $id = basename($sets[0], '.json');
+            self::assertSame($id, Sql::scalar($pdo, 'SELECT backup_ref FROM schema_migrations WHERE version = 1'), 'and recorded with the migration');
+            $manifest = json_decode((string) file_get_contents($sets[0]), true);
+            self::assertIsArray($manifest);
+            self::assertSame('pre_migration', $manifest['trigger'] ?? null);
+        } finally {
+            \Nova\Core\Files::removeTree($tmp);
+        }
+    }
 
-        self::assertSame(2, $this->app(Environment::Development, $output)->run(['nova', 'migrate']));
-        self::assertStringContainsString('backup is required', implode("\n", $output->errors));
+    public function testWhenTheBackupCannotBeMadeANonEmptyDatabaseIsNeverMigrated(): void
+    {
+        $pdo = $this->nonEmptyDatabase();
+        $blocker = sys_get_temp_dir() . '/nova-migrate-file-' . bin2hex(random_bytes(4));
+        file_put_contents($blocker, 'a file where the backup folder should be');
+        $output = new Output(false);
+        try {
+            // The backup folder would have to be created inside a plain file: impossible.
+            self::assertSame(2, $this->app(Environment::Development, $output, 'cli', ['backup' => ['dir' => $blocker . '/backups']])->run(['nova', 'migrate']));
+            self::assertStringContainsString('backup is required', implode("\n", $output->errors));
+            self::assertSame(0, (int) Sql::scalar($pdo, "SELECT COUNT(*) FROM information_schema.TABLES WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'product'"), 'nothing was migrated');
+        } finally {
+            unlink($blocker);
+        }
     }
 
     public function testDevelopmentBypassIsVisibleAndRecorded(): void

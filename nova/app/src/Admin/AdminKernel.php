@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Nova\Admin;
 
+use Nova\Backup\BackupConfig;
+use Nova\Backup\BackupFactory;
+use Nova\Backup\BackupService;
+use Nova\Cli\Application;
 use Nova\Core\Config;
 use Nova\Core\Database;
 use Nova\Core\Environment;
@@ -59,6 +63,8 @@ final class AdminKernel
             },
             new MediaStorage($public),
             MediaLimits::fromConfig($config),
+            static fn(): BackupService => BackupFactory::service($config, $paths, $pdo, Application::VERSION),
+            BackupConfig::fromConfig($config),
         );
     }
 

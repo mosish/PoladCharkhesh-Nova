@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Nova\Admin;
 
+use Nova\Backup\BackupConfig;
+use Nova\Backup\BackupError;
+use Nova\Backup\BackupScheduler;
+use Nova\Backup\BackupService;
 use Nova\Catalogue\CatalogueError;
 use Nova\Http\Request;
 use Nova\Http\Response;
@@ -50,6 +54,7 @@ final class AdminApp
      * @param \Closure(): PublishEngine $engine
      * @param \Closure(int, string): ?string $preview renders a draft Product page (id, language) or null
      * @param (\Closure(): InquiryNotifier)|null $notifier sends inquiry notifications (Retry); null = not configured
+     * @param (\Closure(): BackupService)|null $backups the backup service (Backups screen, dashboard status, fallback trigger); null = not configured
      */
     public function __construct(
         private readonly PDO $pdo,
@@ -64,6 +69,9 @@ final class AdminApp
         private readonly ?\Closure $notifier = null,
         ?MediaStorage $mediaStorage = null,
         MediaLimits $mediaLimits = new MediaLimits(),
+        private readonly ?\Closure $backups = null,
+        private readonly BackupConfig $backupConfig = new BackupConfig(),
+        private readonly ?Clock $backupClock = null,
     ) {
         $this->auth = new AdminAuth($pdo, $session, $clock);
         $this->csrf = new Csrf($session);
@@ -112,6 +120,7 @@ final class AdminApp
             return Response::redirect('/admin/login');
         }
         $this->recover();
+        $this->backupFallback();
 
         try {
             return $this->route($r, $path, $actor) ?? $this->page('error.html.twig', ['code' => 404] + $this->shell($actor, ''), 404);
@@ -177,6 +186,9 @@ final class AdminApp
         }
         if (str_starts_with($path, '/media')) {
             return $this->mediaRoute($r, $path, $actor);
+        }
+        if (str_starts_with($path, '/backups')) {
+            return $this->backupRoute($r, $path, $actor);
         }
         if (str_starts_with($path, '/documents')) {
             return $this->documentRoute($r, $path, $actor);
@@ -299,6 +311,7 @@ final class AdminApp
         return $this->page('dashboard.html.twig', $this->shell($actor, 'dash') + [
             'inq' => $this->inquiries->counts(), 'recent_inq' => $this->inquiries->list('all', '', 4), 'demand' => $this->inquiries->notInCatalogue(),
             'recipient' => (new InquiryRecipient($this->pdo))->get(),
+            'backup' => $this->backups === null ? null : $this->backupService()->status(),
             'counts' => $counts, 'pending' => $pending, 'unsourced' => $unsourced, 'no_english' => $noEnglish,
             'recent' => Activity::recent($this->pdo), 'samples' => (int) \Nova\Core\Sql::scalar($this->pdo, 'SELECT COUNT(*) FROM product WHERE is_sample = 1'),
         ]);
@@ -322,6 +335,77 @@ final class AdminApp
         }
 
         return $this->page('product.html.twig', $this->shell($actor, 'products') + ['p' => $p, 'today' => gmdate('Y-m-d')]);
+    }
+
+    // ---- backups (05 §18, D23)
+
+    private function backupService(): BackupService
+    {
+        if ($this->backups === null) {
+            throw new RuntimeException('Backups are not configured for this Admin.');
+        }
+
+        return ($this->backups)();
+    }
+
+    /**
+     * The fallback trigger (05 §18): only when `backup.fallback` is on and no
+     * successful backup is newer than 24 hours, the first signed-in request
+     * of the day makes the backup. Never throws; a failure is audited.
+     */
+    private function backupFallback(): void
+    {
+        if ($this->backups === null || !$this->backupConfig->fallback) {
+            return;
+        }
+        try {
+            (new BackupScheduler($this->pdo, $this->backupService(), $this->backupConfig, $this->backupClock ?? new SystemClock()))->runFallbackIfDue();
+        } catch (Throwable $e) {
+            error_log('Nova Admin: backup fallback: ' . $e::class . ': ' . $e->getMessage());
+        }
+    }
+
+    private function backupRoute(Request $r, string $path, Actor $actor): ?Response
+    {
+        if ($this->backups === null) {
+            return null;
+        }
+        $get = !$r->isPost();
+        if ($path === '/backups') {
+            if (!$get) {
+                return null;
+            }
+            $svc = $this->backupService();
+
+            return $this->page('backups.html.twig', $this->shell($actor, 'backup') + [
+                'sets' => $svc->sets(), 'status' => $svc->status(), 'fallback' => $this->backupConfig->fallback,
+            ]);
+        }
+        if ($get || !$actor->isOwner()) {
+            return $get ? null : $this->page('error.html.twig', ['code' => 403, 'reason' => 'role'] + $this->shell($actor, ''), 403);
+        }
+        if ($path === '/backups/run') {
+            try {
+                $set = $this->backupService()->run('manual', 'admin');
+                $this->flash('ok', 'پشتیبان تازه ساخته شد.', $set['id']);
+            } catch (BackupError $e) {
+                $this->flash('error', 'پشتیبان‌گیری انجام نشد. علت در گزارش رویدادها ثبت شد.', $e->reason . ': ' . $e->getMessage());
+            }
+
+            return Response::redirect('/admin/backups');
+        }
+        if (preg_match('#^/backups/(B-[0-9]{8}-[0-9]{6}-[0-9a-f]{4})/verify$#', $path, $m) === 1) {
+            $problems = $this->backupService()->verify($m[1]);
+            if ($problems === []) {
+                $this->flash('ok', 'این پشتیبان کامل و قابل بازیابی است.', $m[1]);
+            } else {
+                $this->flash('error', 'این پشتیبان سالم نیست و قابل بازیابی نیست.', $problems[0]);
+            }
+
+            return Response::redirect('/admin/backups');
+        }
+
+        return null;
     }
 
     // ---- media library and documents (A4; 05 §12, §26)
@@ -696,6 +780,7 @@ final class AdminApp
             preg_match('#^/media/(\d+)#', $path, $m) === 1 => "/admin/media/{$m[1]}",
             preg_match('#^/documents/(\d+)#', $path, $m) === 1 => "/admin/documents/{$m[1]}",
             str_starts_with($path, '/media') => '/admin/media',
+            str_starts_with($path, '/backups') => '/admin/backups',
             str_starts_with($path, '/documents') => '/admin/documents',
             str_starts_with($path, '/inquiries') => '/admin/inquiries',
             default => '/admin/',

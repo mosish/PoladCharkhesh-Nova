@@ -225,11 +225,28 @@ test.describe.serial('Owner: first sign-in with TOTP enrolment, then the Product
     expect(errors).toEqual([]);
   });
 
+  test('the Backups screen: status, back up now, verify; axe-clean', async () => {
+    await page.goto(`${BASE}/admin/backups`);
+    await expect(page.locator('h1')).toContainText('پشتیبان‌گیری');
+    await expect(page.locator('.flash--error').first()).toContainText('هنوز هیچ پشتیبان موفقی ساخته نشده است');
+    await axeClean(page);
+    await page.click('form[action="/admin/backups/run"] button[type="submit"]');
+    await expect(page.locator('div.flash--ok')).toContainText('پشتیبان تازه ساخته شد');
+    await expect(page.locator('table.t tbody tr')).toHaveCount(1);
+    await expect(page.locator('p.flash--ok')).toContainText('آخرین پشتیبان موفق');
+    await page.click('form[action$="/verify"] button[type="submit"]');
+    await expect(page.locator('div.flash--ok')).toContainText('کامل و قابل بازیابی');
+    await axeClean(page);
+    await page.goto(`${BASE}/admin/`);
+    await expect(page.locator('main')).not.toContainText('عقب‌افتاده');
+    expect(errors).toEqual([]);
+  });
+
   test('narrow screens reflow to one column without horizontal scrolling', async () => {
     await page.setViewportSize({ width: 375, height: 800 });
     await page.goto(`${BASE}/admin/products`);
     const editor = await page.locator('table.t a.code').first().getAttribute('href');
-    for (const path of ['/admin/', '/admin/products', editor, '/admin/publish', '/admin/media', '/admin/documents', '/admin/inquiries']) {
+    for (const path of ['/admin/', '/admin/products', editor, '/admin/publish', '/admin/media', '/admin/documents', '/admin/inquiries', '/admin/backups']) {
       await page.goto(`${BASE}${path}`);
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth + 1), path).toBe(true);
     }
@@ -262,5 +279,9 @@ test('an Editor signs in with a password and is refused Owner-only actions', asy
   await page.setInputFiles('#m-file', { name: 'd.svg', mimeType: 'image/svg+xml', buffer: Buffer.from('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1"/>') });
   await page.click('main button[type="submit"]');
   await expect(page.locator('.flash--error')).toBeVisible();
+  await page.goto(`${BASE}/admin/backups`);
+  await expect(page.locator('form[action="/admin/backups/run"]')).toHaveCount(0);
+  const denied = await page.request.post(`${BASE}/admin/backups/run`, { form: { _csrf: token }, maxRedirects: 0 });
+  expect(denied.status()).toBe(403);
   expect(errors).toEqual([]);
 });

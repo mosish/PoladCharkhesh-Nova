@@ -417,4 +417,17 @@ Verification (Docker; one disposable database and one disposable Apache stack on
 
 **Limits:** the PDF check is best-effort and does not guarantee a harmless PDF; no page can use an image until Phase 4b adds Article-profile sections, so ALT-INF is tested at service level; `MediaReferences` must also read section content then; the production `.htaccess`, PHP upload limits and the real-host headers are Step 13 / Step 15 items.
 
-**Resume point:** the owner's review of Steps 9–11, then Step 12 (backup and restore with scheduler).
+**Resume point (superseded below):** the owner's review of Steps 9–11, then Step 12.
+
+**Step 12 (backup and restore), 2026-10-15, owner-requested (committed and pushed to GitHub `main`; awaits the owner's review, no gate approved):**
+
+- Implemented per `05` §18 (details, commands, restore procedures, off-site copy and limits: `nova/docs/backup.md`): `Nova\Backup\*` (consistent-snapshot logical dump with per-table row counts and content checksums; content-addressed incremental media store with manifests and full ZIP archives; 7/4/3 retention; verified `pre_migration` and `pre_restore` safety copies; explicit-target restore with empty-target, live-replacement confirmation, interruption marker and cleanup; idempotent repeats; libsodium-encrypted off-site export/import; first-request-of-the-day fallback when no scheduler runs), 13 CLI commands (`backup:*`, `restore:*`), the Admin Backups screen and dashboard status, audit of every success, refusal and failure. No migration was needed: the catalogue of sets is the manifest files, which survive a lost database.
+- Dependencies: none added (libsodium and ZipArchive are already in the image).
+- Findings from verification, fixed: restored databases lacked the two throttle tables (now structure kept, rows not backed up); the manifest claimed throttle tables a pre-0008 database does not have; retention was "last N months that have a set" instead of calendar windows; a normal backup could have run during a migration (now waits for the migration lock); restoring a new host's empty configured database needed an absurd confirmation (now only for a non-empty live database); a restore into the live database made `restore:verify` and idempotent repeats fail on the restore's own audit row (verification now covers audit rows up to the backup point); `backup:import` on a fresh, unmigrated host crashed on audit (audit is best-effort where its table does not exist yet); `MigrateCommandTest` still assumed the old "always refuse" guard (now: backed up and verified first; refused only if the backup cannot be made).
+- Not suppressed: no PHPStan ignore rules were added; test code was fixed instead.
+
+Verification (Docker; disposable databases `nova_s12*`, `nova_rt_*`, temporary folders and two disposable Apache stacks on ports 8092/8093; all removed): PHPUnit 723 tests / 7,792 assertions; PHPStan max with no errors; CS clean; `composer audit` clean; 171 JS tests; 22 real two-host checks; `admin.spec.js` 14/14. `nova` (schema 0004), `nova_test` and the preview `R-20261012-131225-9d1c` were untouched; nothing was restored over them.
+
+**Limits:** a local proof, not the Phase 7 staging drill; no point-in-time recovery or per-table restore; the database dump and the media copy are not atomic with each other; the manifest checksum guards against damage, not an attacker with write access to the backup folder; the real host's cron, PHP CLI limits and provider backups are launch inputs.
+
+**Resume point:** the owner's review of Steps 9–12, then Step 13 (the `.htaccess` template: routing, switch, headers, SVG serving, redirects).

@@ -68,8 +68,25 @@ final class Application
                 'inquiry:notify' => $this->inquiryNotify(),
                 'inquiry:purge' => $this->inquiryPurge(),
                 'media:purge' => $this->mediaPurge(),
+                'backup:run' => $this->backupRun($options),
+                'backup:list' => $this->backupList(),
+                'backup:status' => $this->backupStatus(),
+                'backup:verify' => $this->backupVerify($options),
+                'backup:prune' => $this->backupPrune(),
+                'backup:archive' => $this->backupArchive($options),
+                'backup:export' => $this->backupExport($options),
+                'backup:import' => $this->backupImport($options),
+                'backup:config-checklist' => $this->backupChecklist(),
+                'restore:db' => $this->restoreDb($options),
+                'restore:verify' => $this->restoreVerify($options),
+                'restore:cleanup' => $this->restoreCleanup($options),
+                'restore:media' => $this->restoreMedia($options),
                 default => $this->help(),
             };
+        } catch (\Nova\Backup\BackupError $e) {
+            $this->output->error("Refused or failed ({$e->reason}): " . $e->getMessage());
+
+            return 2;
         } catch (MigrationError $e) {
             $this->output->error('Migration refused: ' . $e->getMessage());
 
@@ -374,10 +391,254 @@ final class Application
         return $this->publish();
     }
 
-    /** The real pre-migration backup arrives with step 12; until then a non-empty database is refused. */
+    /** A non-empty database is backed up (verified) before the first migration; a failed backup refuses the migration. */
     private function backupGuard(): BackupGuard
     {
-        return new UnavailableBackupGuard();
+        return new \Nova\Backup\PreMigrationBackupGuard($this->backups());
+    }
+
+    private ?\Nova\Backup\BackupService $backupService = null;
+
+    private function backups(): \Nova\Backup\BackupService
+    {
+        return $this->backupService ??= \Nova\Backup\BackupFactory::service($this->config, $this->paths, $this->pdo(), self::VERSION);
+    }
+
+    private function restores(): \Nova\Backup\RestoreService
+    {
+        return \Nova\Backup\BackupFactory::restore($this->config, $this->paths, $this->pdo(), $this->backups());
+    }
+
+    /**
+     * `--name=value` from the command-line options.
+     *
+     * @param list<string> $options
+     */
+    private static function option(array $options, string $name): ?string
+    {
+        foreach ($options as $o) {
+            if (str_starts_with($o, "--{$name}=")) {
+                return substr($o, \strlen($name) + 3);
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * The first argument that is not an option.
+     *
+     * @param list<string> $options
+     */
+    private static function argument(array $options, int $n = 0): ?string
+    {
+        $args = array_values(array_filter($options, static fn(string $o): bool => !str_starts_with($o, '--')));
+
+        return $args[$n] ?? null;
+    }
+
+    /** @param list<string> $options */
+    private function backupRun(array $options): int
+    {
+        $trigger = self::option($options, 'trigger') ?? 'manual';
+        if (!\in_array($trigger, ['scheduler', 'fallback', 'manual'], true)) {
+            $this->output->error('--trigger is scheduler, fallback or manual.');
+
+            return 2;
+        }
+        $r = $this->backups()->run($trigger, 'cli', !\in_array('--no-prune', $options, true));
+        $this->output->line("Backup {$r['id']} ({$trigger}): {$r['tables']} tables, schema {$r['schema_version']}, database {$r['db_bytes']} bytes, {$r['media_files']} media files ({$r['media_copied']} new).");
+        foreach ($r['missing'] as $m) {
+            $this->output->line("warning: {$m} is named by the database but was not on disk");
+        }
+
+        return 0;
+    }
+
+    private function backupList(): int
+    {
+        foreach ($this->backups()->sets() as $s) {
+            $this->output->line(\sprintf('%s  %-13s %s%s', $s['id'], $s['trigger'], gmdate('Y-m-d H:i', $s['at']) . ' UTC', $s['ok'] ? '' : '  BROKEN: ' . $s['problem']));
+        }
+
+        return 0;
+    }
+
+    private function backupStatus(): int
+    {
+        $st = $this->backups()->status();
+        $this->output->line($st['last'] === null ? 'No successful backup yet.' : "Last successful backup: {$st['last']['id']} ({$st['last']['trigger']}), {$st['hours_since']} h ago.");
+        if ($st['overdue']) {
+            $this->output->line('OVERDUE: run backup:run (cron), or switch on backup.fallback.');
+        }
+        if ($st['last_failure'] !== null) {
+            $this->output->line("The last backup attempt failed at {$st['last_failure']} UTC (see the audit trail).");
+        }
+
+        return $st['overdue'] || $st['last_failure'] !== null ? 3 : 0;
+    }
+
+    /** @param list<string> $options */
+    private function backupVerify(array $options): int
+    {
+        $id = self::argument($options) ?? '';
+        $problems = $this->backups()->verify($id);
+        foreach ($problems as $p) {
+            $this->output->error($p);
+        }
+        $this->output->line($problems === [] ? "{$id} is whole and restorable." : "{$id} is NOT restorable.");
+
+        return $problems === [] ? 0 : 2;
+    }
+
+    private function backupPrune(): int
+    {
+        $deleted = $this->backups()->prune();
+        $this->output->line($deleted === [] ? 'Nothing to prune.' : 'Pruned: ' . implode(', ', $deleted));
+
+        return 0;
+    }
+
+    /** @param list<string> $options */
+    private function backupArchive(array $options): int
+    {
+        $this->output->line('Archive: ' . $this->backups()->archive(self::argument($options) ?? ''));
+
+        return 0;
+    }
+
+    /** @param list<string> $options */
+    private function backupExport(array $options): int
+    {
+        $id = self::argument($options) ?? '';
+        $out = self::argument($options, 1);
+        if ($out === null) {
+            $this->output->error('Usage: backup:export <set-id> <output-file>');
+
+            return 2;
+        }
+        $pass = ($this->readSecret)('Passphrase for the off-site copy (at least ' . \Nova\Backup\OffsiteCrypto::MIN_PASSPHRASE . ' characters): ');
+        if ($pass !== ($this->readSecret)('Repeat the passphrase: ')) {
+            $this->output->error('The passphrases differ.');
+
+            return 2;
+        }
+        (new \Nova\Backup\OffsiteBundle(\Nova\Backup\BackupFactory::paths($this->config, $this->paths), $this->backups()))->export($id, $out, $pass);
+        $this->pdoAudit('backup.export', $id, ['origin' => 'cli']);
+        $this->output->line("Encrypted copy written to {$out}. Keep the passphrase safe: it cannot be recovered.");
+
+        return 0;
+    }
+
+    /** @param list<string> $options */
+    private function backupImport(array $options): int
+    {
+        $in = self::argument($options);
+        if ($in === null) {
+            $this->output->error('Usage: backup:import <encrypted-file>');
+
+            return 2;
+        }
+        $pass = ($this->readSecret)('Passphrase: ');
+        $id = (new \Nova\Backup\OffsiteBundle(\Nova\Backup\BackupFactory::paths($this->config, $this->paths), $this->backups()))->import($in, $pass);
+        $this->pdoAudit('backup.import', $id, ['origin' => 'cli']);
+        $this->output->line("Imported and verified set {$id}.");
+
+        return 0;
+    }
+
+    /** @param array<string, mixed> $after */
+    private function pdoAudit(string $action, string $label, array $after): void
+    {
+        try {
+            (new \Nova\Audit\AuditLog($this->pdo()))->record(null, $action, 'backup', null, $label, null, $after);
+        } catch (Throwable) {
+            // A new host's database has no audit table until a restore has made it; the command itself already succeeded.
+        }
+    }
+
+    private function backupChecklist(): int
+    {
+        $this->output->line('Configuration is never in a backup. To rebuild config.php on a new host you need values for (names only):');
+        foreach (\Nova\Backup\ConfigChecklist::keys() as $k) {
+            $this->output->line(\sprintf('  %-72s %-20s %s', $k['key'], $k['needed'], $k['note']));
+        }
+        /** @var array{included: list<string>, excluded: list<string>} $b */
+        $b = \Nova\Backup\ConfigChecklist::boundaries();
+        $this->output->line('A backup holds:');
+        foreach ($b['included'] as $i) {
+            $this->output->line("  + {$i}");
+        }
+        $this->output->line('A backup never holds:');
+        foreach ($b['excluded'] as $i) {
+            $this->output->line("  - {$i}");
+        }
+
+        return 0;
+    }
+
+    /** @param list<string> $options */
+    private function restoreDb(array $options): int
+    {
+        $id = self::argument($options) ?? '';
+        $target = self::option($options, 'target');
+        if ($target === null) {
+            $this->output->error('Usage: restore:db <set-id> --target=<empty database> [--replace-live --confirm=<live database>]');
+
+            return 2;
+        }
+        $r = $this->restores()->restoreDatabase($id, $target, \in_array('--replace-live', $options, true), self::option($options, 'confirm'));
+        $this->output->line("{$r['status']}: {$r['tables']} tables, {$r['rows']} rows, schema {$r['schema_version']} into {$target}; every table matches the backup.");
+
+        return 0;
+    }
+
+    /** @param list<string> $options */
+    private function restoreVerify(array $options): int
+    {
+        $target = self::option($options, 'target');
+        if ($target === null) {
+            $this->output->error('Usage: restore:verify <set-id> --target=<database>');
+
+            return 2;
+        }
+        $problems = $this->restores()->verifyTarget(self::argument($options) ?? '', $target);
+        foreach ($problems as $p) {
+            $this->output->error($p);
+        }
+        $this->output->line($problems === [] ? "{$target} matches the backup." : "{$target} DIFFERS from the backup.");
+
+        return $problems === [] ? 0 : 2;
+    }
+
+    /** @param list<string> $options */
+    private function restoreCleanup(array $options): int
+    {
+        $target = self::option($options, 'target');
+        if ($target === null) {
+            $this->output->error('Usage: restore:cleanup --target=<database with an interrupted restore>');
+
+            return 2;
+        }
+        $n = $this->restores()->cleanup($target, \in_array('--replace-live', $options, true), self::option($options, 'confirm'));
+        $this->output->line("Emptied {$target}: {$n} tables removed.");
+
+        return 0;
+    }
+
+    /** @param list<string> $options */
+    private function restoreMedia(array $options): int
+    {
+        $dir = self::option($options, 'target-dir');
+        if ($dir === null) {
+            $this->output->error('Usage: restore:media <set-id> --target-dir=<media folder> [--archive=<zip>]');
+
+            return 2;
+        }
+        $r = $this->restores()->restoreMedia(self::argument($options) ?? '', $dir, self::option($options, 'archive'));
+        $this->output->line("Media restored into {$dir}: {$r['restored']} copied, {$r['unchanged']} already there; {$r['missing_at_backup']} were missing when the backup was made.");
+
+        return 0;
     }
 
     private function noBackupGuard(): BackupGuard
@@ -411,6 +672,12 @@ final class Application
         $this->output->line('  user:reset-totp <email>            reset the Owner\'s two-factor sign-in (re-enrolled at the next sign-in)');
         $this->output->line('  user:list                          accounts, roles and status');
         $this->output->line('  inquiry:notify          retry pending or failed inquiry notifications');
+        $this->output->line('  backup:run [--trigger=scheduler|manual|fallback] [--no-prune]   database + media backup with retention (cron: daily)');
+        $this->output->line('  backup:list | backup:status | backup:verify <id> | backup:prune | backup:archive <id>');
+        $this->output->line('  backup:export <id> <file> | backup:import <file>   encrypted off-site copy (passphrase asked)');
+        $this->output->line('  backup:config-checklist  what a backup holds and the configuration names to keep elsewhere');
+        $this->output->line('  restore:db <id> --target=<empty db> [--replace-live --confirm=<live db>] | restore:verify <id> --target=<db> | restore:cleanup --target=<db>');
+        $this->output->line('  restore:media <id> --target-dir=<folder> [--archive=<zip>]');
         $this->output->line('  media:purge             delete media and documents trashed for 30 days and unreferenced files');
         $this->output->line('  inquiry:purge           delete inquiries past retention (24 months) and old address hashes');
 

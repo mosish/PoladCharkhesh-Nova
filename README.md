@@ -61,7 +61,7 @@ The 2026-10-13 source review identified follow-up work in seven areas. Each find
 
 The details and tests are in the [Admin runbook](nova/docs/admin.md) and the [handoff checkpoint](06%20phase3%20handoff%20checkpoint.md). These fixes still await the owner's review; no gate is approved by them.
 
-**Next acceptance checkpoint:** Step 11 (media core and SVG ingestion) is implemented and verified locally (see [media.md](nova/docs/media.md)); Steps 9, 10 and 11 await the owner's review. Steps 12–16 have not started. Phase 3 completion and production deployment are separate gates.
+**Next acceptance checkpoint:** Step 12 (backup and restore) is implemented and verified locally (see [backup.md](nova/docs/backup.md)); Steps 9–12 await the owner's review. Steps 13–16 have not started. Phase 3 completion and production deployment are separate gates.
 
 The earlier governance/handoff documents contain dated statements such as “uncommitted” and historical test results. These describe their original sessions. A GitHub checkpoint commit does not itself approve those changes or prove that the running database and published release match the source.
 
@@ -160,6 +160,16 @@ Verification evidence for Step 11 (2026-10-14), on a disposable database and a d
 - **Limits:** the PDF check is a best-effort byte scan and does not guarantee a harmless PDF (see [media.md](nova/docs/media.md)); real-host `.htaccess` behaviour is checked at step 15.
 - **Untouched:** the development database, its live release and volumes.
 
+Verification evidence for Step 12 (2026-10-15), on disposable databases, temporary folders and two disposable Apache stacks, all removed afterwards:
+
+- **PHPUnit:** 723 tests / 7,792 assertions passed (the restore tests need operator-created empty `nova_rt_*` databases, see [backup.md](nova/docs/backup.md); without them those tests skip). PHPStan at maximum level reports no errors with no ignore rules; PHP style and `composer audit` passed.
+- **JavaScript:** 171 tests passed.
+- **Backup and restore, tested:** creation and secret exclusion, retention (7/4/3) and store sweeping, restore into an empty database compared table by table with the source, idempotent repeats, wrong and non-empty targets, set-id and media-path traversal, corrupt/truncated/missing/edited/newer-schema sets, interrupted restores (cleaned up in process; after a crash refused until `restore:cleanup`), retained releases byte-identical after backup, prune and restore, the encrypted off-site copy, the pre-migration guard, the fallback trigger.
+- **Two real Apache stacks:** host A backed up through the command line and exported an encrypted copy; separate host B imported it (damaged and wrong-passphrase attempts refused), restored database and media, repeated the restore idempotently, signed the Owner in with the restored account and TOTP secret, published from the restored database, and served the restored document byte-identical (22 checks).
+- **Playwright:** `admin.spec.js` 14/14 including the Backups screen. The public site and the inquiry form were not changed in this step, so `site.spec.js` and `inquiry.spec.js` were not rerun.
+- **Limits:** a local proof, not a staging drill (Phase 7); no point-in-time recovery; the dump is bounded by the host's PHP limits; the real host's cron, PHP CLI and provider backups are launch inputs.
+- **Untouched:** the development database, its live release and volumes; nothing was restored over `nova` or `nova_test`.
+
 - Passing tests do not replace security review, data reconciliation, restore verification or owner acceptance.
 
 ## Repository map
@@ -198,6 +208,7 @@ Useful runbooks:
 - [Publish storage and routing](nova/docs/release-routing.md)
 - [Inquiry endpoint](nova/docs/inquiry.md)
 - [Media core and SVG ingestion](nova/docs/media.md)
+- [Backup and restore](nova/docs/backup.md)
 - [Website and SEO readiness](nova/docs/website-readiness.md)
 - [Designation matching](nova/docs/designation-matching.md)
 

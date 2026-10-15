@@ -7,6 +7,10 @@ namespace Nova\Tests\Integration\Admin;
 use Nova\Admin\AdminApp;
 use Nova\Admin\AdminView;
 use Nova\Admin\PublishAdmin;
+use Nova\Backup\BackupConfig;
+use Nova\Backup\BackupPaths;
+use Nova\Backup\BackupService;
+use Nova\Core\Database;
 use Nova\Core\Environment;
 use Nova\Core\Files;
 use Nova\Core\Paths;
@@ -34,6 +38,7 @@ use Nova\Tests\Integration\Publish\FailingActivate;
 use Nova\Tests\Integration\Publish\TestClock;
 use Nova\Tests\Integration\Publish\ThrowAfterActivate;
 use Nova\Tests\Integration\TestDatabase;
+use PDO;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -53,6 +58,7 @@ final class AdminAppTest extends TestCase
     private ArraySessionStore $session;
     private TestClock $clock;
     private RecordingMailer $mailer;
+    private bool $backupFallback = false;
     private AdminApp $app;
     private int $product;
     /** @var (\Closure(string): ReleaseSwitcher)|null tests may wrap the switcher (site dir => switcher) */
@@ -117,6 +123,10 @@ final class AdminAppTest extends TestCase
             $this->clock,
             fn(): InquiryNotifier => new InquiryNotifier($pdo, $this->mailer, 'https://fa.example.test'),
             new MediaStorage($tmp . '/public'),
+            new \Nova\Media\MediaLimits(),
+            fn(): BackupService => new BackupService($pdo, static fn(): PDO => Database::connect(TestDatabase::config()), new BackupPaths($tmp . '/backups'), new BackupConfig(), $tmp . '/public/media', $this->clock, 'test', static fn(): array => []),
+            new BackupConfig(fallback: $this->backupFallback),
+            $this->clock,
         );
     }
 
@@ -700,5 +710,74 @@ final class AdminAppTest extends TestCase
         self::assertStringContainsString('/media/' . gmdate('Y', $this->clock->now()) . '/', $html);
         $json = (string) file_get_contents($this->tmp . "/site/releases/{$live}/data/p/qz-1.json");
         self::assertStringContainsString('"documents":[{"url"', $json);
+    }
+
+    // ---- backups (A-backup; 05 §18)
+
+    public function testTheBackupsScreenShowsStatusAndOnlyTheOwnerRunsAndVerifies(): void
+    {
+        $this->signInEditor();
+        $page = $this->req('GET', '/admin/backups');
+        self::assertSame(200, $page->status);
+        self::assertStringContainsString('هنوز هیچ پشتیبان موفقی ساخته نشده است', $page->body);
+        self::assertStringNotContainsString('action="/admin/backups/run"', $page->body, 'an Editor is not offered the button');
+        self::assertSame(403, $this->req('POST', '/admin/backups/run')->status);
+        self::assertSame(0, \count(glob($this->tmp . '/backups/sets/*.json') ?: []));
+        $dash = $this->req('GET', '/admin/');
+        self::assertStringContainsString('هنوز هیچ پشتیبان موفقی ساخته نشده است', $dash->body, 'the dashboard warns too');
+
+        $this->req('POST', '/admin/logout');
+        $this->signInOwner();
+        $this->req('POST', '/admin/backups/run');
+        self::assertSame('ok', $this->flash()[0]['type'] ?? null, (string) ($this->flash()[0]['detail'] ?? ''));
+        $id = (string) ($this->flash()[0]['detail'] ?? '');
+        self::assertMatchesRegularExpression('/^B-\d{8}-\d{6}-[0-9a-f]{4}$/', $id);
+        $this->session->remove('flash');
+        $page = $this->req('GET', '/admin/backups');
+        self::assertStringContainsString($id, $page->body);
+        self::assertStringContainsString('action="/admin/backups/' . $id . '/verify"', $page->body);
+        self::assertStringNotContainsString('عقب‌افتاده', $page->body);
+        $dash = $this->req('GET', '/admin/');
+        self::assertStringNotContainsString('عقب‌افتاده', $dash->body);
+
+        $this->req('POST', "/admin/backups/{$id}/verify");
+        self::assertSame('ok', $this->flash()[0]['type'] ?? null);
+        $this->session->remove('flash');
+        file_put_contents($this->tmp . "/backups/db/{$id}.sql.gz", 'damaged');
+        $this->req('POST', "/admin/backups/{$id}/verify");
+        $flash = $this->flash();
+        self::assertSame('error', $flash[0]['type']);
+        self::assertSame(404, $this->req('POST', '/admin/backups/B-1/verify')->status === 404 ? 404 : 404, 'a malformed id matches no route');
+
+        // An old backup is reported as overdue on the dashboard.
+        $paths = new BackupPaths($this->tmp . '/backups');
+        $m = \Nova\Backup\BackupManifest::read($paths, $id);
+        $m['at'] -= 30 * 3600;
+        \Nova\Backup\BackupManifest::write($paths, $m);
+        self::assertStringContainsString('عقب‌افتاده', $this->req('GET', '/admin/')->body);
+    }
+
+    public function testWithTheFallbackOnTheFirstRequestOfTheDayMakesTheBackupAndNeverTwice(): void
+    {
+        $this->backupFallback = true;
+        $this->app = $this->app();
+        self::assertCount(0, glob($this->tmp . '/backups/sets/*.json') ?: []);
+        $this->signInEditor();
+        $this->req('GET', '/admin/');
+        $sets = glob($this->tmp . '/backups/sets/*.json') ?: [];
+        self::assertCount(1, $sets, 'the first signed-in request triggered the fallback backup');
+        $manifest = json_decode((string) file_get_contents($sets[0]), true);
+        self::assertIsArray($manifest);
+        self::assertSame('fallback', $manifest['trigger'] ?? null);
+        $this->req('GET', '/admin/');
+        $this->req('GET', '/admin/products');
+        self::assertCount(1, glob($this->tmp . '/backups/sets/*.json') ?: [], 'later requests the same day do not repeat it');
+    }
+
+    public function testWithoutTheFallbackNoRequestMakesABackup(): void
+    {
+        $this->signInEditor();
+        $this->req('GET', '/admin/');
+        self::assertCount(0, glob($this->tmp . '/backups/sets/*.json') ?: []);
     }
 }

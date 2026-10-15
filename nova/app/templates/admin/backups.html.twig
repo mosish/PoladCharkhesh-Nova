@@ -1,0 +1,60 @@
+{% extends 'shell.html.twig' %}
+{% block title %}پشتیبان‌گیری{% endblock %}
+{% block main %}
+<div class="adm__head"><div><p class="crumbs">سیستم</p><h1>پشتیبان‌گیری <span class="sub">{{ sets|length|fa }} مجموعه</span></h1></div>
+  {% if is_owner %}<div class="actions"><form method="post" action="/admin/backups/run" class="inline"><input type="hidden" name="_csrf" value="{{ csrf }}"><button class="a-btn a-btn--pri" type="submit">پشتیبان‌گیری همین حالا</button></form></div>{% endif %}</div>
+{% if status.last is null %}
+  <p class="flash flash--error" role="note">هنوز هیچ پشتیبان موفقی ساخته نشده است. زمان‌بند (cron) باید روزانه <span class="mono" dir="ltr">backup:run</span> را اجرا کند.</p>
+{% elseif status.overdue %}
+  <p class="flash flash--error" role="note">آخرین پشتیبان موفق {{ status.hours_since|fa }} ساعت پیش بوده و عقب‌افتاده است. زمان‌بند کار نمی‌کند؟ {% if not fallback %}می‌توانید جایگزین اضطراری (<span class="mono" dir="ltr">backup.fallback</span>) را روشن کنید.{% endif %}</p>
+{% else %}
+  <p class="flash flash--ok" role="status">آخرین پشتیبان موفق: <bdi class="code" dir="ltr">{{ status.last.id }}</bdi>، {{ status.hours_since|fa }} ساعت پیش.</p>
+{% endif %}
+{% if status.last_failure %}<p class="flash flash--error" role="alert">آخرین تلاش برای پشتیبان‌گیری ناموفق بود ({{ status.last_failure|when }}). جزئیات در گزارش رویدادها ثبت شده است.</p>{% endif %}
+
+{% if sets is empty %}
+  <div class="card"><p class="empty">مجموعه‌ای وجود ندارد.</p></div>
+{% else %}
+<div class="t-wrap" tabindex="0" role="region" aria-label="جدول پشتیبان‌ها">
+<table class="t"><caption class="sr">مجموعه‌های پشتیبان، تازه‌ترین نخست</caption>
+  <thead><tr><th scope="col">شناسه</th><th scope="col">راه‌انداز</th><th scope="col">زمان</th><th scope="col">پایگاه داده</th><th scope="col">رسانه</th><th scope="col">نسخه‌های منتشرشده</th><th scope="col"><span class="sr">عملیات</span></th></tr></thead>
+  <tbody>
+  {% for s in sets %}
+    <tr>
+      <td><bdi class="code" dir="ltr">{{ s.id }}</bdi></td>
+      <td><span class="tag">{{ s.trigger }}</span></td>
+      {% if s.ok %}
+      <td class="muted nw">{{ s.manifest.created_at|replace({'T': ' ', 'Z': ''})|when }}</td>
+      <td class="n">{{ s.manifest.db.bytes|size }} · {{ s.manifest.db.tables|length }} جدول</td>
+      <td class="n">{{ s.manifest.media.files|length }} فایل{% if s.manifest.media.missing %} <span class="badge b-pend">{{ s.manifest.media.missing|length }} ناموجود</span>{% endif %}</td>
+      <td class="n">{{ s.manifest.releases|length }}</td>
+      <td>{% if is_owner %}<form method="post" action="/admin/backups/{{ s.id }}/verify" class="inline"><input type="hidden" name="_csrf" value="{{ csrf }}"><button class="a-btn a-btn--sm" type="submit">بررسی سلامت</button></form>{% endif %}</td>
+      {% else %}
+      <td colspan="5"><span class="badge b-err">خراب</span> <span class="muted" lang="en" dir="ltr">{{ s.problem }}</span></td>
+      {% endif %}
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+</div>
+{% endif %}
+
+<div class="grid g2 mb-top">
+  <section class="card" aria-labelledby="h-covers"><h2 class="card__h" id="h-covers">هر پشتیبان چه چیزی را دربر دارد</h2>
+    <ul class="list">
+      <li><span class="grow">پایگاه داده: ساختار و داده یک لحظه‌ی یکدست، همراه با شمار ردیف و جمع‌کنترل هر جدول.</span></li>
+      <li><span class="grow">رسانه و مستندات: فایل‌هایی که پایگاه داده ثبت کرده، با فهرست و جمع‌کنترل (افزایشی).</span></li>
+      <li><span class="grow">فهرست نسخه‌های منتشرشده‌ی نگه‌داشته‌شده برای بازگشت (فقط شناسه و جمع‌کنترل؛ نسخه‌ها دست‌نخورده می‌مانند).</span></li>
+    </ul>
+    <p class="card__note"><b>هرگز</b> شامل پیکربندی و رمزها (config.php)، فایل‌های نشست، کد برنامه و نسخه‌های ساخته‌شده نیست. جدول‌های محدودکننده‌ی نرخ (نشانی‌های هش‌شده) خالی بازیابی می‌شوند.</p>
+  </section>
+  <section class="card" aria-labelledby="h-restore"><h2 class="card__h" id="h-restore">بازیابی و نسخه‌ی بیرونی</h2>
+    <ul class="list">
+      <li><span class="grow">بازیابی فقط از خط فرمان انجام می‌شود و هدف باید صریحاً نام برده شود: <span class="mono" dir="ltr">restore:db &lt;id&gt; --target=&lt;empty db&gt;</span>. نسخه‌ی قبلی هرگز بی‌تأیید روی پایگاه زنده نمی‌نشیند.</span></li>
+      <li><span class="grow">نسخه‌ی بیرونی رمزگذاری‌شده: <span class="mono" dir="ltr">backup:export &lt;id&gt; &lt;file&gt;</span> (عبارت رمز هنگام اجرا پرسیده می‌شود و ذخیره نمی‌شود؛ گم‌شدنش جبران‌ناپذیر است). هفتگی برای پایگاه داده و ماهانه برای رسانه توصیه می‌شود.</span></li>
+      <li><span class="grow">بدون زمان‌بند: <span class="mono" dir="ltr">backup:run</span> را دستی اجرا کنید، از دکمه‌ی بالا استفاده کنید، یا <span class="mono" dir="ltr">backup.fallback</span> را روشن کنید تا نخستین ورود روزانه پشتیبان بسازد.</span></li>
+    </ul>
+    <p class="card__note">نگهداری: ۷ روزانه، ۴ هفتگی، ۳ ماهانه (D13). راهنمای کامل: <span class="mono" dir="ltr">nova/docs/backup.md</span>.</p>
+  </section>
+</div>
+{% endblock %}
